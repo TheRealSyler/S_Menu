@@ -1,5 +1,5 @@
 import bpy, os  
-
+from bpy.props import EnumProperty
 from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Add_Node_Call
 
 #SM_PIE_Add_Node_Call, 
@@ -8,7 +8,7 @@ from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Add_Node_Call
 #    Keymap      
 # -----------------------------------------------------------------------------
 
-addon_keymaps = [] 
+addon_keymaps = []
 
 def add_hotkey():
     
@@ -48,6 +48,20 @@ def get_addon_name():
 class SM_Prefs(bpy.types.AddonPreferences):
     bl_idname = get_addon_name()
     
+    tabs = [
+        ("ADD", "Add", ""),
+        ("WIP", "Wip", ""),
+    ]
+    add_sub_tabs = [
+        ("OBJECT", "Object Add Menu", ""),
+        ("NODE", "Node Add Menu", ""),
+        ("WIP", "Wip", ""),
+    ]
+
+    main_tabs: EnumProperty(name="Main_Tab", items=tabs)
+    add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
+
+
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
         row = layout.row()
@@ -56,16 +70,40 @@ class SM_Prefs(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        #wm = bpy.context.window_manager
-        box = layout.box()
-        split = box.split()
-        col = split.column()       
-        col.separator()
-        col.label(text="Keymaps:")
+
+        col = layout.column(align=True)
+        row = col.row()
+        row.prop(self, "main_tabs", expand=True)
+
+        box = col.box()
+        
+        if self.main_tabs == "ADD":
+            self.add_main_tab(context, box)
+
+
+    def add_main_tab(self, context, col):
+        
+        row = col.row()
+        row.prop(self, "add_sub_tabs", expand=True)
+        
+        if self.add_sub_tabs == "OBJECT":
+            self.add_sub_object(context, col)
+        elif self.add_sub_tabs == "NODE":
+            self.add_sub_node(context, col)
+                
+    def add_sub_object(self, context ,col):
+        col.label(text="Options (Wip):")
+
+        col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Add_Call.bl_idname)
+     
+    def add_sub_node(self, context ,col):
+        col.label(text="Options (Wip):")
+
+        col.label(text="Keymap:")
+
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
 
-                
 
 def get_preferences():
     return bpy.context.preferences.addons[get_addon_name()].preferences
