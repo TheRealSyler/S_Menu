@@ -32,6 +32,12 @@ def op_loop_safe_node(col, enum, text, icon, type):
         op.type = type[index]
         op.use_transform = True
 
+def op_loop_safe_node_val(col, enum, text, icon, type):
+    for index, e in enumerate(enum):
+        op = col.operator(e, text=text[index],icon_value=icon[index])
+        op.type = type[index]
+        op.use_transform = True
+
 def spacer(col, num):
     for i in range(0, num):
         col.label(text="")
@@ -445,10 +451,6 @@ class SM_PIE_Add(bpy.types.Menu):
             if col.operator("object.sphere_create", text="Q Sphere") is None:
                 col.label(text="Not Installed")
             
-            
-
-
-
 class SM_PIE_Add_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_add_call'
     bl_label = 'S.Menu Add Pie'
@@ -465,28 +467,53 @@ class SM_PIE_Add_Node(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
-
-        # 4 - LEFT
-        split = pie.split()
-        b = split.column()
-        self.node_utils(b)
-        # 6 - RIGHT
-        pie.separator()
-        # 2 - BOTTOM
-        pie.separator()      
-        # 8 - TOP
-        split = pie.split()
-        self.search(split)     
-        # 7 - TOP - LEFT
-        pie.separator()
-        # 9 - TOP - RIGHT
-        split = pie.split()
-        b = split.column()
-        self.texture_add(b)
-        # 1 - BOTTOM - LEFT
-        pie.separator()
-        # 3 - BOTTOM - RIGHT
-        pie.separator()
+        # check if in compositor
+        if bpy.context.area.ui_type == "CompositorNodeTree":
+            pie.separator()
+            pie.separator()
+            pie.separator()
+            pie.operator("wm.call_menu", text="WIP calls normal menu WIP", icon="ERROR").name = "NODE_MT_add"
+        # check if in Texture node tree
+        elif bpy.context.area.ui_type == "TextureNodeTree":
+            pie.separator()
+            pie.separator()
+            pie.separator()
+            pie.operator("wm.call_menu", text="WIP calls normal menu WIP", icon="ERROR").name = "NODE_MT_add"
+        # check if in shading
+        elif bpy.context.area.ui_type == "ShaderNodeTree":
+            
+            # 4 - LEFT
+            split = pie.split()
+            b = split.column()
+            self.node_utils(b)
+            # 6 - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.shader_add(b)
+            # 2 - BOTTOM
+            split = pie.split()
+            b = split.column()
+            self.node_color(b)
+            b = split.column()
+            self.node_vector(b)
+            b = split.column()
+            # note: dont change the text
+            b.label(text="                                             ")
+            # 8 - TOP
+            split = pie.split()
+            self.search(split)     
+            # 7 - TOP - LEFT
+            pie.separator()
+            # 9 - TOP - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.texture_add(b)
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            split = pie.split()
+            column = split.column()
+            self.add_menu(column)
 
     def node_utils(self, col):
         col.scale_x = 1
@@ -501,53 +528,170 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("node.add_node"),
             ("node.add_node"),
             ("node.add_node"),
+            ("node.add_node"),
         ]
         text = [
             ("Math"),
-            ("Mix"),
             ("Color Ramp"),
             ("Value"),
             ("RGB Curve"),
             ("Mix Shader"),
+            ("Mix"),
             ("Add Shader"),
             ("Layer Weight"),
             ("Hue Saturation"),
+            ("Color Input"),
+        ]
+        icon = [
+            (get_icon("Math_icon", "main")),  
+            (get_icon("Color_Ramp_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("RGB_C_icon", "main")),
+            (get_icon("SH_Mix_icon", "main")),
+            (get_icon("Mix_Color_icon", "main")),
+            (get_icon("SH_Add_icon", "main")),
+            (get_icon("LW_icon", "main")),
+            (get_icon("Hue_icon", "main")),
+            (get_icon("RGB_icon", "main")),
+        ]
+        e_type = [
+            ("ShaderNodeMath"),
+            ("ShaderNodeValToRGB"),
+            ("ShaderNodeValue"),
+            ("ShaderNodeRGBCurve"),
+            ("ShaderNodeMixShader"),
+            ("ShaderNodeMixRGB"),
+            ("ShaderNodeAddShader"),
+            ("ShaderNodeLayerWeight"),
+            ("ShaderNodeHueSaturation"),
+            ("ShaderNodeRGB"),
+        ]
+        
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+    
+    def node_vector(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Bump"),
+            ("Displacement"),
+            ("Mapping"),
+            ("Normal"),
+            ("Normal Map"),
+            ("Vector Curve"),
+            ("Vector Displacement"),
+            ("Vector Transform"),
+        ]
+        icon = [
+            (get_icon("Value_icon", "main")), 
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")), 
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+        ]
+        e_type = [
+            ("ShaderNodeBump"),
+            ("ShaderNodeDisplacement"),
+            ("ShaderNodeMapping"),
+            ("ShaderNodeNormal"),
+            ("ShaderNodeNormalMap"),
+            ("ShaderNodeVectorCurve"),
+            ("ShaderNodeVectorDisplacement"),
+            ("ShaderNodeVectorTransform"),
+        ]
+        
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
+    def node_color(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Bright Contrast"),
+            ("Gamma"),
+            ("Invert"),
+            ("LightFalloff"),
+        ]
+        icon = [
+            (get_icon("Value_icon", "main")), 
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+        ]
+        e_type = [
+            ("ShaderNodeBrightContrast"),
+            ("ShaderNodeGamma"),
+            ("ShaderNodeInvert"),
+            ("ShaderNodeLightFalloff"),
+    
+        ]
+        spacer(col, 2)
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
+    def search(self, col):
+        col.scale_x = 1.35
+        col.scale_y = 2
+        col.operator("node.add_search", text="Search...", icon="VIEWZOOM")
+
+    def texture_add(self, col):
+        col.scale_x = 1.1
+        col.scale_y = 1.8
+        col.operator("sop.sm_texture_node_call", text="Texture", icon="TEXTURE")
+    
+    def shader_add(self, col):
+        col.scale_x = 1.1
+        col.scale_y = 1.8
+        col.operator("sop.sm_shader_node_call", text="Shader", icon="SHADING_RENDERED")
+    
+    def add_menu(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        spacer(col, 3)
+        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node")
+        ]
+        text = [
+            ("Frame"),
+            ("Reroute"),
+            ("Material Output"),
+            ("Script"),
         ]
         icon = [
             ("ERROR"),
             ("ERROR"),
             ("ERROR"),
             ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
         ]
         e_type = [
-            ("ShaderNodeMath"),
-            ("ShaderNodeMixRGB"),
-            ("ShaderNodeValToRGB"),
-            ("ShaderNodeValue"),
-            ("ShaderNodeRGBCurve"),
-            ("ShaderNodeMixShader"),
-            ("ShaderNodeAddShader"),
-            ("ShaderNodeLayerWeight"),
-            ("ShaderNodeHueSaturation"),
+            ("NodeFrame"),
+            ("NodeReroute"),
+            ("ShaderNodeOutputMaterial"),
+            ("ShaderNodeScript"),
         ]
-        
         op_loop_safe_node(col, enum, text, icon, e_type)
-
-    def search(self, col):
-        col.scale_x = 1.4
-        col.scale_y = 2
-        col.operator("node.add_search", text="Search", icon="VIEWZOOM")
-
-    def texture_add(self, col):
-        col.scale_x = 1.4
-        col.scale_y = 1.8
-        col.operator("sop.sm_sdd_texture_node_call", text="Texture", icon="TEXTURE")
-
+    
 class SM_Add_Texture_Node(bpy.types.Menu):
     bl_label = 'S.Menu Add Texture'
 
@@ -575,7 +719,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
         
     def texture_1(self, col): 
         col.scale_x = 1
-        col.scale_y = 1.2
+        col.scale_y = 1.8
         enum = [
             ("node.add_node"),
             ("node.add_node"),
@@ -601,7 +745,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
     
     def texture_2(self, col): 
         col.scale_x = 1
-        col.scale_y = 1.2
+        col.scale_y = 1.8
         enum = [
             ("node.add_node"),
             ("node.add_node"),
@@ -627,7 +771,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
 
     def texture_3(self, col): 
         col.scale_x = 1
-        col.scale_y = 1.2
+        col.scale_y = 1.8
         enum = [
             ("node.add_node"),
             ("node.add_node"),
@@ -660,7 +804,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
 
     def texture_4(self, col): 
         col.scale_x = 1
-        col.scale_y = 1.2
+        col.scale_y = 1.8
         enum = [
             ("node.add_node"),
             ("node.add_node"),
@@ -681,7 +825,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
         op_loop_safe_node(col, enum, text, icon, e_type)
 
 class SM_Add_Texture_Node_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_sdd_texture_node_call'
+    bl_idname = 'sop.sm_texture_node_call'
     bl_label = 'S.Menu Texture Add Pie'
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
@@ -692,6 +836,7 @@ class SM_Add_Texture_Node_Call(bpy.types.Operator):
         return {'FINISHED'}
 
 class SM_PIE_Add_Node_Call(bpy.types.Operator):
+
     bl_idname = 'sop.sm_pie_node_add_call'
     bl_label = 'S.Menu Node Add Pie'
     bl_description = 'Calls pie menu'
@@ -700,4 +845,23 @@ class SM_PIE_Add_Node_Call(bpy.types.Operator):
     
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_PIE_Add_Node")
+        return {'FINISHED'}
+
+class SM_Add_Shader_Node(bpy.types.Menu):
+    bl_label = 'S.Menu Add Shader'
+    
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+
+class SM_Add_Shader_Node_Call(bpy.types.Operator):
+    bl_idname = 'sop.sm_shader_node_call'
+    bl_label = 'S.Menu Shader Add Pie'
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    
+    def execute(self, context):
+        bpy.ops.wm.call_menu_pie(name="SM_Add_Shader_Node")
         return {'FINISHED'}
