@@ -1,6 +1,7 @@
-import bpy
-from .get_icon import get_icon
+import bpy, os
+from . get_icon import get_icon
 
+# todo add Extra Objects support
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
@@ -35,14 +36,21 @@ def spacer(col, num):
     for i in range(0, num):
         col.label(text="")
 
+def get_addon_name():
+    parent = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+
+    return os.path.split(os.path.dirname(parent))[1]
+
+def get_prefs():
+    return bpy.context.preferences.addons[get_addon_name()].preferences
+
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
 #+-----------------------------------------------------------------------------------------------------+#
-
-
 class SM_PIE_Add(bpy.types.Menu):
     bl_label = "Add"
     
+
     def draw(self, context):
         layout = self.layout
 
@@ -90,7 +98,8 @@ class SM_PIE_Add(bpy.types.Menu):
         pie.separator()
         # 3 - BOTTOM - RIGHT
         split = pie.split()
-        self.add_menu(split)
+        column = split.column()
+        self.add_menu(column)
 
     def add_mesh_box(self, col):
         col.scale_x = 1
@@ -107,10 +116,6 @@ class SM_PIE_Add(bpy.types.Menu):
             ("object.text_add"),
             ("mesh.primitive_grid_add"),
             ("mesh.primitive_monkey_add"),
-            ("mesh.add_mesh_rock"),
-            ("mesh.landscape_add"),
-            ("mesh.bolt_add"),
-
         ]
         text = [
             ("Ico Sphere"),
@@ -124,10 +129,6 @@ class SM_PIE_Add(bpy.types.Menu):
             ("Text"),
             ("Grid"),
             ("Monkey"),
-            ("Rock Generator"),
-            ("Landscape"),
-            ("Bolt"),
-        
         ]
         icon = [
             get_icon("Ico_Sphere_icon", "main"),
@@ -140,13 +141,21 @@ class SM_PIE_Add(bpy.types.Menu):
 
             get_icon("Text_icon", "main"),
             get_icon("Grid_icon", "main"),
-            get_icon("Monkey_icon", "main"),
-            get_icon("Rock_icon", "main"),
-            get_icon("Landscape_icon", "main"),
-            get_icon("Bolt_icon", "main"),
+            get_icon("Monkey_icon", "main"),        
         ]
 
         op_loop_val(col, enum, text, icon, False, 7)
+
+        if get_prefs().enable_landscape is True:
+            if col.operator("mesh.add_mesh_rock", text="Rock Generator", icon_value=get_icon("Rock_icon", "main")) is None:
+                col.label(text="Not Installed")
+        if get_prefs().enable_landscape is True:
+            if col.operator("mesh.landscape_add", text="Landscape", icon_value=get_icon("Landscape_icon", "main"),) is None:
+                col.label(text="Not Installed")   
+        if get_prefs().enable_bolt is True:
+            if col.operator("mesh.bolt_add", text="Bolt", icon_value=get_icon("Bolt_icon", "main"),) is None:
+                col.label(text="Not Installed")
+        
 
     def light_1_box(self, col):
         col.scale_x = 1
@@ -425,7 +434,20 @@ class SM_PIE_Add(bpy.types.Menu):
     def add_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.4
+        spacer(col, 3)
         col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_add"
+        
+        if get_prefs().enable_qblocker is True:
+            if col.operator("object.box_create", text="Q Cube") is None:
+                col.label(text="Not Installed")
+            if col.operator("object.cylinder_create", text="Q Cylinder") is None:
+                col.label(text="Not Installed")
+            if col.operator("object.sphere_create", text="Q Sphere") is None:
+                col.label(text="Not Installed")
+            
+            
+
+
 
 class SM_PIE_Add_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_add_call'
