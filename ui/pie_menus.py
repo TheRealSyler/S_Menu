@@ -514,6 +514,8 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             split = pie.split()
             column = split.column()
             self.add_menu(column)
+            column = split.column()
+            self.converter_menu(column)
 
     def node_utils(self, col):
         col.scale_x = 1
@@ -581,8 +583,10 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("node.add_node"),
             ("node.add_node"),
             ("node.add_node"),
+            ("node.add_node"),
         ]
         text = [
+            ("Vector Math"),
             ("Bump"),
             ("Displacement"),
             ("Mapping"),
@@ -597,12 +601,14 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")), 
             (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")),
         ]
         e_type = [
+            ("ShaderNodeVectorMath"),
             ("ShaderNodeBump"),
             ("ShaderNodeDisplacement"),
             ("ShaderNodeMapping"),
@@ -623,14 +629,26 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("node.add_node"),
             ("node.add_node"),
             ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
         ]
         text = [
             ("Bright Contrast"),
             ("Gamma"),
             ("Invert"),
             ("LightFalloff"),
+            ("Wireframe"),
+            ("Fresnel"),
+            ("Tangent"),
+            ("UV Map"),
         ]
         icon = [
+            (get_icon("Value_icon", "main")), 
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")), 
             (get_icon("Value_icon", "main")),
             (get_icon("Value_icon", "main")),
@@ -641,7 +659,10 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeGamma"),
             ("ShaderNodeInvert"),
             ("ShaderNodeLightFalloff"),
-    
+            ("ShaderNodeWireframe"),
+            ("ShaderNodeFresnel"),
+            ("ShaderNodeTangent"),
+            ("ShaderNodeUVMap"),
         ]
         spacer(col, 2)
         op_loop_safe_node_val(col, enum, text, icon, e_type)
@@ -664,21 +685,42 @@ class SM_PIE_Add_Node(bpy.types.Menu):
     def add_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        spacer(col, 3)
+        spacer(col, 9)
         col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
         enum = [
             ("node.add_node"),
             ("node.add_node"),
             ("node.add_node"),
-            ("node.add_node")
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
         ]
         text = [
             ("Frame"),
             ("Reroute"),
             ("Material Output"),
             ("Script"),
+            ("Light Path"),
+            ("Object Info"),
+            ("Particle Info"),
+            ("Camera Data"),
+            ("Geometry"),
+            ("Hair Info"),
+            ("Tex Coord"),
         ]
         icon = [
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
             ("ERROR"),
             ("ERROR"),
             ("ERROR"),
@@ -689,7 +731,68 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("NodeReroute"),
             ("ShaderNodeOutputMaterial"),
             ("ShaderNodeScript"),
+            ("ShaderNodeLightPath"),
+            ("ShaderNodeObjectInfo"),
+            ("ShaderNodeParticleInfo"),
+            ("ShaderNodeCameraData"),
+            ("ShaderNodeGeometry"),
+            ("ShaderNodeHairInfo"),
+            ("ShaderNodeTexCoord"),
         ]
+        op_loop_safe_node(col, enum, text, icon, e_type)
+    
+    def converter_menu(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Shader To RGB"),
+            ("RGB to BW"),
+            ("Separate HSV"),
+            ("Separate RGB"),
+            ("Separate XYZ"),
+            ("Blackbody"),
+            ("Wavelength"),
+            ("Combine HVS"),
+            ("Combine RGB"),
+            ("Combine XYZ"),
+        ]
+        icon = [
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+        ]
+        e_type = [
+            ("ShaderNodeShaderToRGB"),
+            ("ShaderNodeRGBToBW"),
+            ("ShaderNodeSeparateHSV"),
+            ("ShaderNodeSeparateRGB"),
+            ("ShaderNodeSeparateXYZ"),
+            ("ShaderNodeBlackbody"),
+            ("ShaderNodeWavelength"),
+            ("ShaderNodeCombineHSV"),
+            ("ShaderNodeCombineRGB"),
+            ("ShaderNodeCombineXYZ"),
+        ]
+        spacer(col, 3)
         op_loop_safe_node(col, enum, text, icon, e_type)
     
 class SM_Add_Texture_Node(bpy.types.Menu):
@@ -852,8 +955,131 @@ class SM_Add_Shader_Node(bpy.types.Menu):
     
     def draw(self, context):
         layout = self.layout
+
         pie = layout.menu_pie()
 
+        # 4 - LEFT
+        split = pie.split()
+        b = split.column()
+        self.shader_2(b)
+        # 6 - RIGHT
+        split = pie.split()
+        b = split.column()
+        self.shader_1(b)
+        # 2 - BOTTOM
+        split = pie.split()
+        b = split.column()
+        row = b.row()
+        self.shader_3(row)
+        # 8 - TOP
+        split = pie.split()
+        b = split.column()
+        row = b.row()
+        self.shader_4(row)
+
+    def shader_1(self, col): 
+        col.scale_x = 1
+        col.scale_y = 1.8
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Principled"),
+            ("Emission"),
+            ("Volume Principled"),
+        ]
+        icon = [
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+        ]
+        e_type = [
+            ("ShaderNodeBsdfPrincipled"),
+            ("ShaderNodeEmission"),
+            ("ShaderNodeVolumePrincipled"),
+        ]
+        op_loop_safe_node(col, enum, text, icon, e_type)
+
+    def shader_2(self, col): 
+        col.scale_x = 1
+        col.scale_y = 1.8
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Diffuse"),
+            ("SSS"),
+            ("Glossy"),
+        ]
+        icon = [
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+        ]
+        e_type = [
+            ("ShaderNodeBsdfDiffuse"),
+            ("ShaderNodeSubsurfaceScattering"),
+            ("ShaderNodeBsdfGlossy"),
+        ]
+        op_loop_safe_node(col, enum, text, icon, e_type)
+
+    def shader_3(self, col): 
+        col.scale_x = 1
+        col.scale_y = 1.8
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Scatter"),
+            ("Absorption"),
+            ("Translucent"),
+            ("Transparent"),
+        ]
+        icon = [
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+        ]
+        e_type = [
+            ("ShaderNodeVolumeScatter"),
+            ("ShaderNodeVolumeAbsorption"),
+            ("ShaderNodeBsdfTranslucent"),
+            ("ShaderNodeBsdfTransparent"),
+        ]
+        op_loop_safe_node(col, enum, text, icon, e_type)
+
+    def shader_4(self, col): 
+        col.scale_x = 1
+        col.scale_y = 1.8
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Specular"),
+            ("Refraction"),
+            ("Glass"),
+        ]
+        icon = [
+            ("ERROR"),
+            ("ERROR"),
+            ("ERROR"),
+        ]
+        e_type = [
+            ("ShaderNodeEeveeSpecular"),
+            ("ShaderNodeBsdfRefraction"),
+            ("ShaderNodeBsdfGlass"),
+        ]
+        op_loop_safe_node(col, enum, text, icon, e_type)
 
 class SM_Add_Shader_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_shader_node_call'
