@@ -965,7 +965,8 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             # 8 - TOP
             split = pie.split()
             b = split.row()
-            self.texture_4(b)  
+            self.texture_4(b) 
+
         elif bpy.context.area.ui_type == "TextureNodeTree":
             # 4 - LEFT
             split = pie.split()
@@ -974,15 +975,15 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             # 6 - RIGHT
             split = pie.split()
             b = split.column()
-            #self.texture_3(b) 
+            self.tex_texture_2(b) 
             # 2 - BOTTOM
             split = pie.split()
             b = split.row()
-            #self.texture_2(b)      
+            self.tex_texture_3(b)      
             # 8 - TOP
             split = pie.split()
             b = split.row()
-            #self.texture_4(b) 
+            self.tex_texture_4(b)  
         
     def texture_1(self, col): 
         col.scale_x = 1
@@ -1094,54 +1095,97 @@ class SM_Add_Texture_Node(bpy.types.Menu):
     def tex_texture_1(self, col):
 
         col.scale_x = 1
-        col.scale_y = 1.2
+        col.scale_y = 2
         enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
             ("node.add_node"),
             ("node.add_node"),
             ("node.add_node"),
         ]
         text = [
-            ("Output"),
-            ("Viewer"),
-            ("Value To Normal"),
-            ("Invert"),
-            ("Hue Saturation"),
-            ("Combine RGBA"),
-            ("Separate RGBA"),
-            ("At"),
-            ("Rotate"),
-            ("Scale"),
+            ("Clouds"),
+            ("Stucci"),
+            ("Voronoi"),
+
         ]
         icon = [
-            (get_icon("Mat_Out_icon", "main")),
-            (get_icon("Mat_Out_icon", "main")),
-            (get_icon("Reroute_icon", "main")), 
-            (get_icon("Reroute_icon", "main")), 
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+        ]
+        e_type = [
+            ("TextureNodeTexClouds"),
+            ("TextureNodeTexStucci"),
+            ("TextureNodeTexVoronoi"),
+        ]
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
+    def tex_texture_2(self, col):
+
+        col.scale_x = 1
+        col.scale_y = 2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Magic"),
+            ("Marble"),
+            ("Musgrave"),
+        ]
+        icon = [
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+        ]
+        e_type = [
+            ("TextureNodeTexMagic"),
+            ("TextureNodeTexMarble"),
+            ("TextureNodeTexMusgrave"),
+        ]
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
+    def tex_texture_3(self, col):
+
+        col.scale_x = 1
+        col.scale_y = 2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Blend"),
+            ("Wood"),
+        ]
+        icon = [
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")), 
         ]
         e_type = [
             ("TextureNodeTexBlend"),
-            ("TextureNodeTexClouds"),
-            ("TextureNodeTexDistNoise"),
-            ("TextureNodeTexMagic"),
-            ("TextureNodeTexMarble"),
-            ("TextureNodeTexMusgrave"),
-            ("TextureNodeTexNoise"),
-            ("TextureNodeTexStucci"),
-            ("TextureNodeTexVoronoi"),
             ("TextureNodeTexWood"),
+        ]
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
+    def tex_texture_4(self, col):
+
+        col.scale_x = 1
+        col.scale_y = 2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Distorted Noise"),
+            ("Noise"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+        ]
+        e_type = [
+            ("TextureNodeTexDistNoise"),
+            ("TextureNodeTexNoise"),
         ]
         op_loop_safe_node_val(col, enum, text, icon, e_type)
 
