@@ -20,10 +20,10 @@ from . ui.get_icon import register_icons, unregister_icons
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
-    "version": (0, 0, 0, 5),
+    "version": (0, 0, 0, 6),
     "description": "Adds Pie Menus",
     "blender" : (2, 80, 0),
-    "category" : "Object"
+    "category" : "3D view"
 }
 
 

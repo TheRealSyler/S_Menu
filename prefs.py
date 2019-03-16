@@ -58,23 +58,27 @@ class SM_Prefs(bpy.types.AddonPreferences):
         ("WIP", "Wip", ""),
     ]
     enable_qblocker: BoolProperty(
-        name="Enable QBlocker",
+        name="QBlocker",
         default=True
     )
     enable_bolt: BoolProperty(
-        name="Enable Bolt",
+        name="Bolt",
         default=True
     )
     enable_landscape: BoolProperty(
-        name="Enable A.N.T. Landscape",
+        name="A.N.T. Landscape",
         default=True
     )
     enable_rock: BoolProperty(
-        name="Enable Rock Generator",
+        name="Rock Generator",
         default=True
     )
     enable_pipenightmare: BoolProperty(
-        name="Enable Rock Generator",
+        name="Pipe Nightmare",
+        default=True
+    )
+    enable_extra_objects_mesh: BoolProperty(
+        name="Extra Objects (Mesh)",
         default=True
     )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
@@ -118,6 +122,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.prop(self, "enable_landscape", text="A.N.T. Landscape")
         col.prop(self, "enable_rock", text="Rock Generator")
         col.prop(self, "enable_pipenightmare", text="Pipe Nightmare")
+        col.prop(self, "enable_extra_objects_mesh", text="Extra Objects (Mesh)")
 
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Add_Call.bl_idname)
