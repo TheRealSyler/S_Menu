@@ -1769,7 +1769,7 @@ class SM_PIE_A_OM(bpy.types.Menu):
         # 6 - RIGHT
         pie.operator("object.select_all",text="Deselect All", icon_value=get_icon("O_DeSelcet_icon", "main")).action = 'DESELECT'
         # 2 - BOTTOM
-        pie.separator()
+        pie.operator("wm.call_menu",text="Apply Menu", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_object_apply"
         # 8 - TOP
         pie.operator("object.select_all",text="Invert", icon="ARROW_LEFTRIGHT").action = 'INVERT'
             
