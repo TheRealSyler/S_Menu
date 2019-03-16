@@ -112,12 +112,12 @@ class SM_Prefs(bpy.types.AddonPreferences):
                 
     def add_sub_object(self, context ,col):
         col.label(text="Options:")
-        
-        col.prop(self, "enable_qblocker", text="Enable QBlocker")
-        col.prop(self, "enable_bolt", text="Enable Bolt Factory")
-        col.prop(self, "enable_landscape", text="Enable A.N.T. Landscape")
-        col.prop(self, "enable_rock", text="Enable Rock Generator")
-        col.prop(self, "enable_pipenightmare", text="Enable Pipe Nightmare")
+        col.label(text="Please Disable if not installed")
+        col.prop(self, "enable_qblocker", text="QBlocker")
+        col.prop(self, "enable_bolt", text="Bolt Factory")
+        col.prop(self, "enable_landscape", text="A.N.T. Landscape")
+        col.prop(self, "enable_rock", text="Rock Generator")
+        col.prop(self, "enable_pipenightmare", text="Pipe Nightmare")
 
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Add_Call.bl_idname)

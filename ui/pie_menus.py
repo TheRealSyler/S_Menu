@@ -1,8 +1,7 @@
 import bpy, os
 from . get_icon import get_icon
 
-# todo add Extra Objects support
-# todo add 
+# todo add Extra Object, curves support
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
@@ -27,15 +26,15 @@ def op_loop_safe(col, enum, text, icon, type):
         op = col.operator(e, text=text[index],icon=icon[index])
         op.type = type[index]
 
-def op_loop_safe_node(col, enum, text, icon, type):
-    for index, e in enumerate(enum):
-        op = col.operator(e, text=text[index],icon=icon[index])
+def op_loop_safe_node(col, num, text, icon, type):
+    for index in range(0, num):
+        op = col.operator("node.add_node", text=text[index],icon=icon[index])
         op.type = type[index]
         op.use_transform = True
 
-def op_loop_safe_node_val(col, enum, text, icon, type):
-    for index, e in enumerate(enum):
-        op = col.operator(e, text=text[index],icon_value=icon[index])
+def op_loop_safe_node_val(col, num, text, icon, type):
+    for index in range(0, num):
+        op = col.operator("node.add_node", text=text[index],icon_value=icon[index])
         op.type = type[index]
         op.use_transform = True
 
@@ -57,7 +56,6 @@ def get_prefs():
 class SM_PIE_Add(bpy.types.Menu):
     bl_label = "Add"
     
-
     def draw(self, context):
         layout = self.layout
 
@@ -78,10 +76,8 @@ class SM_PIE_Add(bpy.types.Menu):
         
         # 2 - BOTTOM
         split = pie.split()
-        
         b = split.column()
         self.camera(b, 3)
-
         column = split.column()
         self.empty(column, 3)
         
@@ -474,10 +470,45 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         pie = layout.menu_pie()
         # check if in compositor
         if bpy.context.area.ui_type == "CompositorNodeTree":
+            # 4 - LEFT
+            split = pie.split()
+            b = split.column()
+            self.comp_node_utils(b)
+            # 6 - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.comp_add_menu(b)
+            # 2 - BOTTOM
+            split = pie.split()
+            b = split.column()
+            self.comp_menu_3(b)
+            b = split.column()
+            self.comp_menu_2(b)
+            b = split.column()
+            self.comp_menu_1(b)
+            # 8 - TOP
+            split = pie.split()
+            self.search(split)
+            # 7 - TOP - LEFT
+            split = pie.split()
+            b = split.column()
+            b.label(text="                            ")
+            b = split.column()
+            self.comp_menu_6(b)
+            b = split.column()
+            self.comp_menu_8(b)
+            # 9 - TOP - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.comp_menu_4(b)
+            b = split.column()
+            self.comp_menu_5(b)
+            b = split.column()
+            self.comp_menu_7(b)
+            # 1 - BOTTOM - LEFT
             pie.separator()
+            # 3 - BOTTOM - RIGHT
             pie.separator()
-            pie.separator()
-            pie.operator("wm.call_menu", text="WIP calls normal menu WIP", icon="ERROR").name = "NODE_MT_add"
         # check if in Texture node tree
         elif bpy.context.area.ui_type == "TextureNodeTree":
             # 4 - LEFT
@@ -536,18 +567,6 @@ class SM_PIE_Add_Node(bpy.types.Menu):
     def node_utils(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Math"),
             ("Color Ramp"),
@@ -585,25 +604,62 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeRGB"),
         ]
         
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 10, text, icon, e_type)
     
+    def comp_node_utils(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        text = [
+            ("Viewer"),
+            ("Math"),
+            ("Color Ramp"),
+            ("Value"),
+            ("RGB Curve"),
+            ("Mask"),
+            ("Mix"),
+            ("Glare"),
+            ("Lens Distortion"),
+            ("Hue Saturation"),
+            ("Color Input"),
+            ("Split Viewer"),
+            ("Switch"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Math_icon", "main")),  
+            (get_icon("Color_Ramp_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("RGB_C_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Mix_Color_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Hue_icon", "main")),
+            (get_icon("RGB_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeViewer"),
+            ("CompositorNodeMath"),
+            ("CompositorNodeValToRGB"),
+            ("CompositorNodeValue"),
+            ("CompositorNodeCurveRGB"),
+            ("CompositorNodeMask"),
+            ("CompositorNodeMixRGB"),
+            ("CompositorNodeGlare"),
+            ("CompositorNodeLensdist"),
+            ("CompositorNodeHueSat"),
+            ("CompositorNodeRGB"),
+            ("CompositorNodeSplitViewer"),
+            ("CompositorNodeSwitch"),
+        ]
+        
+        op_loop_safe_node_val(col, 13, text, icon, e_type)
+
     def tex_node_utils(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Distance"),
             ("Coordinates"),
@@ -647,22 +703,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("TextureNodeRGBToBW"),
         ]
         
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 12, text, icon, e_type)
 
     def node_vector(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Vector Math"),
             ("Bump"),
@@ -697,21 +742,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeVectorTransform"),
         ]
         
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 9, text, icon, e_type)
 
     def node_color(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Bright Contrast"),
             ("Gamma"),
@@ -743,7 +778,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeUVMap"),
         ]
         spacer(col, 2)
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 8, text, icon, e_type)
 
     def search(self, col):
         col.scale_x = 1.35
@@ -765,19 +800,6 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         col.scale_y = 1.2
         spacer(col, 9)
         col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Frame"),
             ("Reroute"),
@@ -819,27 +841,13 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeHairInfo"),
             ("ShaderNodeTexCoord"),
         ]
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 11, text, icon, e_type)
     
     def add_menu_tex(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
         col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
+       
         text = [
             ("Frame"),
             ("Reroute"),
@@ -885,23 +893,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("TextureNodeScale"),
             ("TextureNodeTranslate"),
         ]
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 13, text, icon, e_type)
 
     def converter_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Shader To RGB"),
             ("RGB to BW"),
@@ -915,16 +911,16 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("Combine XYZ"),
         ]
         icon = [
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
         ]
         e_type = [
             ("ShaderNodeShaderToRGB"),
@@ -939,8 +935,309 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeCombineXYZ"),
         ]
         spacer(col, 3)
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 10, text, icon, e_type)
     
+    def comp_add_menu(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        spacer(col, 0)
+        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
+        text = [
+            ("Frame"),
+            ("Reroute"),
+            ("Cryptomatte"),
+            ("Bokeh Image"),
+            ("Image"),
+            ("Movie Clip"),
+            ("Texture"),
+            ("Time"),
+            ("Track Position"),
+            ("Composite"),
+            ("File Output"),
+            ("Levels"),
+        ]
+        icon = [
+            (get_icon("Frame_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("NodeFrame"),
+            ("NodeReroute"),
+            ("CompositorNodeCryptomatte"),
+            ("CompositorNodeBokehImage"),
+            ("CompositorNodeImage"),
+            ("CompositorNodeMovieClip"),
+            ("CompositorNodeTexture"),
+            ("CompositorNodeTime"),
+            ("CompositorNodeTrackPos"),
+            ("CompositorNodeComposite"),
+            ("CompositorNodeOutputFile"),
+            ("CompositorNodeLevels"),
+        ]
+        op_loop_safe_node_val(col, 12, text, icon, e_type)
+
+    def comp_menu_1(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        spacer(col, 3)
+        text = [
+            ("Color Correction"),
+            ("Blur"),
+            ("Defocus"),
+            ("Bokeh Blur"),
+            ("Bilateral Blur"),
+            ("Directional Blur"),
+            ("Vector Blur"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeColorCorrection"),
+            ("CompositorNodeBlur"),
+            ("CompositorNodeDefocus"),
+            ("CompositorNodeBokehBlur"),
+            ("CompositorNodeBilateralblur"),
+            ("CompositorNodeDBlur"),
+            ("CompositorNodeVecBlur"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+
+    def comp_menu_2(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        spacer(col, 0)
+
+        text = [
+            ("Alpha Over"),
+            ("Hue Correct"),
+            ("Gamma"),
+            ("Bright/Contrast"),
+            ("Invert"),
+            ("Tonemap"),
+            ("Z Combine"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+        ]
+        e_type = [
+            ("CompositorNodeAlphaOver"),
+            ("CompositorNodeHueCorrect"),
+            ("CompositorNodeGamma"),
+            ("CompositorNodeBrightContrast"),
+            ("CompositorNodeInvert"),
+            ("CompositorNodeTonemap"),
+            ("CompositorNodeZcombine"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+
+    def comp_menu_3(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        spacer(col, 3)
+
+        text = [
+            ("Color Balance"),
+            ("Despeckle"),
+            ("Dilate/Erode"),
+            ("Filter"),
+            ("Inpaint"),
+            ("Pixelate"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeColorBalance"),
+            ("CompositorNodeDespeckle"),
+            ("CompositorNodeDilateErode"),
+            ("CompositorNodeFilter"),
+            ("CompositorNodeInpaint"),
+            ("CompositorNodePixelate"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+    
+    def comp_menu_4(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        
+        text = [
+            ("Render Layers"),
+            ("Color Spill"),
+            ("Color Key"),
+            ("Channel Key"),
+            ("Chroma Key"),
+            ("Box Mask"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeRLayers"),
+            ("CompositorNodeColorSpill"),
+            ("CompositorNodeColorMatte"),
+            ("CompositorNodeChannelMatte"),
+            ("CompositorNodeChromaMatte"),
+            ("CompositorNodeBoxMask"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+        spacer(col, 14)
+    
+    def comp_menu_5(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        
+        text = [
+            ("Difference Key"),
+            ("Distance Key"),
+            ("Double Edge Mask"),
+            ("Keying"),
+            ("Keying Screen"),
+            ("Ellipse Mask"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeDifMatte"),
+            ("CompositorNodeDistanceMatte"),
+            ("CompositorNodeDoubleEdgeMask"),
+            ("CompositorNodeKeying"),
+            ("CompositorNodeKeyingScreen"),
+            ("CompositorNodeEllipseMask"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+        spacer(col, 14)
+
+    def comp_menu_6(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        
+        text = [
+            ("Map Range"),
+            ("Map Value"),
+            ("Normal"),
+            ("Normalize"),
+            ("Vector Curve"),
+            ("Displace"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeMapRange"),
+            ("CompositorNodeMapValue"),
+            ("CompositorNodeNormal"),
+            ("CompositorNodeNormalize"),
+            ("CompositorNodeCurveVec"),
+            ("CompositorNodeDisplace"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+        spacer(col, 14)
+
+    def comp_menu_7(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        
+        text = [
+            ("Luminace Key"),
+            ("Corner Pin"),
+            ("Crop"),
+            ("Flip"),
+            ("Map UV"),
+            ("Movie Distortion"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodeLumaMatte"),
+            ("CompositorNodeCornerPin"),
+            ("CompositorNodeCrop"),
+            ("CompositorNodeFlip"),
+            ("CompositorNodeMapUV"),
+            ("CompositorNodeMovieDistortion"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+        spacer(col, 14)
+
+    def comp_menu_8(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        
+        text = [
+            ("Plane Track Deform"),
+            ("Stabilize 2D"),
+            ("Transform"),
+            ("Scale"),
+            ("Rotate"),
+            ("Translate"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodePlaneTrackDeform"),
+            ("CompositorNodeStabilize"),
+            ("CompositorNodeTransform"),
+            ("CompositorNodeScale"),
+            ("CompositorNodeRotate"),
+            ("CompositorNodeTranslate"),
+        ]
+        op_loop_safe_node_val(col, 6, text, icon, e_type)
+        spacer(col, 14)
+
 class SM_Add_Texture_Node(bpy.types.Menu):
     bl_label = 'S.Menu Add Texture'
 
@@ -988,11 +1285,6 @@ class SM_Add_Texture_Node(bpy.types.Menu):
     def texture_1(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Gradient"),
             ("Point Density"),
@@ -1009,17 +1301,11 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("ShaderNodeTexSky"),
 
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 3, text, icon, e_type)
     
     def texture_2(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-
-        ]
         text = [
             ("Environment"),
             ("IES"),
@@ -1035,18 +1321,11 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("ShaderNodeTexIES"),
             ("ShaderNodeTexImage"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 3, text, icon, e_type)
 
     def texture_3(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Magic"),
             ("Musgrave"),
@@ -1068,15 +1347,11 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("ShaderNodeTexVoronoi"),
             ("ShaderNodeTexWave"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 5, text, icon, e_type)
 
     def texture_4(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Bick"),
             ("Checker"),
@@ -1090,17 +1365,12 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("ShaderNodeTexChecker"),
 
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 2, text, icon, e_type)
 
     def tex_texture_1(self, col):
 
         col.scale_x = 1
         col.scale_y = 2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Clouds"),
             ("Stucci"),
@@ -1117,17 +1387,12 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("TextureNodeTexStucci"),
             ("TextureNodeTexVoronoi"),
         ]
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 3, text, icon, e_type)
 
     def tex_texture_2(self, col):
 
         col.scale_x = 1
         col.scale_y = 2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Magic"),
             ("Marble"),
@@ -1143,16 +1408,12 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("TextureNodeTexMarble"),
             ("TextureNodeTexMusgrave"),
         ]
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 3, text, icon, e_type)
 
     def tex_texture_3(self, col):
 
         col.scale_x = 1
         col.scale_y = 2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Blend"),
             ("Wood"),
@@ -1165,16 +1426,13 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("TextureNodeTexBlend"),
             ("TextureNodeTexWood"),
         ]
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 2, text, icon, e_type)
 
     def tex_texture_4(self, col):
 
         col.scale_x = 1
         col.scale_y = 2
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
+
         text = [
             ("Distorted Noise"),
             ("Noise"),
@@ -1187,7 +1445,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("TextureNodeTexDistNoise"),
             ("TextureNodeTexNoise"),
         ]
-        op_loop_safe_node_val(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, 2, text, icon, e_type)
 
 class SM_Add_Texture_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_texture_node_call'
@@ -1242,11 +1500,6 @@ class SM_Add_Shader_Node(bpy.types.Menu):
     def shader_1(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Principled"),
             ("Emission"),
@@ -1262,16 +1515,11 @@ class SM_Add_Shader_Node(bpy.types.Menu):
             ("ShaderNodeEmission"),
             ("ShaderNodeVolumePrincipled"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 3, text, icon, e_type)
 
     def shader_2(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Diffuse"),
             ("SSS"),
@@ -1287,17 +1535,11 @@ class SM_Add_Shader_Node(bpy.types.Menu):
             ("ShaderNodeSubsurfaceScattering"),
             ("ShaderNodeBsdfGlossy"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 3, text, icon, e_type)
 
     def shader_3(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Scatter"),
             ("Absorption"),
@@ -1316,16 +1558,11 @@ class SM_Add_Shader_Node(bpy.types.Menu):
             ("ShaderNodeBsdfTranslucent"),
             ("ShaderNodeBsdfTransparent"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 4, text, icon, e_type)
 
     def shader_4(self, col): 
         col.scale_x = 1
         col.scale_y = 1.8
-        enum = [
-            ("node.add_node"),
-            ("node.add_node"),
-            ("node.add_node"),
-        ]
         text = [
             ("Specular"),
             ("Refraction"),
@@ -1341,7 +1578,7 @@ class SM_Add_Shader_Node(bpy.types.Menu):
             ("ShaderNodeBsdfRefraction"),
             ("ShaderNodeBsdfGlass"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node(col, 3, text, icon, e_type)
 
 class SM_Add_Shader_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_shader_node_call'
