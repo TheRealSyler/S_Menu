@@ -13,24 +13,32 @@ addon_keymaps = []
 def add_hotkey():
     
     wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
-    km.keymap_items.new(SM_PIE_Add_Call.bl_idname, 'A', 'PRESS', shift=True)                           
-    addon_keymaps.append(km)
+    kc = wm.keyconfigs.addon
+
+    if not kc:
+        print('Keymap Error')
+        return
     
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Node Generic', space_type='NODE_EDITOR')
-    km.keymap_items.new(SM_PIE_Add_Node_Call.bl_idname, 'A', 'PRESS', shift=True)                           
-    addon_keymaps.append(km)
+    km = kc.keymaps.new(name='Object Mode', space_type='EMPTY')
+
+    kmi = km.keymap_items.new(SM_PIE_Add_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=True)
+    addon_keymaps.append((km, kmi))
+    kmi = km.keymap_items.new(SM_PIE_Q_Menu_Call.bl_idname, 'Q', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
+    
+    km = kc.keymaps.new(name='Node Generic', space_type='NODE_EDITOR')
+
+    kmi = km.keymap_items.new(SM_PIE_Add_Node_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=True)
+    addon_keymaps.append((km, kmi))
+   
     
 
     
 def remove_hotkey():
-    wm = bpy.context.window_manager
-    for km in addon_keymaps:
-        wm.keyconfigs.addon.keymaps.remove(km)
-    # clear the list
-    del addon_keymaps[:]
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
 
+    addon_keymaps.clear()
 
 
 
