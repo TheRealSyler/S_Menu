@@ -14,9 +14,6 @@ from . ui.pie_menus import (
     SM_PIE_A_OM,
     SM_PIE_A_OM_Call,
 )
-#SM_PIE_Add_Node, 
-#SM_PIE_Add_Node_Call, 
-#
 
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -24,11 +21,13 @@ from . ui.get_icon import register_icons, unregister_icons
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
-    "version": (0, 0, 0, 7),
+    "version": (0, 0, 0, 8),
     "description": "Adds Pie Menus",
     "blender" : (2, 80, 0),
     "category" : "3D view"
 }
+
+
 
 classes = [
     SM_PIE_Add,
