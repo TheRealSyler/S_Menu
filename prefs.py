@@ -90,6 +90,18 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Extra Objects (Mesh)",
         default=True
     )
+    enable_hops: BoolProperty(
+        name="Harf Ops",
+        default=True
+    )
+    enable_rarray: BoolProperty(
+        name="R.Array",
+        default=True
+    )
+    enable_kitops: BoolProperty(
+        name="Kit Ops",
+        default=True
+    )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
 
@@ -147,8 +159,11 @@ class SM_Prefs(bpy.types.AddonPreferences):
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
 
     def q_menu_tab(self, context, col):
-        col.label(text="Options (Wip):")
-        
+        col.label(text="Options:")
+        col.label(text="Please Disable if not installed")
+        col.prop(self, "enable_hops", text="Hard Ops")
+        col.prop(self, "enable_rarray", text="R.Array")
+        col.prop(self, "enable_kitops", text="Kit Ops")
         col.label(text="Keymap:")
 
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)

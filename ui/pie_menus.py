@@ -1,8 +1,8 @@
 import bpy, os
 from . get_icon import get_icon
 
-# todo add Extra Objects support
-# todo add 
+# todo add Extra Object (Curve) support
+# todo Q Menu
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
@@ -1613,15 +1613,6 @@ class SM_Add_Shader_Node_Call(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_Add_Shader_Node")
         return {'FINISHED'}
-    bl_idname = 'sop.sm_shader_node_call'
-    bl_label = 'S.Menu Shader Add Pie'
-    bl_description = 'Calls pie menu'
-    bl_options = {'REGISTER', 'UNDO'}
-    
-    
-    def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_Add_Shader_Node")
-        return {'FINISHED'}
 
 class SM_PIE_Q_Menu(bpy.types.Menu):
     bl_label = "Q Menu"
@@ -1629,24 +1620,131 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-
+        print (bpy.context.active_object.type)
         pie = layout.menu_pie()
-        # 4 - LEFT
-        pie.separator()
-        # 6 - RIGHT
-        pie.separator()
-        # 2 - BOTTOM
-        pie.separator()
-        # 8 - TOP
-        pie.separator()
-        # 7 - TOP - LEFT
-        pie.separator()
-        # 9 - TOP - RIGHT
-        pie.separator()
-        # 1 - BOTTOM - LEFT
-        pie.separator()
-        # 3 - BOTTOM - RIGHT
-        pie.separator()
+        
+        
+        if bpy.context.active_object.type == 'CURVE':
+            # 4 - LEFT
+            if get_prefs().enable_hops is True:
+                pie.operator("hops.adjust_curve",text="Adjust Curve", icon="ARROW_LEFTRIGHT")
+            else:
+                pie.separator()
+            # 6 - RIGHT
+            pie.operator("object.convert",text="Convert", icon="OUTLINER_OB_MESH").target = "MESH"        
+            # 2 - BOTTOM
+            pie.separator()
+            # 8 - TOP
+            pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+            # 7 - TOP - LEFT
+            pie.operator("wm.call_menu",text="Quick Favorites", icon_value=get_icon("List_icon", "main")).name = "SCREEN_MT_user_menu"
+            # 9 - TOP - RIGHT
+            if get_prefs().enable_hops is True:
+                pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+            else:
+                pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+
+        if bpy.context.active_object.type == 'EMPTY':
+            # 4 - LEFT
+            if get_prefs().enable_rarray is True:
+                pie.operator("sop.r_array",text="(R) Array", icon_value=get_icon("RA_Icon", "main"))
+            else:
+                pie.separator()
+            # 6 - RIGHT
+            pie.separator()
+            # 2 - BOTTOM
+            pie.separator()
+            # 8 - TOP
+            pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+            # 7 - TOP - LEFT
+            pie.operator("wm.call_menu",text="Quick Favorites", icon_value=get_icon("List_icon", "main")).name = "SCREEN_MT_user_menu"
+            # 9 - TOP - RIGHT
+            if get_prefs().enable_hops is True:
+                pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+            else:
+                pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+
+        if bpy.context.active_object.type == 'MESH':
+            # 4 - LEFT
+            split = pie.split()
+            b = split.column()
+            self.left_mesh_menu(b)
+            # 6 - RIGHT
+            pie.separator()
+            # 2 - BOTTOM
+            pie.separator()
+            # 8 - TOP
+            split = pie.split()
+            row = split.row()
+            self.QA_01(row)
+            # 7 - TOP - LEFT
+            pie.separator()
+            # 9 - TOP - RIGHT
+            pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.separator()
+        
+    def left_mesh_menu(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.8
+        
+        if get_prefs().enable_rarray is True:
+            col.operator("sop.r_array", text="(R) Array",icon_value=get_icon("RA_Icon", "main"))
+
+        enum = [
+            ("hops.reset_axis_modal"),
+            ("hops.reset_status"),
+            ("hops.slash"),
+            ("hops.sphere_cast"),
+        ]
+        
+        text = [
+            ("Reset Axis"),
+            ("Reset Status"),
+            ("Slash"),
+            ("Sphere Cast"),
+        ]
+        icon = [
+            get_icon("Xslap", "main"),
+            get_icon("StatusReset", "main"),
+            get_icon("Csplit", "main"),
+            get_icon("SphereCast", "main"),
+        ]
+        
+        if get_prefs().enable_hops is True:
+            op_loop_val(col, enum, text, icon, 0, False)
+
+    def QA_01(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.8
+
+        enum = [
+            ("hops.helper"),
+            ("hops.mirror_gizmo"),
+        ]
+        text = [
+            ("Hops Helper"),
+            ("Hops Mirror(broken?!)"),
+        ]
+        icon = [
+            get_icon("Hops_helper_icon", "main"),
+            get_icon("Mirror_Icon", "main"),
+        ]
+        col.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+        if get_prefs().enable_kitops is True:
+            col.operator("view3d.insertpopup", text="Kit Ops",icon_value=get_icon("Insert", "main"))
+        if get_prefs().enable_hops is True:
+            op_loop_val(col, enum, text, icon, 0, False)
 
 class SM_PIE_Q_Menu_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_menu_call'
