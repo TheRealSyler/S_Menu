@@ -9,6 +9,8 @@ from . ui.pie_menus import (
     SM_Add_Texture_Node_Call,
     SM_Add_Shader_Node,
     SM_Add_Shader_Node_Call,
+    SM_PIE_Q_Menu,
+    SM_PIE_Q_Menu_Call,
 )
 #SM_PIE_Add_Node, 
 #SM_PIE_Add_Node_Call, 
@@ -36,6 +38,8 @@ classes = [
     SM_Add_Texture_Node_Call,
     SM_Add_Shader_Node,
     SM_Add_Shader_Node_Call,
+    SM_PIE_Q_Menu,
+    SM_PIE_Q_Menu_Call,
     SM_Prefs,
 ]
 

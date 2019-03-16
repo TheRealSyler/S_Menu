@@ -475,7 +475,6 @@ class SM_PIE_Add(bpy.types.Menu):
         col.operator("wm.call_menu",text="Mechanical", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_mesh_mech_add"
         col.operator("wm.call_menu",text="Torus Objects", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_mesh_torus_add"
 
-
 class SM_PIE_Add_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_add_call'
     bl_label = 'S.Menu Add Pie'
@@ -1328,4 +1327,39 @@ class SM_Add_Shader_Node_Call(bpy.types.Operator):
     
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_Add_Shader_Node")
+        return {'FINISHED'}
+
+class SM_PIE_Q_Menu(bpy.types.Menu):
+    bl_label = "Q Menu"
+    
+
+    def draw(self, context):
+        layout = self.layout
+
+        pie = layout.menu_pie()
+        # 4 - LEFT
+        pie.separator()
+        # 6 - RIGHT
+        pie.separator()
+        # 2 - BOTTOM
+        pie.separator()
+        # 8 - TOP
+        pie.separator()
+        # 7 - TOP - LEFT
+        pie.separator()
+        # 9 - TOP - RIGHT
+        pie.separator()
+        # 1 - BOTTOM - LEFT
+        pie.separator()
+        # 3 - BOTTOM - RIGHT
+        pie.separator()
+
+class SM_PIE_Q_Menu_Call(bpy.types.Operator):
+    bl_idname = 'sop.sm_pie_q_menu_call'
+    bl_label = 'S.Menu Q Menu Pie'
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        bpy.ops.wm.call_menu_pie(name="SM_PIE_Q_Menu")
         return {'FINISHED'}

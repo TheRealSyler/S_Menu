@@ -1,6 +1,6 @@
 import bpy, os  
 from bpy.props import EnumProperty, BoolProperty
-from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Add_Node_Call
+from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Q_Menu_Call, SM_PIE_Add_Node_Call
 
 # todo create enable all options function for each menu
 
