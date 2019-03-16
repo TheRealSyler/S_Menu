@@ -2,6 +2,7 @@ import bpy, os
 from . get_icon import get_icon
 
 # todo add Extra Objects support
+# todo add 
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
@@ -597,15 +598,15 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("Vector Transform"),
         ]
         icon = [
-            (get_icon("Value_icon", "main")), 
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")), 
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
+            (get_icon("Vector_Math_icon", "main")), 
+            (get_icon("Bump_icon", "main")),
+            (get_icon("Displacement_icon", "main")),
+            (get_icon("Mapping_icon", "main")),
+            (get_icon("Normal_icon", "main")),
+            (get_icon("Normal_Map_icon", "main")), 
+            (get_icon("VC_icon", "main")),
+            (get_icon("V_Displacement_icon", "main")),
+            (get_icon("Vector_Transform_icon", "main")),
         ]
         e_type = [
             ("ShaderNodeVectorMath"),
@@ -638,21 +639,21 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("Bright Contrast"),
             ("Gamma"),
             ("Invert"),
-            ("LightFalloff"),
+            ("Light Falloff"),
             ("Wireframe"),
             ("Fresnel"),
             ("Tangent"),
             ("UV Map"),
         ]
         icon = [
+            (get_icon("BrightContrast_icon", "main")), 
+            (get_icon("Gamma_icon", "main")),
+            (get_icon("Invert_icon", "main")),
+            (get_icon("Light_Falloff_icon", "main")),
             (get_icon("Value_icon", "main")), 
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")), 
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
-            (get_icon("Value_icon", "main")),
+            (get_icon("Fresnel_icon", "main")),
+            (get_icon("Tangent_icon", "main")),
+            (get_icon("UV_Map_icon", "main")),
         ]
         e_type = [
             ("ShaderNodeBrightContrast"),
@@ -714,17 +715,19 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("Tex Coord"),
         ]
         icon = [
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
-            ("ERROR"),
+            (get_icon("Frame_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Mat_Out_icon", "main")),
+            (get_icon("Script_icon", "main")),
+            (get_icon("Value_icon", "main")), 
+            (get_icon("Object_Info_icon", "main")),
+            (get_icon("Particle_Info_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("Value_icon", "main")), 
+            (get_icon("Value_icon", "main")),
+            (get_icon("Hair_Info_icon", "main")),
+            (get_icon("Value_icon", "main")),
+           
         ]
         e_type = [
             ("NodeFrame"),
@@ -735,11 +738,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeObjectInfo"),
             ("ShaderNodeParticleInfo"),
             ("ShaderNodeCameraData"),
-            ("ShaderNodeGeometry"),
+            ("ShaderNodeNewGeometry"),
             ("ShaderNodeHairInfo"),
             ("ShaderNodeTexCoord"),
         ]
-        op_loop_safe_node(col, enum, text, icon, e_type)
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
     
     def converter_menu(self, col):
         col.scale_x = 1
