@@ -147,9 +147,9 @@ class SM_PIE_Add(bpy.types.Menu):
 
         if get_prefs().enable_extra_objects_mesh is True:
             if col.operator("mesh.primitive_vert_add", text="Single Vert", icon_value=get_icon("Reroute_icon", "main")) is None:
-                col.label(text="Not Installed")
+                col.label(text="Please Disable")
             if col.operator("mesh.primitive_round_cube_add", text="Round Cube", icon_value=get_icon("Sphere_icon", "main")) is None:
-                col.label(text="Not Installed")
+                col.label(text="Extra Objects in addon prefs")
         if get_prefs().enable_landscape is True:
             if col.operator("mesh.add_mesh_rock", text="Rock Generator", icon_value=get_icon("Rock_icon", "main")) is None:
                 col.label(text="Not Installed")
