@@ -73,6 +73,10 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Enable Rock Generator",
         default=True
     )
+    enable_pipenightmare: BoolProperty(
+        name="Enable Rock Generator",
+        default=True
+    )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
 
@@ -113,6 +117,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.prop(self, "enable_bolt", text="Enable Bolt Factory")
         col.prop(self, "enable_landscape", text="Enable A.N.T. Landscape")
         col.prop(self, "enable_rock", text="Enable Rock Generator")
+        col.prop(self, "enable_pipenightmare", text="Enable Pipe Nightmare")
 
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Add_Call.bl_idname)

@@ -74,7 +74,7 @@ class SM_PIE_Add(bpy.types.Menu):
         b = split.column()
         column = split.column()
         self.forces(column, 0)
-        self.curve(b, 3)
+        self.curve(b, 2)
         
         # 2 - BOTTOM
         split = pie.split()
@@ -84,7 +84,6 @@ class SM_PIE_Add(bpy.types.Menu):
 
         column = split.column()
         self.empty(column, 3)
-
         
         # 8 - TOP
         split = pie.split()
@@ -434,8 +433,13 @@ class SM_PIE_Add(bpy.types.Menu):
             ("CURVE_NCIRCLE"),
             ("CURVE_PATH"),
         ]
-        
+        if get_prefs().enable_pipenightmare is False:
+            snum = snum + 1
         spacer(col, snum)
+        if get_prefs().enable_pipenightmare is True:
+            if col.operator("object.pipe_nightmare", text="Pipes", icon="GRAPH") is None:
+                col.label(text="Not Installed")
+        
         op_loop(col, enum, text, icon, True, 2)
 
     def add_menu(self, col):
@@ -476,10 +480,21 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             pie.operator("wm.call_menu", text="WIP calls normal menu WIP", icon="ERROR").name = "NODE_MT_add"
         # check if in Texture node tree
         elif bpy.context.area.ui_type == "TextureNodeTree":
-            pie.separator()
-            pie.separator()
-            pie.separator()
-            pie.operator("wm.call_menu", text="WIP calls normal menu WIP", icon="ERROR").name = "NODE_MT_add"
+            # 4 - LEFT
+            split = pie.split()
+            b = split.column()
+            self.tex_node_utils(b)
+            # 6 - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.add_menu_tex(b)
+            # 2 - BOTTOM
+            split = pie.split()
+            b = split.column()
+            self.texture_add(b)
+            # 8 - TOP
+            split = pie.split()
+            self.search(split) 
         # check if in shading
         elif bpy.context.area.ui_type == "ShaderNodeTree":
             
@@ -572,6 +587,68 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         
         op_loop_safe_node_val(col, enum, text, icon, e_type)
     
+    def tex_node_utils(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Distance"),
+            ("Coordinates"),
+            ("Curve Time"),
+            ("Image"),
+            ("Texture"),
+            ("RGB Curve"),
+            ("Mix"),
+            ("Math"),
+            ("Color Ramp"),
+            ("Checker"),
+            ("Brick"),
+            ("RGB to BW"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+        ]
+        e_type = [
+            ("TextureNodeDistance"),
+            ("TextureNodeCoordinates"),
+            ("TextureNodeCurveTime"),
+            ("TextureNodeImage"),
+            ("TextureNodeTexture"),
+            ("TextureNodeCurveRGB"),
+            ("TextureNodeMixRGB"),
+            ("TextureNodeMath"),
+            ("TextureNodeValToRGB"),
+            ("TextureNodeChecker"),
+            ("TextureNodeBricks"),
+            ("TextureNodeRGBToBW"),
+        ]
+        
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
     def node_vector(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
@@ -744,6 +821,72 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         ]
         op_loop_safe_node_val(col, enum, text, icon, e_type)
     
+    def add_menu_tex(self, col):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Frame"),
+            ("Reroute"),
+            ("Output"),
+            ("Viewer"),
+            ("Value To Normal"),
+            ("Invert"),
+            ("Hue Saturation"),
+            ("Combine RGBA"),
+            ("Separate RGBA"),
+            ("At"),
+            ("Rotate"),
+            ("Scale"),
+            ("Translate"),
+        ]
+        icon = [
+            (get_icon("Frame_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Mat_Out_icon", "main")),
+            (get_icon("Mat_Out_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("NodeFrame"),
+            ("NodeReroute"),
+            ("TextureNodeOutput"),
+            ("TextureNodeViewer"),
+            ("TextureNodeValToNor"),
+            ("TextureNodeInvert"),
+            ("TextureNodeHueSaturation"),
+            ("TextureNodeCompose"),
+            ("TextureNodeDecompose"),
+            ("TextureNodeAt"),
+            ("TextureNodeRotate"),
+            ("TextureNodeScale"),
+            ("TextureNodeTranslate"),
+        ]
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
+
     def converter_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
@@ -804,24 +947,42 @@ class SM_Add_Texture_Node(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
+        
 
-        # 4 - LEFT
-        split = pie.split()
-        b = split.column()
-        self.texture_1(b)
-        # 6 - RIGHT
-        split = pie.split()
-        b = split.column()
-        self.texture_3(b) 
-        # 2 - BOTTOM
-        split = pie.split()
-        b = split.row()
-        self.texture_2(b)      
-        # 8 - TOP
-        split = pie.split()
-        b = split.row()
-        self.texture_4(b)     
-
+        if bpy.context.area.ui_type == "ShaderNodeTree":
+            # 4 - LEFT
+            split = pie.split()
+            b = split.column()
+            self.texture_1(b)
+            # 6 - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.texture_3(b) 
+            # 2 - BOTTOM
+            split = pie.split()
+            b = split.row()
+            self.texture_2(b)      
+            # 8 - TOP
+            split = pie.split()
+            b = split.row()
+            self.texture_4(b)  
+        elif bpy.context.area.ui_type == "TextureNodeTree":
+            # 4 - LEFT
+            split = pie.split()
+            b = split.column()
+            self.tex_texture_1(b)
+            # 6 - RIGHT
+            split = pie.split()
+            b = split.column()
+            #self.texture_3(b) 
+            # 2 - BOTTOM
+            split = pie.split()
+            b = split.row()
+            #self.texture_2(b)      
+            # 8 - TOP
+            split = pie.split()
+            b = split.row()
+            #self.texture_4(b) 
         
     def texture_1(self, col): 
         col.scale_x = 1
@@ -929,6 +1090,60 @@ class SM_Add_Texture_Node(bpy.types.Menu):
 
         ]
         op_loop_safe_node(col, enum, text, icon, e_type)
+
+    def tex_texture_1(self, col):
+
+        col.scale_x = 1
+        col.scale_y = 1.2
+        enum = [
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+            ("node.add_node"),
+        ]
+        text = [
+            ("Output"),
+            ("Viewer"),
+            ("Value To Normal"),
+            ("Invert"),
+            ("Hue Saturation"),
+            ("Combine RGBA"),
+            ("Separate RGBA"),
+            ("At"),
+            ("Rotate"),
+            ("Scale"),
+        ]
+        icon = [
+            (get_icon("Mat_Out_icon", "main")),
+            (get_icon("Mat_Out_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+        ]
+        e_type = [
+            ("TextureNodeTexBlend"),
+            ("TextureNodeTexClouds"),
+            ("TextureNodeTexDistNoise"),
+            ("TextureNodeTexMagic"),
+            ("TextureNodeTexMarble"),
+            ("TextureNodeTexMusgrave"),
+            ("TextureNodeTexNoise"),
+            ("TextureNodeTexStucci"),
+            ("TextureNodeTexVoronoi"),
+            ("TextureNodeTexWood"),
+        ]
+        op_loop_safe_node_val(col, enum, text, icon, e_type)
 
 class SM_Add_Texture_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_texture_node_call'
