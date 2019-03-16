@@ -1,6 +1,6 @@
 import bpy, os  
 from bpy.props import EnumProperty, BoolProperty
-from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Q_Menu_Call, SM_PIE_Add_Node_Call
+from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Add_Node_Call, SM_PIE_Q_Menu_Call
 
 # todo create enable all options function for each menu
 
@@ -9,6 +9,7 @@ from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Q_Menu_Call, SM_PIE_Add_Node_
 # -----------------------------------------------------------------------------
 
 addon_keymaps = []
+
 
 def add_hotkey():
     
@@ -58,7 +59,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     
     tabs = [
         ("ADD", "Add", ""),
-        ("WIP", "Wip", ""),
+        ("QMENU", "Q Menu", ""),
     ]
     add_sub_tabs = [
         ("OBJECT", "Object Add Menu", ""),
@@ -110,6 +111,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
         
         if self.main_tabs == "ADD":
             self.add_main_tab(context, box)
+        
+        if self.main_tabs == "QMENU":
+            self.q_menu_tab(context, box)
 
 
     def add_main_tab(self, context, col):
@@ -141,3 +145,10 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Keymap:")
 
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
+
+    def q_menu_tab(self, context, col):
+        col.label(text="Options (Wip):")
+        
+        col.label(text="Keymap:")
+
+        self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
