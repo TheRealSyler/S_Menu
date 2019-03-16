@@ -11,6 +11,8 @@ from . ui.pie_menus import (
     SM_Add_Shader_Node_Call,
     SM_PIE_Q_Menu,
     SM_PIE_Q_Menu_Call,
+    SM_PIE_A_OM,
+    SM_PIE_A_OM_Call,
 )
 #SM_PIE_Add_Node, 
 #SM_PIE_Add_Node_Call, 
@@ -28,7 +30,6 @@ bl_info = {
     "category" : "3D view"
 }
 
-
 classes = [
     SM_PIE_Add,
     SM_PIE_Add_Call,
@@ -40,6 +41,8 @@ classes = [
     SM_Add_Shader_Node_Call,
     SM_PIE_Q_Menu,
     SM_PIE_Q_Menu_Call,
+    SM_PIE_A_OM,
+    SM_PIE_A_OM_Call,
     SM_Prefs,
 ]
 

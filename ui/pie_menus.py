@@ -1755,3 +1755,32 @@ class SM_PIE_Q_Menu_Call(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_PIE_Q_Menu")
         return {'FINISHED'}
+
+class SM_PIE_A_OM(bpy.types.Menu):
+    bl_label = "S.Menu 'A' Menu"
+    
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+        
+        # 4 - LEFT
+        pie.operator("object.select_all",text="Select All", icon_value=get_icon("O_Selcet_icon", "main")).action = 'SELECT'
+        # 6 - RIGHT
+        pie.operator("object.select_all",text="Deselect All", icon_value=get_icon("O_DeSelcet_icon", "main")).action = 'DESELECT'
+        # 2 - BOTTOM
+        pie.separator()
+        # 8 - TOP
+        pie.operator("object.select_all",text="Invert", icon="ARROW_LEFTRIGHT").action = 'INVERT'
+            
+
+
+class SM_PIE_A_OM_Call(bpy.types.Operator):
+    bl_idname = 'sop.sm_pie_a_menu_call'
+    bl_label = "S.Menu 'A' Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        bpy.ops.wm.call_menu_pie(name="SM_PIE_A_OM")
+        return {'FINISHED'}
