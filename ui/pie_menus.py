@@ -8,6 +8,9 @@ from . get_icon import get_icon
 #? Utils
 #+-----------------------------------------------------------------------------------------------------+#
 
+def diabled_button(col, text, icon):
+    col.label(text=text, icon_value=icon)
+
 def op_loop_val(col, enum, text, icon, spacer, spinum):
     for index, e in enumerate(enum):            
         if index == spinum and spacer is True:
@@ -441,9 +444,11 @@ class SM_PIE_Add(bpy.types.Menu):
 
     def add_menu(self, col):
         col.scale_x = 1
-        col.scale_y = 1.4
-        spacer(col, 3)
-        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_add"
+        col.scale_y = 1.2
+        spacer(col, 2)
+        col.label(text="                                 ")
+        box = col.box()
+        box.menu("VIEW3D_MT_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
         
         if get_prefs().enable_qblocker is True:
             if col.operator("object.box_create", text="Q Cube") is None:
@@ -452,6 +457,7 @@ class SM_PIE_Add(bpy.types.Menu):
                 col.label(text="Not Installed")
             if col.operator("object.sphere_create", text="Q Sphere") is None:
                 col.label(text="Not Installed")
+        
 
     def extra_objects(self, col):
         col.scale_x = 1
@@ -470,10 +476,12 @@ class SM_PIE_Add(bpy.types.Menu):
         ]
         spacer(col, 3)
         op_loop_val(col, enum, text, icon, False, 7)
-        col.operator("wm.call_menu",text="Extras", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_mesh_extras_add"
-        col.operator("wm.call_menu",text="Math Function", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_mesh_math_add"
-        col.operator("wm.call_menu",text="Mechanical", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_mesh_mech_add"
-        col.operator("wm.call_menu",text="Torus Objects", icon_value=get_icon("List_icon", "main")).name = "VIEW3D_MT_mesh_torus_add"
+        box = col.box()
+        col.label(text="                                 ")
+        box.menu("VIEW3D_MT_mesh_extras_add",text="Extras", icon_value=get_icon("List_icon", "main"))
+        box.menu("VIEW3D_MT_mesh_math_add",text="Math Function", icon_value=get_icon("List_icon", "main"))
+        box.menu("VIEW3D_MT_mesh_mech_add",text="Mechanical", icon_value=get_icon("List_icon", "main"))
+        box.menu("VIEW3D_MT_mesh_torus_add",text="Torus Objects", icon_value=get_icon("List_icon", "main"))
 
 class SM_PIE_Add_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_add_call'
@@ -568,7 +576,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             self.node_vector(b)
             b = split.column()
             # note: dont change the text
-            b.label(text="                                             ")
+            b.label(text="                                                ")
             # 8 - TOP
             split = pie.split()
             self.search(split)     
@@ -822,7 +830,9 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         col.scale_x = 1
         col.scale_y = 1.2
         spacer(col, 9)
-        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
+        col.label(text="                                    ")
+        box = col.box()
+        box.menu("NODE_MT_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
         text = [
             ("Frame"),
             ("Reroute"),
@@ -865,11 +875,14 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeTexCoord"),
         ]
         op_loop_safe_node_val(col, 11, text, icon, e_type)
-    
+        col.label(text="                                ")
+
     def add_menu_tex(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
+        col.label(text="                                ")
+        box = col.box()
+        box.menu("NODE_MT_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
        
         text = [
             ("Frame"),
@@ -917,6 +930,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("TextureNodeTranslate"),
         ]
         op_loop_safe_node_val(col, 13, text, icon, e_type)
+        col.label(text="                                ")
 
     def converter_menu(self, col):
         col.scale_x = 1
@@ -957,14 +971,16 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeCombineRGB"),
             ("ShaderNodeCombineXYZ"),
         ]
-        spacer(col, 3)
+        spacer(col, 4)
         op_loop_safe_node_val(col, 10, text, icon, e_type)
     
     def comp_add_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
         spacer(col, 0)
-        col.operator("wm.call_menu", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main")).name = "NODE_MT_add"
+        col.label(text="                                ")
+        box = col.box()
+        box.menu("NODE_MT_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
         text = [
             ("Frame"),
             ("Reroute"),
@@ -1009,6 +1025,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("CompositorNodeLevels"),
         ]
         op_loop_safe_node_val(col, 12, text, icon, e_type)
+        col.label(text="                                ")
 
     def comp_menu_1(self, col):
         col.scale_x = 1
@@ -1633,11 +1650,14 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             # 6 - RIGHT
             pie.operator("object.convert",text="Convert", icon="OUTLINER_OB_MESH").target = "MESH"        
             # 2 - BOTTOM
-            pie.separator()
+            if get_prefs().enable_hops is True:
+                pie.menu("hops.settings_submenu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+            else:
+                pie.separator()
             # 8 - TOP
             pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
             # 7 - TOP - LEFT
-            pie.operator("wm.call_menu",text="Quick Favorites", icon_value=get_icon("List_icon", "main")).name = "SCREEN_MT_user_menu"
+            pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
             # 9 - TOP - RIGHT
             if get_prefs().enable_hops is True:
                 pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
@@ -1651,17 +1671,30 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         if bpy.context.active_object.type == 'EMPTY':
             # 4 - LEFT
             if get_prefs().enable_rarray is True:
-                pie.operator("sop.r_array",text="(R) Array", icon_value=get_icon("RA_Icon", "main"))
+                if bpy.context.active_object.RA_Status is True:
+                    split = pie.split()
+                    b = split.column()
+                    box = b.box()
+                    box.scale_y = 1.5
+                    box.operator("sop.r_array",text="(R) Array", icon_value=get_icon("RA_Icon", "main"))
+                else:
+                    split = pie.split()
+                    b = split.column()
+                    box = b.box()
+                    diabled_button(box, "(R) Array", get_icon("Reroute_icon", "main"))
             else:
                 pie.separator()
             # 6 - RIGHT
             pie.separator()
             # 2 - BOTTOM
-            pie.separator()
+            if get_prefs().enable_hops is True:
+                pie.menu("hops.settings_submenu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+            else:
+                pie.separator()
             # 8 - TOP
             pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
             # 7 - TOP - LEFT
-            pie.operator("wm.call_menu",text="Quick Favorites", icon_value=get_icon("List_icon", "main")).name = "SCREEN_MT_user_menu"
+            pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
             # 9 - TOP - RIGHT
             if get_prefs().enable_hops is True:
                 pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
@@ -1693,7 +1726,36 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             pie.separator()
             # 3 - BOTTOM - RIGHT
             pie.separator()
-        
+
+        if bpy.context.active_object.type == 'CAMERA':
+            # 4 - LEFT
+            if get_prefs().enable_hops is True:
+                pie.operator("hops.set_camera",text="Set Active Camera", icon="HIDE_OFF")
+            else:
+                pie.separator()
+            # 6 - RIGHT
+            split = pie.split()
+            b = split.column()
+            self.camera_menu(b)
+            # 2 - BOTTOM
+            if get_prefs().enable_hops is True:
+                pie.menu("hops.settings_submenu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+            else:
+                pie.separator()
+            # 8 - TOP
+            pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+            # 7 - TOP - LEFT
+            pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+            # 9 - TOP - RIGHT
+            if get_prefs().enable_hops is True:
+                pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+            else:
+                pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+
     def left_mesh_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.8
@@ -1746,6 +1808,20 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         if get_prefs().enable_hops is True:
             op_loop_val(col, enum, text, icon, 0, False)
 
+    def camera_menu(slef, col):
+        col.scale_x = 1
+        col.scale_y = 1
+        
+        obj = bpy.context.object
+
+        obj = bpy.context.object.data
+        col.prop(obj, "lens", text="Lens")
+        col.prop(obj, "passepartout_alpha", text="PP")
+        col.prop(obj, "dof_object", text="")
+
+        if get_prefs().enable_hops is True:
+            col.menu("hops.settings_submenu", text="Settings")
+
 class SM_PIE_Q_Menu_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_menu_call'
     bl_label = 'S.Menu Q Menu Pie'
@@ -1773,8 +1849,6 @@ class SM_PIE_A_OM(bpy.types.Menu):
         # 8 - TOP
         pie.operator("object.select_all",text="Invert", icon="ARROW_LEFTRIGHT").action = 'INVERT'
             
-
-
 class SM_PIE_A_OM_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_a_menu_call'
     bl_label = "S.Menu 'A' Menu"

@@ -10,7 +10,6 @@ from . ui.pie_menus import SM_PIE_Add_Call, SM_PIE_Add_Node_Call, SM_PIE_Q_Menu_
 
 addon_keymaps = []
 
-
 def add_hotkey():
     
     wm = bpy.context.window_manager
@@ -34,16 +33,11 @@ def add_hotkey():
     kmi = km.keymap_items.new(SM_PIE_Add_Node_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=True)
     addon_keymaps.append((km, kmi))
    
-    
-
-    
 def remove_hotkey():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
 
     addon_keymaps.clear()
-
-
 
 # -----------------------------------------------------------------------------
 #    Preferences      
@@ -93,7 +87,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         default=True
     )
     enable_hops: BoolProperty(
-        name="Harf Ops",
+        name="Hard Ops",
         default=True
     )
     enable_rarray: BoolProperty(
@@ -106,7 +100,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
     )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
-
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
@@ -131,7 +124,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
         if self.main_tabs == "UTILS":
             col.label(text="Keymap:")
             self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
-
 
     def add_main_tab(self, context, col):
         

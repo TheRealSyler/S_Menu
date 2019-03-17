@@ -27,8 +27,6 @@ bl_info = {
     "category" : "3D view"
 }
 
-
-
 classes = [
     SM_PIE_Add,
     SM_PIE_Add_Call,
@@ -56,9 +54,6 @@ def register():
     # ------------------------------------------------------------------------------------------------------------
     register_icons(__file__)
 
-
-
-
 def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
@@ -69,7 +64,7 @@ def unregister():
     # Icons Unregister stuff
     # ------------------------------------------------------------------------------------------------------------
     unregister_icons()
-    
 
+    
 if __name__ == "__main__":
     register()
