@@ -1,6 +1,5 @@
 import bpy, os
 from . get_icon import get_icon
-
 # todo add Extra Object (Curve) support
 # todo Q Menu
 
@@ -8,7 +7,7 @@ from . get_icon import get_icon
 #? Utils
 #+-----------------------------------------------------------------------------------------------------+#
 
-def diabled_button(col, text, icon):
+def disabled_button(col, text, icon):
     col.label(text=text, icon_value=icon)
 
 def op_loop_val(col, enum, text, icon, spacer, spinum):
@@ -29,6 +28,11 @@ def op_loop_safe(col, enum, text, icon, type):
     for index, e in enumerate(enum):
         op = col.operator(e, text=text[index],icon=icon[index])
         op.type = type[index]
+
+def op_loop_name(col, enum, text, icon, name):
+    for index, e in enumerate(enum):
+        op = col.operator(e, text=text[index],icon=icon[index])
+        op.name = name[index]
 
 def op_loop_safe_node(col, num, text, icon, type):
     for index in range(0, num):
@@ -1285,7 +1289,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
         layout = self.layout
         pie = layout.menu_pie()
         
-
+        
         if bpy.context.area.ui_type == "ShaderNodeTree":
             # 4 - LEFT
             split = pie.split()
@@ -1632,171 +1636,343 @@ class SM_Add_Shader_Node_Call(bpy.types.Operator):
         return {'FINISHED'}
 
 class SM_PIE_Q_Menu(bpy.types.Menu):
-    bl_label = "Q Menu"
+    bl_label = "S.Menu 'Q' Menu"
     
 
     def draw(self, context):
         layout = self.layout
-        print (bpy.context.active_object.type)
         pie = layout.menu_pie()
-        
-        
-        if bpy.context.active_object.type == 'CURVE':
-            # 4 - LEFT
-            if get_prefs().enable_hops is True:
-                pie.operator("hops.adjust_curve",text="Adjust Curve", icon="ARROW_LEFTRIGHT")
-            else:
-                pie.separator()
-            # 6 - RIGHT
-            pie.operator("object.convert",text="Convert", icon="OUTLINER_OB_MESH").target = "MESH"        
-            # 2 - BOTTOM
-            if get_prefs().enable_hops is True:
-                pie.menu("hops.settings_submenu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
-            else:
-                pie.separator()
-            # 8 - TOP
-            pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
-            # 7 - TOP - LEFT
-            pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
-            # 9 - TOP - RIGHT
-            if get_prefs().enable_hops is True:
-                pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
-            else:
-                pie.separator()
-            # 1 - BOTTOM - LEFT
-            pie.separator()
-            # 3 - BOTTOM - RIGHT
-            pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+        print (bpy.context.selected_objects)
+        if not bpy.context.selected_objects == []:
+            #print (bpy.context.active_object.type)
 
-        if bpy.context.active_object.type == 'EMPTY':
-            # 4 - LEFT
-            if get_prefs().enable_rarray is True:
-                if bpy.context.active_object.RA_Status is True:
+            if bpy.context.active_object.type == 'CURVE':
+                # 4 - LEFT
+                if get_prefs().enable_hops is True:
+                    pie.operator("hops.adjust_curve",text="Adjust Curve", icon="ARROW_LEFTRIGHT")
+                else:
+                    pie.separator()
+                # 6 - RIGHT
+                pie.operator("object.convert",text="Convert", icon="OUTLINER_OB_MESH").target = "MESH"        
+                # 2 - BOTTOM
+                if get_prefs().enable_hops is True:
+                    pie.menu("hops_main_menu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+                else:
+                    pie.separator()
+                # 8 - TOP
+                pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+                # 7 - TOP - LEFT
+                pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                # 9 - TOP - RIGHT
+                if get_prefs().enable_hops is True:
+                    pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+                else:
+                    pie.separator()
+                # 1 - BOTTOM - LEFT
+                pie.separator()
+                # 3 - BOTTOM - RIGHT
+                pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+        
+            elif bpy.context.active_object.type == 'EMPTY':
+                # 4 - LEFT
+                if get_prefs().enable_rarray is True:
+                    if bpy.context.active_object.RA_Status is True:
+                        split = pie.split()
+                        b = split.column()
+                        box = b.box()
+                        box.scale_x = 1.1
+                        box.scale_y = 1.5
+                        box.operator("sop.r_array",text="(R) Array", icon_value=get_icon("RA_Icon", "main"))
+                    else:
+                        split = pie.split()
+                        b = split.column()
+                        box = b.box()
+                        disabled_button(box, "(R) Array", get_icon("Reroute_icon", "main"))
+                else:
+                    pie.separator()
+                # 6 - RIGHT
+                split = pie.split()
+                col = split.column()
+                box = col.box()
+                box.scale_x = 1.1
+                box.scale_y = 1.5
+                edv = box.operator("wm.context_modal_mouse",text="Adjust Empty Size", icon="ARROW_LEFTRIGHT")
+                edv.data_path_iter = "selected_editable_objects"
+                edv.data_path_item = "empty_display_size"
+                edv.input_scale = 0.01
+                # 2 - BOTTOM
+                if get_prefs().enable_hops is True:
+                    pie.menu("hops_main_menu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+                else:
+                    pie.separator()
+                # 8 - TOP
+                pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+                # 7 - TOP - LEFT
+                pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                # 9 - TOP - RIGHT
+                if get_prefs().enable_hops is True:
+                    pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+                else:
+                    pie.separator()
+                # 1 - BOTTOM - LEFT
+                split = pie.split()
+                col = split.column()
+                box = col.box()
+                box.scale_x = 1.1
+                box.scale_y = 1.5
+                ob = bpy.context.active_object
+                box.prop(ob, "empty_display_type", text="Display As")
+                # 3 - BOTTOM - RIGHT
+                pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+            
+            elif bpy.context.active_object.type == 'MESH':
+                # 4 - LEFT
+                split = pie.split()
+                b = split.column_flow(columns=2,align=True)
+                self.left_mesh_menu(b)
+                # 6 - RIGHT
+                pie.separator()
+                # 2 - BOTTOM
+                split = pie.split()
+                b = split.column()
+                self.QA_03(b)
+                # 8 - TOP
+                split = pie.split()
+                b = split.column()
+                if get_prefs().enable_hops is True:
+                    b.menu("hops_main_menu", text="Hops Menu (Old)", icon_value=get_icon("List_icon", "main"))
+                self.QA_01(b)
+                # 7 - TOP - LEFT
+                pie.separator()
+                # 9 - TOP - RIGHT
+                pie.separator()
+                # 1 - BOTTOM - LEFT
+                split = pie.split()
+                b = split.column(align=True)
+                b.label(text="")
+                b = split.column(align=True)
+                self.mesh_menu_bottom_02(b)
+                b = split.column(align=True)
+                self.mesh_menu_bottom_01(b)
+                # 3 - BOTTOM - RIGHT
+                split = pie.split()
+                b = split.column(align=True)
+                self.mesh_menu_bottom_02(b)
+            
+            elif bpy.context.active_object.type == 'CAMERA':
+                # 4 - LEFT
+                pie.separator()
+                # 6 - RIGHT
+                split = pie.split()
+                b = split.column()
+                self.camera_menu(b)
+                # 2 - BOTTOM
+                if get_prefs().enable_hops is True:
                     split = pie.split()
-                    b = split.column()
-                    box = b.box()
-                    box.scale_y = 1.5
-                    box.operator("sop.r_array",text="(R) Array", icon_value=get_icon("RA_Icon", "main"))
+                    col = split.column()
+                    col.label(text="                                    ")
+                    box = col.box()
+                    box.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+                    box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+                    box.menu("hops_main_menu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 else:
                     split = pie.split()
-                    b = split.column()
-                    box = b.box()
-                    diabled_button(box, "(R) Array", get_icon("Reroute_icon", "main"))
-            else:
+                    col = split.column()
+                    col.label(text="                                    ")
+                    box = col.box()
+                    box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                # 8 - TOP
+                pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+                # 7 - TOP - LEFT
+                split = pie.split()
+                col = split.column()
+                col.label(text="                                              ")
+                box = col.box()
+                box.scale_x = 1
+                box.scale_y = 1.2
+                edv = box.operator("wm.context_modal_mouse",text="Adjust Focus Distance", icon="ARROW_LEFTRIGHT")
+                edv.data_path_iter = "selected_editable_objects"
+                edv.data_path_item = "data.dof_distance"
+                edv.input_scale = 0.01
+                edv = box.operator("wm.context_modal_mouse",text="Adjust Passepartout", icon="ARROW_LEFTRIGHT")
+                edv.input_scale = 0.001
+                edv.data_path_iter = "selected_editable_objects"
+                edv.data_path_item = "data.passepartout_alpha"
+                edv = box.operator("wm.context_modal_mouse",text="Adjust Focal Length", icon="ARROW_LEFTRIGHT")
+                edv.input_scale = 0.01
+                #edv.header_text = "test"
+                edv.data_path_iter = "selected_editable_objects"
+                edv.data_path_item = "data.lens"
+                edv = box.operator("wm.context_modal_mouse",text="Adjust F-Stop", icon="ARROW_LEFTRIGHT")
+                edv.input_scale = 0.01
+                edv.data_path_iter = "selected_editable_objects"
+                edv.data_path_item = "data.gpu_dof.fstop"
+            
+                if get_prefs().enable_hops is True:
+                    box.operator("hops.set_camera",text="Set Active Camera", icon="HIDE_OFF")
+                # 9 - TOP - RIGHT
                 pie.separator()
-            # 6 - RIGHT
-            pie.separator()
-            # 2 - BOTTOM
-            if get_prefs().enable_hops is True:
-                pie.menu("hops.settings_submenu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
-            else:
+                # 1 - BOTTOM - LEFT
+                split = pie.split()
+                b = split.column()
+                self.camera_menu_2(b)
+                # 3 - BOTTOM - RIGHT
+            
+            elif bpy.context.active_object.type == 'LIGHT':
+                # 4 - LEFT
+                if get_prefs().enable_hops is True:
+                    pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+                else:
+                    pie.separator()
+                # 6 - RIGHT
+                split = pie.split()
+                col = split.column()
+                self.lamp_menu(col)
+                # 2 - BOTTOM
+                if get_prefs().enable_hops is True:
+                    pie.menu("hops_main_menu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
+                else:
+                    pie.separator()
+                # 8 - TOP
+                pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+                # 7 - TOP - LEFT
+                pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                # 9 - TOP - RIGHT
                 pie.separator()
-            # 8 - TOP
-            pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
-            # 7 - TOP - LEFT
-            pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
-            # 9 - TOP - RIGHT
-            if get_prefs().enable_hops is True:
-                pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
-            else:
+                # 1 - BOTTOM - LEFT
+                pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+                # 3 - BOTTOM - RIGHT
                 pie.separator()
-            # 1 - BOTTOM - LEFT
-            pie.separator()
-            # 3 - BOTTOM - RIGHT
-            pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+            
+            elif bpy.context.active_object.type == 'FONT':
+                # 4 - LEFT
+                split = pie.split()
+                col = split.column()
+                self.text_font_menu(col)
+                # 6 - RIGHT
+                split = pie.split()
+                col = split.column()
+                self.text_geo_menu(col)
+                # 2 - BOTTOM
+                if get_prefs().enable_hops is True:
+                    split = pie.split()
+                    col = split.column()
+                    col.label(text="                                    ")
+                    box = col.box()
+                    box.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
+                    box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                else:
+                    split = pie.split()
+                    col = split.column()
+                    col.label(text="                                    ")
+                    box = col.box()
+                    box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                # 8 - TOP
+                pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+                # 7 - TOP - LEFT
+                pie.separator()
+                # 9 - TOP - RIGHT
+                pie.separator()
+                # 1 - BOTTOM - LEFT
+                pie.separator()
+                # 3 - BOTTOM - RIGHT
+                pie.separator()
 
-        if bpy.context.active_object.type == 'MESH':
-            # 4 - LEFT
-            split = pie.split()
-            b = split.column()
-            self.left_mesh_menu(b)
-            # 6 - RIGHT
-            pie.separator()
-            # 2 - BOTTOM
-            pie.separator()
-            # 8 - TOP
-            split = pie.split()
-            row = split.row()
-            self.QA_01(row)
-            # 7 - TOP - LEFT
-            pie.separator()
-            # 9 - TOP - RIGHT
-            pie.separator()
-            # 1 - BOTTOM - LEFT
-            pie.separator()
-            # 3 - BOTTOM - RIGHT
-            pie.separator()
+            else:
+                pie.separator()
+                pie.separator()
+                split = pie.split()
+                disabled_button(split,"For Now", 2)
+                split = pie.split()
+                disabled_button(split,"Not Supported", 2)
 
-        if bpy.context.active_object.type == 'CAMERA':
-            # 4 - LEFT
-            if get_prefs().enable_hops is True:
-                pie.operator("hops.set_camera",text="Set Active Camera", icon="HIDE_OFF")
-            else:
-                pie.separator()
-            # 6 - RIGHT
-            split = pie.split()
-            b = split.column()
-            self.camera_menu(b)
-            # 2 - BOTTOM
-            if get_prefs().enable_hops is True:
-                pie.menu("hops.settings_submenu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
-            else:
-                pie.separator()
-            # 8 - TOP
-            pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
-            # 7 - TOP - LEFT
-            pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
-            # 9 - TOP - RIGHT
-            if get_prefs().enable_hops is True:
-                pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
-            else:
-                pie.separator()
-            # 1 - BOTTOM - LEFT
+        else:
             pie.separator()
-            # 3 - BOTTOM - RIGHT
-            pie.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+            pie.separator()
+            split = pie.split()
+            split = pie.split()
+            disabled_button(split,"No Object Selected", 2)
+
+
 
     def left_mesh_menu(self, col):
-        col.scale_x = 1
+        col.scale_x = 1.9
         col.scale_y = 1.8
-        
-        if get_prefs().enable_rarray is True:
-            col.operator("sop.r_array", text="(R) Array",icon_value=get_icon("RA_Icon", "main"))
 
         enum = [
-            ("hops.reset_axis_modal"),
+            ("hops.xunwrap"),
+            ("view3d.bevel_multiplier"),
+            ("hops.step"),
             ("hops.reset_status"),
-            ("hops.slash"),
+            ("hops.reset_axis_modal"),
             ("hops.sphere_cast"),
         ]
         
         text = [
-            ("Reset Axis"),
+            ("Auto Unwrap"),
+            ("Bevel multiplier"),
+            ("Step"),
             ("Reset Status"),
-            ("Slash"),
+            ("Reset Axis"),
             ("Sphere Cast"),
         ]
         icon = [
-            get_icon("Xslap", "main"),
+            get_icon("PUnwrap", "main"),
+            get_icon("BevelMultiply", "main"),
+            get_icon("Sstep", "main"),
             get_icon("StatusReset", "main"),
-            get_icon("Csplit", "main"),
+            get_icon("Xslap", "main"),
             get_icon("SphereCast", "main"),
         ]
-        
+        #spacer(col, 1 )
         if get_prefs().enable_hops is True:
+            col.operator("hops.apply_modifiers", text="Smart Apply",icon_value=get_icon("Applyall", "main")).modifier_types = 'BOOLEAN'
             op_loop_val(col, enum, text, icon, 0, False)
+            col.operator("hops.bool_toggle_viewport", text="Toggle Modifiers",icon_value=get_icon("Tris", "main")).all_modifiers = True
+            op = col.operator("hops.modifier_scroll", text="Modifier Scroll",icon_value=get_icon("Diagonal", "main"))
+            op.all = True
+            op.additive = True
+        if get_prefs().enable_rarray is True:
+            col.operator("sop.r_array", text="(R) Array",icon_value=get_icon("RA_Icon", "main"))
 
     def QA_01(self, col):
-        col.scale_x = 1
+        col.scale_x = 1.1
         col.scale_y = 1.8
-
+        col = col.row(align=True)
         enum = [
             ("hops.helper"),
             ("hops.mirror_gizmo"),
         ]
         text = [
             ("Hops Helper"),
-            ("Hops Mirror(broken?!)"),
+            ("Hops Mirror"),
+        ]
+        icon = [
+            get_icon("Hops_helper_icon", "main"),
+            get_icon("Mirror_Icon", "main"),
+        ]
+        col.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
+        if get_prefs().enable_kitops is True:
+            if col.operator("view3d.insertpopup", text="Kit Ops",icon_value=get_icon("Insert", "main")) is None:
+                col.label(text="Not Installed")
+        if get_prefs().enable_hops is True:
+            op_loop_val(col, enum, text, icon, 0, False)
+    
+    def QA_02(self, col):
+        col.scale_x = 1.1
+        col.scale_y = 1.8
+        col = col.row(align=True)
+        enum = [
+            ("hops.helper"),
+            ("hops.mirror_gizmo"),
+        ]
+        text = [
+            ("Hops Helper"),
+            ("Hops Mirror"),
         ]
         icon = [
             get_icon("Hops_helper_icon", "main"),
@@ -1808,19 +1984,289 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         if get_prefs().enable_hops is True:
             op_loop_val(col, enum, text, icon, 0, False)
 
-    def camera_menu(slef, col):
+    def QA_03(self, col):
+        col.scale_x = 1.4
+        col.scale_y = 1.8
+        col = col.row(align=True)
+        enum = [
+            ("wm.tool_set_by_name"),
+            ("wm.tool_set_by_name"),
+        ]
+        text = [
+            ("Select Box"),
+            ("Cursor"),
+        ]
+        icon = [
+            "RESTRICT_SELECT_OFF",
+            "PIVOT_CURSOR",
+        ]
+        name = [
+            ("Select Box"),
+            ("Cursor"),
+        ]
+        if get_prefs().enable_box_cutter is True:
+            if col.operator("bc.topbar_activate",text="Activate Box Cutter", icon_value=get_icon("BoxCutter", "main")) is None:
+                col.label(text="Not Installed")
+     
+        op_loop_name(col, enum, text, icon, name)
+    
+    def mesh_menu_bottom_01(self, col):
+        col.scale_x = 1.4
+        col.scale_y = 1.8
+        enum = [
+            ("hops.bevel_helper"),
+            ("hops.sharp_manager"),
+        ]
+        text = [
+            ("Bevel Helper"),
+            ("Sharp Manager"),
+        ]
+        icon = [
+            get_icon("Xslap", "main"),
+            get_icon("Diagonal", "main"),
+        ]
+  
+        spacer(col, 8)
+        if get_prefs().enable_hops is True:
+            op_loop_val(col, enum, text, icon, 0, False)
+        box = col.box()
+        box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+    
+    def mesh_menu_bottom_02(self, col):
+        col.scale_x = 1.4
+        col.scale_y = 1.8
+        spacer(col, 8)
+        col.operator_context = "INVOKE_DEFAULT"
+        col.operator("hops.bool_scroll_objects", text="Object Scroll", icon_value=get_icon("StatusReset", "main"))
+
+        op = col.operator("hops.modifier_scroll", text="Cycle Booleans", icon_value=get_icon("StatusOveride", "main"))
+        op.additive = False
+        op.type = 'BOOLEAN'
+
+        op = col.operator("hops.modifier_scroll", text="Additive Scroll", icon_value=get_icon("Diagonal", "main"))
+        op.additive = True
+        op.type = 'BOOLEAN'
+
+        col.operator("hops.bool_toggle_viewport", text="Toggle Modifiers", icon_value=get_icon("Tris", "main")).all_modifiers = False
+
+        
+
+    def camera_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1
+        col = col.box()
         
-        obj = bpy.context.object
-
+        
         obj = bpy.context.object.data
-        col.prop(obj, "lens", text="Lens")
-        col.prop(obj, "passepartout_alpha", text="PP")
-        col.prop(obj, "dof_object", text="")
+        dof_options = obj.gpu_dof
+        col.prop(obj, "passepartout_alpha", text="Passepartout")
+        col.prop(obj, "dof_object", text="Focus on Object")
+        col.prop(obj, "dof_distance", text="Focus Distance")
+        col.prop(dof_options, "fstop")
+        col.prop(dof_options, "blades")
+        col.prop(dof_options, "rotation")
+        col.prop(dof_options, "ratio")
 
-        if get_prefs().enable_hops is True:
-            col.menu("hops.settings_submenu", text="Settings")
+
+        split = col.split()
+        split.prop_menu_enum(obj, "show_guide")
+
+        col = col.column(align=True)
+
+        col.separator()
+
+        col.prop(obj, "display_size", text="Camera Display Size")
+
+        col.separator()
+
+        col.prop(obj, "show_limits", text="Limits")
+        col.prop(obj, "show_mist", text="Mist")
+        col.prop(obj, "show_sensor", text="Sensor")
+        col.prop(obj, "show_name", text="Name")
+    
+    def camera_menu_2(self, col):
+        col.scale_x = 1
+        col.scale_y = 1
+        spacer(col, 7)
+        col = col.box()
+        scene = bpy.context.scene
+        cam = bpy.context.object.data
+        col.label(text="Lens")
+        col.prop(cam, "type")
+
+        col = col.column()
+        col.separator()
+
+        if cam.type == 'PERSP':
+            col = col.column()
+            if cam.lens_unit == 'MILLIMETERS':
+                col.prop(cam, "lens")
+            elif cam.lens_unit == 'FOV':
+                col.prop(cam, "angle")
+            col.prop(cam, "lens_unit")
+
+        elif cam.type == 'ORTHO':
+            col.prop(cam, "ortho_scale")
+
+        elif cam.type == 'PANO':
+            engine = scene.render.engine
+            if engine == 'CYCLES':
+                ccam = cam.cycles
+                col.prop(ccam, "panorama_type")
+                if ccam.panorama_type == 'FISHEYE_EQUIDISTANT':
+                    col.prop(ccam, "fisheye_fov")
+                elif ccam.panorama_type == 'FISHEYE_EQUISOLID':
+                    col.prop(ccam, "fisheye_lens", text="Lens")
+                    col.prop(ccam, "fisheye_fov")
+                elif ccam.panorama_type == 'EQUIRECTANGULAR':
+                    sub = col.column(align=True)
+                    sub.prop(ccam, "latitude_min", text="Latitude Min")
+                    sub.prop(ccam, "latitude_max", text="Max")
+                    sub = col.column(align=True)
+                    sub.prop(ccam, "longitude_min", text="Longitude Min")
+                    sub.prop(ccam, "longitude_max", text="Max")
+            elif engine in {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}:
+                if cam.lens_unit == 'MILLIMETERS':
+                    col.prop(cam, "lens")
+                elif cam.lens_unit == 'FOV':
+                    col.prop(cam, "angle")
+                col.prop(cam, "lens_unit")
+
+        col = col.column()
+        col.separator()
+
+        sub = col.column(align=True)
+        sub.prop(cam, "shift_x", text="Shift X")
+        sub.prop(cam, "shift_y", text="Y")
+
+        col.separator()
+        sub = col.column(align=True)
+        sub.prop(cam, "clip_start", text="Clip Start")
+        sub.prop(cam, "clip_end", text="End")
+
+    def lamp_menu(self, col):
+        scene = bpy.context.scene
+        col = col.box()
+        col.scale_x = 1
+        col.scale_y = 1.4
+        
+        if scene.render.engine == 'BLENDER_EEVEE':
+            light = bpy.context.object.data
+            
+            row = col.row()
+            row.prop(light, "type", expand=True)
+            
+            col.prop(light, "color")
+            col.prop(light, "energy")
+            col.prop(light, "specular_factor", text="Specular")
+
+            col.separator()
+
+            if light.type in {'POINT', 'SPOT', 'SUN'}:
+                col.prop(light, "shadow_soft_size", text="Radius")
+            elif light.type == 'AREA':
+                col.prop(light, "shape")
+
+                sub = col.column(align=True)
+
+                if light.shape in {'SQUARE', 'DISK'}:
+                    sub.prop(light, "size")
+                elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
+                    sub.prop(light, "size", text="Size X")
+                    sub.prop(light, "size_y", text="Y")
+
+        if scene.render.engine == 'CYCLES':
+            light = bpy.context.object.data
+            clamp = light.cycles
+            row = col.row()
+            row.prop(light, "type", expand=True)    
+            if light.type in {'POINT', 'SUN', 'SPOT'}:
+                col.prop(light, "shadow_soft_size", text="Size")
+            elif light.type == 'AREA':
+                col.prop(light, "shape", text="Shape")
+                sub = col.column(align=True)
+    
+                if light.shape in {'SQUARE', 'DISK'}:
+                    sub.prop(light, "size")
+                elif light.shape in {'RECTANGLE', 'ELLIPSE'}:
+                    sub.prop(light, "size", text="Size X")
+                    sub.prop(light, "size_y", text="Y")
+    
+            sub = col.column(align=True)
+            sub.active = not (light.type == 'AREA' and clamp.is_portal)
+            sub.prop(clamp, "cast_shadow")
+            sub.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
+           
+            if light.type == 'AREA':
+                col.prop(clamp, "is_portal", text="Portal")
+    
+    def text_geo_menu(self, col):
+        col = col.box()
+        col.scale_x = 1
+        col.scale_y = 1.2
+        
+        curve = bpy.context.object.data
+        col.label(text="Geometry")
+        col.prop(curve, "offset")
+
+        sub = col.column()
+        sub.active = (curve.bevel_object is None)
+        sub.prop(curve, "extrude")
+
+        col.prop(curve, "taper_object")
+
+        sub = col.column()
+        sub.active = curve.taper_object is not None
+        sub.prop(curve, "use_map_taper")
+
+        sub.label(text="Bevel")
+        sub.active = (curve.bevel_object is None)
+        sub.prop(curve, "bevel_depth", text="Depth")
+        sub.prop(curve, "bevel_resolution", text="Resolution")
+        col.prop(curve, "bevel_object", text="Bevel Object")
+        sub = col.column()
+        sub.active = curve.bevel_object is not None
+        sub.prop(curve, "use_fill_caps")
+        col.label(text="Shape")
+        sub = col.column(align=True)
+        sub.prop(curve, "resolution_u", text="Resolution Preview U")
+        sub = col.column(align=True)
+        sub.prop(curve, "render_resolution_u", text="Render U")
+        col.prop(curve, "use_fast_edit", text="Fast Editing")
+        sub = col.column()
+        sub.active = (curve.dimensions == '2D' or (curve.bevel_object is None and curve.dimensions == '3D'))
+        sub.prop(curve, "fill_mode")
+        col.prop(curve, "use_fill_deform")
+        
+    def text_font_menu(self, col):
+        col = col.box()
+        col.scale_x = 1
+        col.scale_y = 1.2
+
+
+        text = bpy.context.object.data
+        char = bpy.context.object.data.edit_format
+
+        row = col.split(factor=0.25)
+        row.label(text="Regular")
+        row.template_ID(text, "font", open="font.open", unlink="font.unlink")
+        row = col.split(factor=0.25)
+        row.label(text="Bold")
+        row.template_ID(text, "font_bold", open="font.open", unlink="font.unlink")
+        row = col.split(factor=0.25)
+        row.label(text="Italic")
+        row.template_ID(text, "font_italic", open="font.open", unlink="font.unlink")
+        row = col.split(factor=0.25)
+        row.label(text="Bold & Italic")
+        row.template_ID(text, "font_bold_italic", open="font.open", unlink="font.unlink")
+
+        col.separator()
+
+        row = col.row(align=True)
+        row.prop(char, "use_bold", toggle=True)
+        row.prop(char, "use_italic", toggle=True)
+        row.prop(char, "use_underline", toggle=True)
+        row.prop(char, "use_small_caps", toggle=True)
 
 class SM_PIE_Q_Menu_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_menu_call'

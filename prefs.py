@@ -98,6 +98,10 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Kit Ops",
         default=True
     )
+    enable_box_cutter: BoolProperty(
+        name="Box Cutter",
+        default=True
+    )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
 
@@ -159,6 +163,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.prop(self, "enable_hops", text="Hard Ops")
         col.prop(self, "enable_rarray", text="R.Array")
         col.prop(self, "enable_kitops", text="Kit Ops")
+        col.prop(self, "enable_box_cutter", text="Box Cutter")
         col.label(text="Keymap:")
 
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
