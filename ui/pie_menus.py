@@ -1,7 +1,6 @@
 import bpy, os
 from . get_icon import get_icon
 # todo add Extra Object (Curve) support
-# todo Q Menu
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
@@ -1652,9 +1651,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
-        print (bpy.context.selected_objects)
         if not bpy.context.selected_objects == []:
-            #print (bpy.context.active_object.type)
 
             if bpy.context.active_object.type == 'CURVE':
                 # 4 - LEFT
@@ -2035,7 +2032,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             col.label(text="")
         col.operator("object.subdivision_set",text="(3)", icon="MOD_SUBSURF").level = 3
         if get_prefs().enable_hops is True:
-            if col.operator("clean.sharps",text="clean.sharps",icon_value=get_icon("CleansharpsE", "main")) is None:
+            if col.operator("clean.sharps",text="Clean Sharps",icon_value=get_icon("CleansharpsE", "main")) is None:
                 col.label(text="Not Installed")
         else:
             col.label(text="")
