@@ -73,36 +73,36 @@ class SM_PIE_Add(bpy.types.Menu):
         # 4 - LEFT
         split = pie.split()
         #column = split.column()
-        b = split.column()
+        b = split.column(align=True)
         self.add_mesh_box(b)
 
         # 6 - RIGHT
         split = pie.split()
-        b = split.column()
-        column = split.column()
+        b = split.column(align=True)
+        column = split.column(align=True)
         self.forces(column, 0)
         self.curve(b, 2)
         
         # 2 - BOTTOM
         split = pie.split()
         if get_prefs().enable_extra_objects_mesh is True:
-            b = split.column()
+            b = split.column(align=True)
             self.extra_objects(b)
-        b = split.column()
+        b = split.column(align=True)
         self.camera(b, 3)
 
-        column = split.column()
+        column = split.column(align=True)
         self.empty(column, 3)
         
         # 8 - TOP
         split = pie.split()
-        column = split.column()
+        column = split.column(align=True)
         self.light_2_box(column, 3)
         
-        b = split.column()
+        b = split.column(align=True)
         self.light_1_box(b)
 
-        column = split.column()
+        column = split.column(align=True)
         self.bone(column)
         
         # 7 - TOP - LEFT
@@ -113,7 +113,7 @@ class SM_PIE_Add(bpy.types.Menu):
         pie.separator()
         # 3 - BOTTOM - RIGHT
         split = pie.split()
-        column = split.column()
+        column = split.column(align=True)
         self.add_menu(column)
 
     def add_mesh_box(self, col):
@@ -1500,7 +1500,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("TextureNodeTexNoise"),
         ]
         op_loop_safe_node_val(col, 2, text, icon, e_type)
-
+#! REMOVE ?!
 class SM_Add_Texture_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_texture_node_call'
     bl_label = 'S.Menu Texture Add Pie'
@@ -1633,7 +1633,7 @@ class SM_Add_Shader_Node(bpy.types.Menu):
             ("ShaderNodeBsdfGlass"),
         ]
         op_loop_safe_node(col, 3, text, icon, e_type)
-
+#! REMOVE ?!
 class SM_Add_Shader_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_shader_node_call'
     bl_label = 'S.Menu Shader Add Pie'
@@ -1741,7 +1741,9 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 b = split.column_flow(columns=2,align=True)
                 self.left_mesh_menu(b)
                 # 6 - RIGHT
-                pie.separator()
+                split = pie.split()
+                b = split.column_flow(columns=3,align=True)
+                self.QA_02(b)
                 # 2 - BOTTOM
                 split = pie.split()
                 b = split.column()
@@ -1751,23 +1753,26 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 b = split.column()
                 if get_prefs().enable_hops is True:
                     b.menu("hops_main_menu", text="Hops Menu (Old)", icon_value=get_icon("List_icon", "main"))
+                
                 self.QA_01(b)
                 # 7 - TOP - LEFT
                 pie.separator()
                 # 9 - TOP - RIGHT
                 pie.separator()
                 # 1 - BOTTOM - LEFT
-                split = pie.split()
-                b = split.column(align=True)
-                b.label(text="")
-                b = split.column(align=True)
-                self.mesh_menu_bottom_02(b)
-                b = split.column(align=True)
-                self.mesh_menu_bottom_01(b)
+                if get_prefs().enable_hops is True:
+                    split = pie.split()
+                    b = split.column(align=True)
+                    self.mesh_menu_bottom_01(b)
+                else:
+                    pie.separator()
                 # 3 - BOTTOM - RIGHT
-                split = pie.split()
-                b = split.column(align=True)
-                self.mesh_menu_bottom_02(b)
+                if get_prefs().enable_hops is True:
+                    split = pie.split()
+                    b = split.column(align=True)
+                    self.mesh_menu_bottom_02(b)
+                else:
+                    pie.separator()
             
             elif bpy.context.active_object.type == 'CAMERA':
                 # 4 - LEFT
@@ -1914,40 +1919,47 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         col.scale_y = 1.8
 
         enum = [
-            ("hops.xunwrap"),
             ("view3d.bevel_multiplier"),
             ("hops.step"),
-            ("hops.reset_status"),
+            ("hops.shrinkwrap2"),
             ("hops.reset_axis_modal"),
             ("hops.sphere_cast"),
         ]
         
         text = [
-            ("Auto Unwrap"),
             ("Bevel multiplier"),
             ("Step"),
-            ("Reset Status"),
+            ("Hops Shrink"),
             ("Reset Axis"),
             ("Sphere Cast"),
         ]
         icon = [
-            get_icon("PUnwrap", "main"),
             get_icon("BevelMultiply", "main"),
             get_icon("Sstep", "main"),
-            get_icon("StatusReset", "main"),
+            get_icon("ShrinkTo", "main"),
             get_icon("Xslap", "main"),
             get_icon("SphereCast", "main"),
         ]
         #spacer(col, 1 )
         if get_prefs().enable_hops is True:
-            col.operator("hops.apply_modifiers", text="Smart Apply",icon_value=get_icon("Applyall", "main")).modifier_types = 'BOOLEAN'
+            
+            hops = True
+            if col.operator("hops.xunwrap", text="Auto Unwrap",icon_value=get_icon("PUnwrap", "main")) is None:
+                col.label(text="Hard Ops Not Installed")
+                hops = False
+
             op_loop_val(col, enum, text, icon, 0, False)
-            col.operator("hops.bool_toggle_viewport", text="Toggle Modifiers",icon_value=get_icon("Tris", "main")).all_modifiers = True
-            op = col.operator("hops.modifier_scroll", text="Modifier Scroll",icon_value=get_icon("Diagonal", "main"))
-            op.all = True
-            op.additive = True
+            if hops is True:
+                col.operator("hops.apply_modifiers", text="Smart Apply",icon_value=get_icon("Applyall", "main")).modifier_types = 'BOOLEAN'
+                col.operator("hops.bool_toggle_viewport", text="Toggle Modifiers",icon_value=get_icon("Tris", "main")).all_modifiers = True
+                op = col.operator("hops.modifier_scroll", text="Modifier Scroll",icon_value=get_icon("Diagonal", "main"))
+                op.all = True
+                op.additive = True
+         
+            
         if get_prefs().enable_rarray is True:
-            col.operator("sop.r_array", text="(R) Array",icon_value=get_icon("RA_Icon", "main"))
+            if col.operator("sop.r_array", text="(R) Array",icon_value=get_icon("RA_Icon", "main")) is None:
+                col.label(text="(R) Array Not Installed")
 
     def QA_01(self, col):
         col.scale_x = 1.1
@@ -1966,33 +1978,67 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             get_icon("Mirror_Icon", "main"),
         ]
         col.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
-        if get_prefs().enable_kitops is True:
-            if col.operator("view3d.insertpopup", text="Kit Ops",icon_value=get_icon("Insert", "main")) is None:
-                col.label(text="Not Installed")
         if get_prefs().enable_hops is True:
             op_loop_val(col, enum, text, icon, 0, False)
     
     def QA_02(self, col):
-        col.scale_x = 1.1
-        col.scale_y = 1.8
-        col = col.row(align=True)
-        enum = [
-            ("hops.helper"),
-            ("hops.mirror_gizmo"),
-        ]
-        text = [
-            ("Hops Helper"),
-            ("Hops Mirror"),
-        ]
-        icon = [
-            get_icon("Hops_helper_icon", "main"),
-            get_icon("Mirror_Icon", "main"),
-        ]
-        col.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
-        if get_prefs().enable_kitops is True:
-            col.operator("view3d.insertpopup", text="Kit Ops",icon_value=get_icon("Insert", "main"))
         if get_prefs().enable_hops is True:
-            op_loop_val(col, enum, text, icon, 0, False)
+            col.scale_x = 1.4
+            col.scale_y = 1.8
+        else:
+            col.scale_x = 1.4
+            col.scale_y = 1.6
+        #colunm 1
+        obj = bpy.context.active_object.data
+        col.prop(obj, "use_auto_smooth", text="Auto Smooth")
+        hops = True
+        if get_prefs().enable_hops is True: 
+            if col.operator("hops.soft_sharpen",text="(S) Sharp", icon_value=get_icon("Ssharpen", "main")) is None:
+                col.label(text="Not Installed")
+                hops = False
+            active_object = bpy.context.active_object
+            if hops is True:    
+                if active_object.hops.status in ("CSHARP", "CSTEP"):
+                    col.operator("hops.adjust_bevel",text="(B) Width", icon_value=get_icon("AdjustBevel", "main"))
+                else:
+                    col.operator("hops.complex_sharpen",text="(C) Sharp", icon_value=get_icon("CSharpen", "main"))
+        else:
+            col.label(text="")
+            col.label(text="")
+        col.operator("object.subdivision_set",text="Subdiv (1)", icon="MOD_SUBSURF").level = 1
+        col.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
+        #colunm 2
+        col.operator("object.shade_smooth",text="Shade Smooth", icon_value=get_icon("Smooth_Shading_icon", "main"))
+        if get_prefs().enable_hops is True:
+            if col.operator("hops.adjust_tthick",text="Adjust (T) Thick", icon_value=get_icon("Tthick", "main")) is None:
+                col.label(text="Not Installed")
+            if col.operator("hops.adjust_array",text="Adjust Array", icon="ARROW_LEFTRIGHT") is None:
+                col.label(text="Not Installed")
+        else:
+            col.label(text="")
+            col.label(text="")
+        col.operator("object.subdivision_set",text="(2)", icon="MOD_SUBSURF").level = 2
+        if get_prefs().enable_hops is True:
+            if col.operator("hops.reset_status",text="Reset Status", icon_value=get_icon("StatusReset", "main")) is None:
+                col.label(text="Not Installed")
+        else:
+            col.label(text="")
+        #colunm 3
+        col.operator("object.shade_flat",text="Shade Flat", icon_value=get_icon("Flat_Shading_icon", "main"))
+        if get_prefs().enable_hops is True:
+            if col.operator("view3d.clean_mesh",text="Clean Mesh", icon_value=get_icon("FaceGrate", "main")) is None:
+                col.label(text="Not Installed")
+            if col.operator("hops.array_gizmo",text="Array Gizmo", icon_value=get_icon("Array", "main")) is None:
+                col.label(text="Not Installed")
+        else:
+            col.label(text="")
+            col.label(text="")
+        col.operator("object.subdivision_set",text="(3)", icon="MOD_SUBSURF").level = 3
+        if get_prefs().enable_hops is True:
+            if col.operator("clean.sharps",text="clean.sharps",icon_value=get_icon("CleansharpsE", "main")) is None:
+                col.label(text="Not Installed")
+        else:
+            col.label(text="")
 
     def QA_03(self, col):
         col.scale_x = 1.4
@@ -2014,10 +2060,10 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             ("Select Box"),
             ("Cursor"),
         ]
+        
         if get_prefs().enable_box_cutter is True:
             if col.operator("bc.topbar_activate",text="Activate Box Cutter", icon_value=get_icon("BoxCutter", "main")) is None:
-                col.label(text="Not Installed")
-     
+                col.label(text="Box Cutter Not Installed")
         op_loop_name(col, enum, text, icon, name)
     
     def mesh_menu_bottom_01(self, col):
@@ -2025,18 +2071,21 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         col.scale_y = 1.8
         enum = [
             ("hops.bevel_helper"),
+            ("view3d.status_helper_popup"),
             ("hops.sharp_manager"),
         ]
         text = [
             ("Bevel Helper"),
+            ("Status Helper"),
             ("Sharp Manager"),
         ]
         icon = [
             get_icon("Xslap", "main"),
+            get_icon("StatusOveride", "main"),
             get_icon("Diagonal", "main"),
         ]
   
-        spacer(col, 8)
+        spacer(col, 9)
         if get_prefs().enable_hops is True:
             op_loop_val(col, enum, text, icon, 0, False)
         box = col.box()
@@ -2047,19 +2096,18 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         col.scale_y = 1.8
         spacer(col, 8)
         col.operator_context = "INVOKE_DEFAULT"
-        col.operator("hops.bool_scroll_objects", text="Object Scroll", icon_value=get_icon("StatusReset", "main"))
+        hops = True
+        if col.operator("hops.bool_scroll_objects", text="Object Scroll", icon_value=get_icon("StatusReset", "main")) is None:
+            col.label(text="Hard Ops Not Installed")
+            hops = False
+        if hops is True:
+            op = col.operator("hops.modifier_scroll", text="Cycle Booleans", icon_value=get_icon("StatusOveride", "main"))
+            op.additive = False
+            op.type = 'BOOLEAN'
 
-        op = col.operator("hops.modifier_scroll", text="Cycle Booleans", icon_value=get_icon("StatusOveride", "main"))
-        op.additive = False
-        op.type = 'BOOLEAN'
-
-        op = col.operator("hops.modifier_scroll", text="Additive Scroll", icon_value=get_icon("Diagonal", "main"))
-        op.additive = True
-        op.type = 'BOOLEAN'
-
-        col.operator("hops.bool_toggle_viewport", text="Toggle Modifiers", icon_value=get_icon("Tris", "main")).all_modifiers = False
-
-        
+            op = col.operator("hops.modifier_scroll", text="Additive Scroll", icon_value=get_icon("Diagonal", "main"))
+            op.additive = True
+            op.type = 'BOOLEAN'
 
     def camera_menu(self, col):
         col.scale_x = 1

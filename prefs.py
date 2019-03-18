@@ -94,10 +94,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="R.Array",
         default=True
     )
-    enable_kitops: BoolProperty(
-        name="Kit Ops",
-        default=True
-    )
     enable_box_cutter: BoolProperty(
         name="Box Cutter",
         default=True
@@ -168,7 +164,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Please Disable if not installed")
         col.prop(self, "enable_hops", text="Hard Ops")
         col.prop(self, "enable_rarray", text="R.Array")
-        col.prop(self, "enable_kitops", text="Kit Ops")
         col.prop(self, "enable_box_cutter", text="Box Cutter")
         col.label(text="Keymap:")
 
