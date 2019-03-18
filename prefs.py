@@ -102,6 +102,10 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Box Cutter",
         default=True
     )
+    enable_pose_buttons: BoolProperty(
+        name="Box Cutter",
+        default=True
+    )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
 
@@ -126,7 +130,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
         if self.main_tabs == "QMENU":
             self.q_menu_tab(context, box)
         if self.main_tabs == "UTILS":
-            col.label(text="Keymap:")
+            col.label(text="Options:")
+            col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
+            col.label(text="Keymaps:")
             self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
 
     def add_main_tab(self, context, col):

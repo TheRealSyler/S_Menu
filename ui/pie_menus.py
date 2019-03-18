@@ -823,7 +823,8 @@ class SM_PIE_Add_Node(bpy.types.Menu):
     def texture_add(self, col):
         col.scale_x = 1.1
         col.scale_y = 1.8
-        col.operator("sop.sm_texture_node_call", text="Texture", icon="TEXTURE")
+        col.operator_context = "INVOKE_DEFAULT"
+        col.operator("wm.call_menu_pie").name = "SM_Add_Texture_Node"  # ("sop.sm_texture_node_call", text="Texture", icon="TEXTURE")
     
     def shader_add(self, col):
         col.scale_x = 1.1
@@ -1802,9 +1803,9 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 edv.data_path_item = "data.passepartout_alpha"
                 edv = box.operator("wm.context_modal_mouse",text="Adjust Focal Length", icon="ARROW_LEFTRIGHT")
                 edv.input_scale = 0.01
-                #edv.header_text = "test"
                 edv.data_path_iter = "selected_editable_objects"
                 edv.data_path_item = "data.lens"
+                #edv.header_text = "test"
                 edv = box.operator("wm.context_modal_mouse",text="Adjust F-Stop", icon="ARROW_LEFTRIGHT")
                 edv.input_scale = 0.01
                 edv.data_path_iter = "selected_editable_objects"
