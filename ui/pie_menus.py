@@ -1876,6 +1876,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                     col = split.column()
                     col.label(text="                                    ")
                     box = col.box()
+                    box.operator("object.convert",text="Convert", icon="OUTLINER_OB_MESH").target = "MESH"
                     box.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
                     box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
                     box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
@@ -2265,11 +2266,18 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         
         curve = bpy.context.object.data
         col.label(text="Geometry")
-        col.prop(curve, "offset")
-
         sub = col.column()
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Offset", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.001
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.offset"
+
+        
         sub.active = (curve.bevel_object is None)
-        sub.prop(curve, "extrude")
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Extrusion", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.001
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.extrude"
 
         col.prop(curve, "taper_object")
 
@@ -2279,8 +2287,14 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
 
         sub.label(text="Bevel")
         sub.active = (curve.bevel_object is None)
-        sub.prop(curve, "bevel_depth", text="Depth")
-        sub.prop(curve, "bevel_resolution", text="Resolution")
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Bevel Depth", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.001
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.bevel_depth"
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Bevel Resolution", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.1
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.bevel_resolution"
         col.prop(curve, "bevel_object", text="Bevel Object")
         sub = col.column()
         sub.active = curve.bevel_object is not None
