@@ -507,38 +507,41 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         if bpy.context.area.ui_type == "CompositorNodeTree":
             # 4 - LEFT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.comp_node_utils(b)
             # 6 - RIGHT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.comp_add_menu(b)
             # 2 - BOTTOM
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_3(b)
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_2(b)
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_1(b)
             # 8 - TOP
             split = pie.split()
-            self.search(split)
+            b = split.column()
+            box = b.box()
+            self.group_menu_add(box)
+            self.search(b)
             # 7 - TOP - LEFT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             b.label(text="                            ")
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_6(b)
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_8(b)
             # 9 - TOP - RIGHT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_4(b)
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_5(b)
-            b = split.column()
+            b = split.column(align=True)
             self.comp_menu_7(b)
             # 1 - BOTTOM - LEFT
             pie.separator()
@@ -548,11 +551,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         elif bpy.context.area.ui_type == "TextureNodeTree":
             # 4 - LEFT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.tex_node_utils(b)
             # 6 - RIGHT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.add_menu_tex(b)
             # 2 - BOTTOM
             split = pie.split()
@@ -566,17 +569,17 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             
             # 4 - LEFT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.node_utils(b)
             # 6 - RIGHT
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.shader_add(b)
             # 2 - BOTTOM
             split = pie.split()
-            b = split.column()
+            b = split.column(align=True)
             self.node_color(b)
-            b = split.column()
+            b = split.column(align=True)
             self.node_vector(b)
             b = split.column()
             # note: dont change the text
@@ -594,9 +597,9 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             pie.separator()
             # 3 - BOTTOM - RIGHT
             split = pie.split()
-            column = split.column()
+            column = split.column(align=True)
             self.add_menu(column)
-            column = split.column()
+            column = split.column(align=True)
             self.converter_menu(column)
 
     def node_utils(self, col):
@@ -739,6 +742,8 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         ]
         
         op_loop_safe_node_val(col, 12, text, icon, e_type)
+        box = col.box()
+        self.group_menu_add(box)
 
     def node_vector(self, col):
         col.scale_x = 1
@@ -824,17 +829,20 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         col.scale_x = 1.1
         col.scale_y = 1.8
         col.operator_context = "INVOKE_DEFAULT"
-        col.operator("wm.call_menu_pie").name = "SM_Add_Texture_Node"  # ("sop.sm_texture_node_call", text="Texture", icon="TEXTURE")
+        col.operator("wm.call_menu_pie", text="Texture", icon="TEXTURE").name = "SM_Add_Texture_Node"
     
     def shader_add(self, col):
         col.scale_x = 1.1
         col.scale_y = 1.8
-        col.operator("sop.sm_shader_node_call", text="Shader", icon="SHADING_RENDERED")
+        col.operator("wm.call_menu_pie", text="Shader", icon="SHADING_RENDERED").name = "SM_Add_Shader_Node"
     
+    def group_menu_add(self, col):
+        col.menu("NODE_MT_category_CMP_GROUP", text="Groups", icon_value=get_icon("List_icon", "main"))
+
     def add_menu(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        spacer(col, 9)
+        spacer(col, 10)
         col.label(text="                                    ")
         box = col.box()
         box.menu("NODE_MT_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
@@ -879,6 +887,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeHairInfo"),
             ("ShaderNodeTexCoord"),
         ]
+        self.group_menu_add(box)
         op_loop_safe_node_val(col, 11, text, icon, e_type)
         col.label(text="                                ")
 
@@ -976,7 +985,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeCombineRGB"),
             ("ShaderNodeCombineXYZ"),
         ]
-        spacer(col, 4)
+        spacer(col, 6)
         op_loop_safe_node_val(col, 10, text, icon, e_type)
     
     def comp_add_menu(self, col):
