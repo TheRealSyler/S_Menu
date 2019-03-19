@@ -1,23 +1,24 @@
 import bpy
 
 from . ui.pie_menus import (
-    get_prefs,
+    #get_prefs,
     SM_PIE_Add,
     SM_PIE_Add_Call, 
     SM_PIE_Add_Node,
     SM_PIE_Add_Node_Call,
     SM_Add_Texture_Node,
-    SM_Add_Texture_Node_Call,
     SM_Add_Shader_Node,
-    SM_Add_Shader_Node_Call,
     SM_PIE_Q_Menu,
     SM_PIE_Q_Menu_Call,
     SM_PIE_A_OM,
     SM_PIE_A_OM_Call,
+    SM_PIE_Q_Node,
+    SM_PIE_Q_Node_Call,
 )
 
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
+from . ui.add_pose_copy_buttons import add_pose_copy_buttons
 
 bl_info = {
     "name" : "S.Menu",
@@ -36,16 +37,16 @@ classes = [
     SM_PIE_Add_Node,
     SM_PIE_Add_Node_Call,
     SM_Add_Texture_Node,
-    SM_Add_Texture_Node_Call,
     SM_Add_Shader_Node,
-    SM_Add_Shader_Node_Call,
     SM_PIE_Q_Menu,
     SM_PIE_Q_Menu_Call,
     SM_PIE_A_OM,
     SM_PIE_A_OM_Call,
+    SM_PIE_Q_Node,
+    SM_PIE_Q_Node_Call,
     SM_Prefs,
 ]
-
+"""
 def add_pose_copy_buttons(self, context):
     if get_prefs().enable_pose_buttons is True:
         if bpy.context.mode == 'POSE':
@@ -54,7 +55,7 @@ def add_pose_copy_buttons(self, context):
             row.operator("pose.copy", text="", icon='COPYDOWN')
             row.operator("pose.paste", text="", icon='PASTEDOWN').flipped = False
             row.operator("pose.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-
+"""
 def register():
     for c in classes:
         bpy.utils.register_class(c)

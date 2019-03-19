@@ -1387,9 +1387,6 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("CompositorNodeSwitch"),
         ]
         op_loop_safe_node_val(col, 26, text, icon, e_type)
-        
-
-
 
 class SM_Add_Texture_Node(bpy.types.Menu):
     bl_label = 'S.Menu Add Texture'
@@ -1599,17 +1596,6 @@ class SM_Add_Texture_Node(bpy.types.Menu):
             ("TextureNodeTexNoise"),
         ]
         op_loop_safe_node_val(col, 2, text, icon, e_type)
-#! REMOVE ?!
-class SM_Add_Texture_Node_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_texture_node_call'
-    bl_label = 'S.Menu Texture Add Pie'
-    bl_description = 'Calls pie menu'
-    bl_options = {'REGISTER', 'UNDO'}
-    
-    
-    def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_Add_Texture_Node")
-        return {'FINISHED'}
 
 class SM_PIE_Add_Node_Call(bpy.types.Operator):
 
@@ -1732,17 +1718,6 @@ class SM_Add_Shader_Node(bpy.types.Menu):
             ("ShaderNodeBsdfGlass"),
         ]
         op_loop_safe_node(col, 3, text, icon, e_type)
-#! REMOVE ?!
-class SM_Add_Shader_Node_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_shader_node_call'
-    bl_label = 'S.Menu Shader Add Pie'
-    bl_description = 'Calls pie menu'
-    bl_options = {'REGISTER', 'UNDO'}
-    
-    
-    def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_Add_Shader_Node")
-        return {'FINISHED'}
 
 class SM_PIE_Q_Menu(bpy.types.Menu):
     bl_label = "S.Menu 'Q' Menu"
@@ -2450,7 +2425,6 @@ class SM_PIE_Q_Menu_Call(bpy.types.Operator):
 class SM_PIE_A_OM(bpy.types.Menu):
     bl_label = "S.Menu 'A' Menu"
     
-
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
@@ -2472,4 +2446,39 @@ class SM_PIE_A_OM_Call(bpy.types.Operator):
     
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_PIE_A_OM")
+        return {'FINISHED'}
+
+class SM_PIE_Q_Node(bpy.types.Menu):
+    bl_label = "S.Menu 'Q' Node Menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        pie = layout.menu_pie()
+
+        # 4 - LEFT
+        pie.separator()
+        # 6 - RIGHT
+        pie.separator()
+        # 2 - BOTTOM
+        pie.separator()
+        # 8 - TOP
+        pie.separator()
+        # 7 - TOP - LEFT
+        pie.separator()
+        # 9 - TOP - RIGHT
+        pie.separator()
+        # 1 - BOTTOM - LEFT
+        pie.separator()
+        # 3 - BOTTOM - RIGHT
+        pie.separator()
+
+class SM_PIE_Q_Node_Call(bpy.types.Operator):
+    bl_idname = 'sop.sm_pie_q_node_menu_call'
+    bl_label = "S.Menu 'Q' Node Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.wm.call_menu_pie(name="SM_PIE_Q_Node")
         return {'FINISHED'}
