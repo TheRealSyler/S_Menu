@@ -2455,23 +2455,90 @@ class SM_PIE_Q_Node(bpy.types.Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
+        if bpy.context.area.ui_type == "CompositorNodeTree":
+            # 4 - LEFT
+            pie.separator()
+            # 6 - RIGHT
+            split = pie.split()
+            col = split.column()
+            self.comp_q_01(col)
+            # 2 - BOTTOM
+            pie.separator()
+            # 8 - TOP
+            pie.separator()
+            # 7 - TOP - LEFT
+            pie.separator()
+            # 9 - TOP - RIGHT
+            pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.separator()
+        elif bpy.context.area.ui_type == "ShaderNodeTree":
+            # 4 - LEFT
+            pie.separator()
+            # 6 - RIGHT
+            pie.separator()
+            # 2 - BOTTOM
+            pie.separator()
+            # 8 - TOP
+            split = pie.split()
+            split.label(text="WIP", icon="ERROR")
+            # 7 - TOP - LEFT
+            pie.separator()
+            # 9 - TOP - RIGHT
+            pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.separator()
+        
+        elif bpy.context.area.ui_type == "TextureNodeTree":
+            # 4 - LEFT
+            pie.separator()
+            # 6 - RIGHT
+            pie.separator()
+            # 2 - BOTTOM
+            pie.separator()
+            # 8 - TOP
+            split = pie.split()
+            split.label(text="WIP", icon="ERROR")
+            # 7 - TOP - LEFT
+            pie.separator()
+            # 9 - TOP - RIGHT
+            pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
+            pie.separator()
 
-        # 4 - LEFT
-        pie.separator()
-        # 6 - RIGHT
-        pie.separator()
-        # 2 - BOTTOM
-        pie.separator()
-        # 8 - TOP
-        pie.separator()
-        # 7 - TOP - LEFT
-        pie.separator()
-        # 9 - TOP - RIGHT
-        pie.separator()
-        # 1 - BOTTOM - LEFT
-        pie.separator()
-        # 3 - BOTTOM - RIGHT
-        pie.separator()
+    def comp_q_01(self, col):
+        col.scale_x = 1.2
+        col.scale_y = 1.4
+        
+        snode = bpy.context.space_data
+
+        box = col.box()
+        box.prop(snode, "show_backdrop", text="Backdrop")
+
+        box.active = snode.show_backdrop
+
+
+        box.prop(snode, "backdrop_channels", text="Channels")
+        box.prop(snode, "backdrop_zoom", text="Zoom")
+
+        box.prop(snode, "backdrop_offset", text="Offset")
+
+        box.separator()
+
+        box.operator("node.backimage_move", text="Move")
+        box.operator("node.backimage_fit", text="Fit")
+        '''
+        edv = box.operator("wm.context_modal_mouse",text="Adjust Focal Length", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.01
+        edv.data_path_iter = "selected_editable_objects"
+        edv.data_path_item = "data.lens"
+        '''
 
 class SM_PIE_Q_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_node_menu_call'

@@ -15,6 +15,7 @@ from . ui.pie_menus import (
     SM_PIE_Q_Node,
     SM_PIE_Q_Node_Call,
 )
+from . operators.comp_node_adjust_view_modal import SM_Modal_adjust_view
 
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -45,17 +46,9 @@ classes = [
     SM_PIE_Q_Node,
     SM_PIE_Q_Node_Call,
     SM_Prefs,
+    SM_Modal_adjust_view,
 ]
-"""
-def add_pose_copy_buttons(self, context):
-    if get_prefs().enable_pose_buttons is True:
-        if bpy.context.mode == 'POSE':
-            row = self.layout.row(align=True)
-            row.separator()
-            row.operator("pose.copy", text="", icon='COPYDOWN')
-            row.operator("pose.paste", text="", icon='PASTEDOWN').flipped = False
-            row.operator("pose.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-"""
+
 def register():
     for c in classes:
         bpy.utils.register_class(c)

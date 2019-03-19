@@ -62,6 +62,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     bl_idname = get_addon_name()
     
     tabs = [
+        ("LIST", "Menu List", ""),
         ("ADD", "Add", ""),
         ("QMENU", "Q Menu", ""),
         ("UTILS", "Utils", ""),
@@ -118,6 +119,10 @@ class SM_Prefs(bpy.types.AddonPreferences):
     )
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
+    q_sub_tabs: EnumProperty(name="Q_sub_Tab", items=q_sub_tabs)
+
+    collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
+    collapse_list_node: BoolProperty(name="Node:", default=False)
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
@@ -132,8 +137,11 @@ class SM_Prefs(bpy.types.AddonPreferences):
         row = col.row()
         row.prop(self, "main_tabs", expand=True)
 
-        box = col.box()
         
+        
+        if self.main_tabs == "LIST":
+            self.List_tab(context, col)
+        box = col.box()
         if self.main_tabs == "ADD":
             self.add_main_tab(context, box)
         if self.main_tabs == "QMENU":
@@ -141,6 +149,28 @@ class SM_Prefs(bpy.types.AddonPreferences):
         if self.main_tabs == "UTILS":
             self.utils_tab(context, box)
             
+    def List_tab(self, context, col):
+        
+        sub = col.box()
+        if self.collapse_list_object_mode is True:
+            icon = "TRIA_RIGHT"
+        else:
+            icon = "TRIA_DOWN"
+        sub.prop(self,"collapse_list_object_mode", icon=icon)
+        if self.collapse_list_object_mode is False:
+            self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Add_Call.bl_idname)
+            self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
+            self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
+            
+        sub = col.box()
+        if self.collapse_list_node is True:
+            icon = "TRIA_RIGHT"
+        else:
+            icon = "TRIA_DOWN"
+        sub.prop(self,"collapse_list_node", icon=icon)
+        if self.collapse_list_node is False:
+            self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
+            self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
 
     def add_main_tab(self, context, col):
         
@@ -157,9 +187,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
         row = col.row()
         row.prop(self, "q_sub_tabs", expand=True)
         
-        if self.add_sub_tabs == "OBJECT":
+        if self.q_sub_tabs == "OBJECT":
             self.q_sub_object(context, col)
-        elif self.add_sub_tabs == "NODE":
+        elif self.q_sub_tabs == "NODE":
             self.q_sub_node(context, col)
                 
     def add_sub_object(self, context ,col):
@@ -196,7 +226,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
     
     def utils_tab(self, context, col):
-        col.label(text="Options:")
+        col.label(text="General Options:")
         col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
         col.label(text="Keymaps:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
