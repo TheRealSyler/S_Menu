@@ -45,6 +45,7 @@ def op_loop_safe_node_val(col, num, text, icon, type):
         op.type = type[index]
         op.use_transform = True
 
+
 def spacer(col, num):
     for i in range(0, num):
         col.label(text="")
@@ -506,8 +507,8 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         if bpy.context.area.ui_type == "CompositorNodeTree":
             # 4 - LEFT
             split = pie.split()
-            b = split.column(align=True)
-            self.comp_node_utils(b)
+            b = split.column_flow(columns=2, align=True)
+            self.C9(b)
             # 6 - RIGHT
             split = pie.split()
             b = split.column(align=True)
@@ -529,7 +530,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             # 7 - TOP - LEFT
             split = pie.split()
             b = split.column(align=True)
-            b.label(text="                            ")
+            b.label(text="                                   ")
             b = split.column(align=True)
             self.comp_menu_6(b)
             b = split.column(align=True)
@@ -1018,8 +1019,8 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
-            (get_icon("Reroute_icon", "main")),
-            (get_icon("Reroute_icon", "main")),
+            (get_icon("tex_icon", "main")),
+            (get_icon("Reroute_icon", "main")),  
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
@@ -1078,7 +1079,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
     def comp_menu_2(self, col):
         col.scale_x = 1
         col.scale_y = 1.2
-        spacer(col, 0)
+        spacer(col, 3)
 
         text = [
             ("Alpha Over"),
@@ -1206,11 +1207,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         col.scale_y = 1.2
         
         text = [
-            ("Map Range"),
             ("Map Value"),
             ("Normal"),
             ("Normalize"),
             ("Vector Curve"),
+            ("Map Range"),
             ("Displace"),
         ]
         icon = [
@@ -1222,11 +1223,11 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             (get_icon("Reroute_icon", "main")),
         ]
         e_type = [
-            ("CompositorNodeMapRange"),
             ("CompositorNodeMapValue"),
             ("CompositorNodeNormal"),
             ("CompositorNodeNormalize"),
             ("CompositorNodeCurveVec"),
+            ("CompositorNodeMapRange"),
             ("CompositorNodeDisplace"),
         ]
         op_loop_safe_node_val(col, 6, text, icon, e_type)
@@ -1293,6 +1294,102 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         ]
         op_loop_safe_node_val(col, 6, text, icon, e_type)
         spacer(col, 14)
+
+    def C9(self, col):
+        col.scale_x = 1.81
+        col.scale_y = 1.15
+        text = [
+            ("Alpha Convert"),
+            ("Combine HSVA"),
+            ("Combine RGBA"),
+            ("Combine YCbCrA"),
+            ("Combine YUVA"),
+            ("Id Mask"),
+            ("RGB To BW"),
+            ("Separate HSVA"),
+            ("Separate RGBA"),
+            ("Separate YCbCrA"),
+            ("Separate YUVA"),
+            ("Set Alpha"),
+            ("Switch View"),
+            ("Viewer"),
+            ("Math"),
+            ("Color Ramp"),
+            ("Value"),
+            ("RGB Curve"),
+            ("Mask"),
+            ("Mix"),
+            ("Glare"),
+            ("Sun Beams"),
+            ("Lens Distortion"),
+            ("Hue Saturation"),
+            ("Color Input"),
+            ("Split Viewer"),
+            ("Switch"),
+        ]
+        icon = [
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")), 
+            (get_icon("Math_icon", "main")),  
+            (get_icon("Color_Ramp_icon", "main")),
+            (get_icon("Value_icon", "main")),
+            (get_icon("RGB_C_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Mix_Color_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Hue_icon", "main")),
+            (get_icon("RGB_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+            (get_icon("Reroute_icon", "main")),
+        ]
+        e_type = [
+            ("CompositorNodePremulKey"),
+            ("CompositorNodeCombHSVA"),
+            ("CompositorNodeCombRGBA"),
+            ("CompositorNodeCombYCCA"),
+            ("CompositorNodeCombYUVA"),
+            ("CompositorNodeIDMask"),
+            ("CompositorNodeRGBToBW"),
+            ("CompositorNodeSepHSVA"),
+            ("CompositorNodeSepRGBA"),
+            ("CompositorNodeSepYCCA"),
+            ("CompositorNodeSepYUVA"),
+            ("CompositorNodeSetAlpha"),
+            ("CompositorNodeSwitchView"),
+            
+            ("CompositorNodeViewer"),
+            ("CompositorNodeMath"),
+            ("CompositorNodeValToRGB"),
+            ("CompositorNodeValue"),
+            ("CompositorNodeCurveRGB"),
+            ("CompositorNodeMask"),
+            ("CompositorNodeMixRGB"),
+            ("CompositorNodeGlare"),
+            ("CompositorNodeSunBeams"),
+            ("CompositorNodeLensdist"),
+            ("CompositorNodeHueSat"),
+            ("CompositorNodeRGB"),
+            ("CompositorNodeSplitViewer"),
+            ("CompositorNodeSwitch"),
+        ]
+        op_loop_safe_node_val(col, 26, text, icon, e_type)
+        
+
+
 
 class SM_Add_Texture_Node(bpy.types.Menu):
     bl_label = 'S.Menu Add Texture'
