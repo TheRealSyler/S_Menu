@@ -15,7 +15,7 @@ from . ui.pie_menus import (
     SM_PIE_Q_Node,
     SM_PIE_Q_Node_Call,
 )
-from . operators.comp_node_adjust_view_modal import SM_Modal_adjust_view
+from . operators.comp_node_change_channel import SM_Modal_change_channel
 
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -46,7 +46,7 @@ classes = [
     SM_PIE_Q_Node,
     SM_PIE_Q_Node_Call,
     SM_Prefs,
-    SM_Modal_adjust_view,
+    SM_Modal_change_channel,
 ]
 
 def register():

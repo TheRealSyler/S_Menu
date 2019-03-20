@@ -54,7 +54,7 @@ def remove_hotkey():
 def get_addon_name():
     return os.path.basename(os.path.dirname(os.path.realpath(__file__)))
 
-def get_preferences():
+def get_prefs():
     return bpy.context.preferences.addons[get_addon_name()].preferences
 
 # Preferences            
@@ -76,7 +76,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         ("OBJECT", "Object Mode Menu", ""),
         ("NODE", "Node Menu", ""),
     ]
-
+    #§ Enable Props
     enable_qblocker: BoolProperty(
         name="QBlocker",
         default=True
@@ -117,12 +117,14 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Box Cutter",
         default=True
     )
+    #§ Tab Props
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
     q_sub_tabs: EnumProperty(name="Q_sub_Tab", items=q_sub_tabs)
-
+    #§ UI Bool Props
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
     collapse_list_node: BoolProperty(name="Node:", default=False)
+  
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
