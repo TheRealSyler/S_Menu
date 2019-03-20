@@ -1,11 +1,15 @@
 import bpy
 
+from bpy.props import IntProperty
 
-class SM_Modal_change_channel(bpy.types.Operator):
-    bl_idname = 'sop.sm_modal_change_channel'
+class SM_Modal_adjust_view(bpy.types.Operator):
+    bl_idname = 'sop.sm_modal_adjust_view'
     bl_label = "S.Menu Change Channel"
     bl_description = 'Calls Change Channel'
     bl_options = {'REGISTER', 'UNDO', "INTERNAL"}
+
+    first_mouse_x: IntProperty()
+    first_mouse_y: IntProperty()
 
     def get_next_backdrop_channel(self, reverse):
         snode = bpy.context.space_data
@@ -56,15 +60,39 @@ class SM_Modal_change_channel(bpy.types.Operator):
 
     def modal(self, context, event):
         snode = bpy.context.space_data
-        bpy.context.area.header_text_set("  Channel: " + self.get_channel_text() + "                  Use the Mousewheel to change Channel")
+        bpy.context.area.header_text_set("{} {} {} {}".format(
+            "ZOOM",
+            "",
+            "",
+            "a"
+        ))
         # -------------------------------------------------------------#     
         if event.type == 'WHEELUPMOUSE':
-            snode.backdrop_channels = self.get_next_backdrop_channel(False) 
-            
-            
-        if event.type == 'WHEELDOWNMOUSE':
-            snode.backdrop_channels = self.get_next_backdrop_channel(True)
+            if event.ctrl:
+                snode.backdrop_channels = self.get_next_backdrop_channel(False)
+            else:
+                if event.shift:
+                    snode.backdrop_zoom = snode.backdrop_zoom + 0.01
+                else:
+                    snode.backdrop_zoom = snode.backdrop_zoom + 0.07
 
+        if event.type == 'WHEELDOWNMOUSE':
+            if event.ctrl:
+                snode.backdrop_channels = self.get_next_backdrop_channel(False) 
+            else:
+                if event.shift:     
+                    snode.backdrop_zoom = snode.backdrop_zoom - 0.01
+                else:    
+                    snode.backdrop_zoom = snode.backdrop_zoom - 0.07
+
+
+        if event.type == 'MOUSEMOVE' :
+            delta_x = self.first_mouse_x - event.mouse_x
+            snode.backdrop_offset[0] = delta_x * -1
+
+            delta_y = self.first_mouse_y - event.mouse_y
+            snode.backdrop_offset[1] = delta_y * -1
+        
         # -------------------------------------------------------------#   
         #+ Finish/Cancel Modal        
         elif event.type == 'LEFTMOUSE':
@@ -78,7 +106,8 @@ class SM_Modal_change_channel(bpy.types.Operator):
         return {'RUNNING_MODAL'}
     
     def invoke(self, context, event):
-
+        self.first_mouse_x = event.mouse_x
+        self.first_mouse_y = event.mouse_y
 
         self.mouse_path = []
         context.window_manager.modal_handler_add(self)

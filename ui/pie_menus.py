@@ -1,5 +1,7 @@
 import bpy, os
 from . get_icon import get_icon
+
+
 # todo add Extra Object (Curve) support
 
 #+-----------------------------------------------------------------------------------------------------+#
@@ -2523,8 +2525,9 @@ class SM_PIE_Q_Node(bpy.types.Menu):
 
         box.active = snode.show_backdrop
 
-        box.prop(snode, "backdrop_zoom", text="Zoom")
 
+        box.prop(snode, "backdrop_zoom", text="Zoom")
+        box.operator("sop.sm_modal_adjust_view", text="Zoom")
         box.operator("sop.sm_modal_change_channel", text="Change Chanel")
 
         box.operator("node.backimage_move", text="Move")
