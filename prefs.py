@@ -6,6 +6,7 @@ from . ui.pie_menus import (
     SM_PIE_Q_Menu_Call, 
     SM_PIE_A_OM_Call, 
     SM_PIE_Q_Node_Call,
+    SM_PIE_A_NODE_Call,
 )
 # todo create enable all options function for each menu
 
@@ -39,6 +40,9 @@ def add_hotkey():
     addon_keymaps.append((km, kmi))
 
     kmi = km.keymap_items.new(SM_PIE_Q_Node_Call.bl_idname, 'Q', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
+
+    kmi = km.keymap_items.new(SM_PIE_A_NODE_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
    
 def remove_hotkey():

@@ -14,6 +14,8 @@ from . ui.pie_menus import (
     SM_PIE_A_OM_Call,
     SM_PIE_Q_Node,
     SM_PIE_Q_Node_Call,
+    SM_PIE_A_NODE,
+    SM_PIE_A_NODE_Call,
 )
 from . operators.comp_adjust_view import SM_Modal_adjust_view
 
@@ -45,6 +47,8 @@ classes = [
     SM_PIE_A_OM_Call,
     SM_PIE_Q_Node,
     SM_PIE_Q_Node_Call,
+    SM_PIE_A_NODE,
+    SM_PIE_A_NODE_Call,
     SM_Prefs,
     SM_Modal_adjust_view,
 ]

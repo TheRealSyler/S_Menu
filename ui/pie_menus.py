@@ -2450,6 +2450,40 @@ class SM_PIE_A_OM_Call(bpy.types.Operator):
         bpy.ops.wm.call_menu_pie(name="SM_PIE_A_OM")
         return {'FINISHED'}
 
+class SM_PIE_A_NODE(bpy.types.Menu):
+    bl_label = "S.Menu 'A' Node Menu"
+    
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+        
+        # 4 - LEFT
+        pie.operator("node.select_all",text="Select All", icon_value=get_icon("O_Selcet_icon", "main")).action = 'SELECT'
+        # 6 - RIGHT
+        pie.operator("node.select_all",text="Deselect All", icon_value=get_icon("O_DeSelcet_icon", "main")).action = 'DESELECT'
+        # 2 - BOTTOM
+        pie.operator("wm.tool_set_by_name",text="Annotate", icon="GREASEPENCIL").name = 'Annotate'
+        # 8 - TOP
+        pie.operator("node.select_all",text="Invert Selection", icon="ARROW_LEFTRIGHT").action = 'INVERT'
+        # 7 - TOP - LEFT
+        pie.operator("wm.tool_set_by_name",text="Select", icon="RESTRICT_SELECT_OFF").name = 'Select'
+        # 9 - TOP - RIGHT
+        pie.operator("wm.tool_set_by_name",text="Annotate Eraser", icon="BRUSH_DATA").name = 'Annotate Eraser'
+        # 1 - BOTTOM - LEFT
+        pie.operator("wm.tool_set_by_name",text="Select Box", icon="SHADING_BBOX").name = 'Select Box'
+        # 3 - BOTTOM - RIGHT
+        pie.operator("wm.tool_set_by_name",text="Links Cut", icon="SCULPTMODE_HLT").name = 'Links Cut'
+            
+class SM_PIE_A_NODE_Call(bpy.types.Operator):
+    bl_idname = 'sop.sm_pie_a_node_menu_call'
+    bl_label = "S.Menu 'A' Node Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def execute(self, context):
+        bpy.ops.wm.call_menu_pie(name="SM_PIE_A_NODE")
+        return {'FINISHED'}
+
 class SM_PIE_Q_Node(bpy.types.Menu):
     bl_label = "S.Menu 'Q' Node Menu"
 
@@ -2611,8 +2645,6 @@ class SM_PIE_Q_Node(bpy.types.Menu):
         spacer(col, 1)
      
         col.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
-
-
 
 class SM_PIE_Q_Node_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_node_menu_call'
