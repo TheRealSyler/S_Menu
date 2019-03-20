@@ -127,7 +127,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     q_sub_tabs: EnumProperty(name="Q_sub_Tab", items=q_sub_tabs)
     #§ UI Bool Props
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
-    collapse_list_node: BoolProperty(name="Node:", default=False)
+    collapse_list_node: BoolProperty(name="Nodes:", default=False)
     #§ comp_adjust_view Prefs
     SM_Modal_adjust_view_suppress_move: BoolProperty(name="Node:", default=False)
 
@@ -178,6 +178,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         if self.collapse_list_node is False:
             self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
+            self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
 
     def add_main_tab(self, context, col):
         
@@ -214,7 +215,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
      
     def add_sub_node(self, context ,col):
         col.label(text="Keymap:")
-
+        
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
 
     def q_sub_object(self, context, col):
@@ -237,3 +238,4 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
         col.label(text="Keymaps:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
+        self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
