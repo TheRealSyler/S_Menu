@@ -1,6 +1,7 @@
 import bpy
 
-from bpy.props import IntProperty
+from .. prefs import get_prefs
+from bpy.props import IntProperty , FloatVectorProperty
 
 class SM_Modal_adjust_view(bpy.types.Operator):
     bl_idname = 'sop.sm_modal_adjust_view'
@@ -10,6 +11,8 @@ class SM_Modal_adjust_view(bpy.types.Operator):
 
     first_mouse_x: IntProperty()
     first_mouse_y: IntProperty()
+    initial_backdrop_offset: FloatVectorProperty(size=2)
+    
 
     def get_next_backdrop_channel(self, reverse):
         snode = bpy.context.space_data
@@ -60,16 +63,25 @@ class SM_Modal_adjust_view(bpy.types.Operator):
 
     def modal(self, context, event):
         snode = bpy.context.space_data
-        bpy.context.area.header_text_set("{} {} {} {}".format(
-            "ZOOM",
-            "",
-            "",
-            "a"
+        
+        bpy.context.area.header_text_set("       {} {}       {} {}       {} {} {} {} {}       {} {}       {}".format(
+            "Zoom (Wheel Up/Down + Shift for more Precision):",
+            round(snode.backdrop_zoom,2),
+            "Channel (Ctrl Wheel Up/Down):",
+            self.get_channel_text(),
+            "Offset",
+            "X:",
+            snode.backdrop_offset[0],
+            "Y:",
+            snode.backdrop_offset[1],
+            "Suppress Movement (S):",
+            get_prefs().SM_Modal_adjust_view_suppress_move,
+            "Exit (LMB, RMG Or Esc)",
         ))
         # -------------------------------------------------------------#     
         if event.type == 'WHEELUPMOUSE':
             if event.ctrl:
-                snode.backdrop_channels = self.get_next_backdrop_channel(False)
+                snode.backdrop_channels = self.get_next_backdrop_channel(True)
             else:
                 if event.shift:
                     snode.backdrop_zoom = snode.backdrop_zoom + 0.01
@@ -87,12 +99,23 @@ class SM_Modal_adjust_view(bpy.types.Operator):
 
 
         if event.type == 'MOUSEMOVE' :
-            delta_x = self.first_mouse_x - event.mouse_x
-            snode.backdrop_offset[0] = delta_x * -1
+            if get_prefs().SM_Modal_adjust_view_suppress_move is False:
+                delta_x = self.first_mouse_x - event.mouse_x
+                snode.backdrop_offset[0] = delta_x * -1
 
-            delta_y = self.first_mouse_y - event.mouse_y
-            snode.backdrop_offset[1] = delta_y * -1
+                delta_y = self.first_mouse_y - event.mouse_y
+                snode.backdrop_offset[1] = delta_y * -1
         
+        if event.type == 'S' and event.value == "PRESS":
+            if get_prefs().SM_Modal_adjust_view_suppress_move is True:
+                get_prefs().SM_Modal_adjust_view_suppress_move = False
+            else:
+                get_prefs().SM_Modal_adjust_view_suppress_move = True
+                
+                snode.backdrop_offset[0] = self.initial_backdrop_offset[0]
+                snode.backdrop_offset[1] = self.initial_backdrop_offset[1]
+
+
         # -------------------------------------------------------------#   
         #+ Finish/Cancel Modal        
         elif event.type == 'LEFTMOUSE':
@@ -108,6 +131,7 @@ class SM_Modal_adjust_view(bpy.types.Operator):
     def invoke(self, context, event):
         self.first_mouse_x = event.mouse_x
         self.first_mouse_y = event.mouse_y
+        self.initial_backdrop_offset = bpy.context.space_data.backdrop_offset
 
         self.mouse_path = []
         context.window_manager.modal_handler_add(self)

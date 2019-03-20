@@ -2459,23 +2459,33 @@ class SM_PIE_Q_Node(bpy.types.Menu):
         pie = layout.menu_pie()
         if bpy.context.area.ui_type == "CompositorNodeTree":
             # 4 - LEFT
-            pie.separator()
+            split = pie.split()
+            col = split.column()
+            self.comp_q_04(col)
             # 6 - RIGHT
             split = pie.split()
             col = split.column()
             self.comp_q_01(col)
             # 2 - BOTTOM
-            pie.separator()
+            split = pie.split()
+            col = split.column()
+            self.comp_q_02(col)
             # 8 - TOP
-            pie.separator()
+            split = pie.split()
+            col = split.column()
+            self.comp_q_03(col)
             # 7 - TOP - LEFT
             pie.separator()
             # 9 - TOP - RIGHT
             pie.separator()
             # 1 - BOTTOM - LEFT
-            pie.separator()
+            split = pie.split()
+            col = split.column()
+            self.comp_q_06(col)
             # 3 - BOTTOM - RIGHT
-            pie.separator()
+            split = pie.split()
+            col = split.column()
+            self.comp_q_05(col)
         elif bpy.context.area.ui_type == "ShaderNodeTree":
             # 4 - LEFT
             pie.separator()
@@ -2515,23 +2525,93 @@ class SM_PIE_Q_Node(bpy.types.Menu):
             pie.separator()
 
     def comp_q_01(self, col):
-        col.scale_x = 1.2
-        col.scale_y = 1.4
+        col.scale_x = 1.1
+        col.scale_y = 2
         
         snode = bpy.context.space_data
 
         box = col.box()
-        box.prop(snode, "show_backdrop", text="Backdrop")
+        box.prop(snode, "show_backdrop", text="Backdrop", emboss=False)
 
         box.active = snode.show_backdrop
 
+        box.operator("sop.sm_modal_adjust_view", text="Adjust Backdrop", icon="PREFERENCES")
 
-        box.prop(snode, "backdrop_zoom", text="Zoom")
-        box.operator("sop.sm_modal_adjust_view", text="Zoom")
-        box.operator("sop.sm_modal_change_channel", text="Change Chanel")
+        box.operator("node.backimage_fit", text="Fit Backdrop", icon="OBJECT_DATA")
+    
+    def comp_q_02(self, col):
+        col.scale_x = 1.1
+        col.scale_y = 1.2
+        spacer(col, 1)
 
-        box.operator("node.backimage_move", text="Move")
-        box.operator("node.backimage_fit", text="Fit Backdrop")
+        snode = bpy.context.space_data
+        snode_id = snode.id
+        tree = snode.node_tree
+        box = col.box()
+        
+        box.label(text="Performance:")
+        box = box.column()
+        if snode_id:
+            box.prop(snode_id, "use_nodes")
+        box.prop(snode, "use_auto_render")
+        box.prop(tree, "render_quality", text="Render")
+        box.prop(tree, "edit_quality", text="Edit")
+        box.prop(tree, "chunk_size")
+
+        box = box.column()
+        box.prop(tree, "use_opencl")
+        box.prop(tree, "use_groupnode_buffer")
+        box.prop(tree, "use_two_pass")
+        box.prop(tree, "use_viewer_border")
+
+    def comp_q_03(self, col):
+        col.scale_x = 1.1
+        col.scale_y = 1.2
+        
+        node = bpy.context.active_node
+
+        box = col.box()
+        
+
+        box.label(text="Node:")
+        box.prop(node, "name")
+        box.prop(node, "label")
+
+        box.prop(node, "use_custom_color", text="Color", emboss=False)
+        sub = box.column()
+        sub.enabled = node.use_custom_color
+        sub.prop(node, "color", text="")
+        sub.operator("node.node_copy_color", text="", icon='COPYDOWN')#? useless
+    
+    def comp_q_04(self, col):
+        col.scale_x = 1.1
+        col.scale_y = 1.6
+
+        box = col.box()
+
+        box.operator("node.toolbar", text="Toggle Shelf", icon='MENU_PANEL')
+        box.operator("screen.screen_full_area", text="Toggle Maximize Area", icon='WINDOW')
+        box.operator("node.properties", text="Toggle Sidebar", icon='MENU_PANEL')
+
+    def comp_q_05(self, col):
+        col.scale_x = 2
+        col.scale_y = 1.8
+        spacer(col, 1)
+        #box = col.box()
+        tool_settings = bpy.context.tool_settings
+        row = col.row(align=True)
+        row.prop(tool_settings, "use_snap", text="")
+        row.prop(tool_settings, "snap_node_element", icon_only=True)
+        if tool_settings.snap_node_element != 'GRID':
+            row.prop(tool_settings, "snap_target", text="")
+
+    def comp_q_06(self, col):
+        col.scale_x = 2
+        col.scale_y = 1.8
+        spacer(col, 1)
+     
+        col.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
+
 
 
 class SM_PIE_Q_Node_Call(bpy.types.Operator):
