@@ -26,7 +26,7 @@ from . ui.add_pose_copy_buttons import add_pose_copy_buttons
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
-    "version": (0, 0, 1, 0),
+    "version": (0, 0, 1, 1),
     "description": "Adds Pie Menus",
     "blender" : (2, 80, 0),
     "category" : "3D view"
