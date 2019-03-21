@@ -2615,7 +2615,7 @@ class SM_PIE_Q_Node(bpy.types.Menu):
         sub = box.column()
         sub.enabled = node.use_custom_color
         sub.prop(node, "color", text="")
-        sub.operator("node.node_copy_color", text="", icon='COPYDOWN')#? useless
+        sub.operator("node.node_copy_color", text="", icon='COPYDOWN') #? useless
     
     def comp_q_04(self, col):
         col.scale_x = 1.1

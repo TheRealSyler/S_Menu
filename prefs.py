@@ -132,10 +132,14 @@ class SM_Prefs(bpy.types.AddonPreferences):
     SM_Modal_adjust_view_suppress_move: BoolProperty(name="Node:", default=False)
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
-        keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
+        # keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
+        keymap_item = context.window_manager.keyconfigs.user.keymaps[k_name].keymap_items
         row = layout.row()
+        km = context.window_manager.keyconfigs.user.keymaps[k_name]  # added
+        layout.context_pointer_set("keymap", km)  # added
         row.prop(keymap_item[idname], 'active', text="",full_event=True)
         row.prop(keymap_item[idname], 'type', text=keymap_item[idname].name, full_event=True) 
+
 
     def draw(self, context):
         layout = self.layout
