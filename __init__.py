@@ -19,8 +19,10 @@ from . ui.pie_menus import (
 )
 from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
-from . operators.mesh_history_operator import SM_mesh_history_OP, SM_mesh_history_Props
-
+from . operators.mesh_history_operator import (
+    SM_mesh_history_Props, 
+    SM_mesh_history_make_copy,
+)
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
 from . ui.add_pose_copy_buttons import add_pose_copy_buttons
@@ -55,7 +57,7 @@ classes = [
     SM_Modal_adjust_view,
     SM_mesh_history_panel,
     SM_mesh_history_Props,
-    SM_mesh_history_OP,
+    SM_mesh_history_make_copy,
 ]
 
 def register():
