@@ -5,7 +5,7 @@ from . get_icon import get_icon
 # todo add Extra Object (Curve) support
 
 #+-----------------------------------------------------------------------------------------------------+#
-#? Utils
+#? Utils 
 #+-----------------------------------------------------------------------------------------------------+#
 
 def disabled_button(col, text, icon):
@@ -46,7 +46,6 @@ def op_loop_safe_node_val(col, num, text, icon, type):
         op = col.operator("node.add_node", text=text[index],icon_value=icon[index])
         op.type = type[index]
         op.use_transform = True
-
 
 def spacer(col, num):
     for i in range(0, num):
@@ -2120,8 +2119,8 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         col.scale_y = 1.8
         col = col.row(align=True)
         enum = [
-            ("wm.tool_set_by_name"),
-            ("wm.tool_set_by_name"),
+            ("wm.tool_set_by_id"),
+            ("wm.tool_set_by_id"),
         ]
         text = [
             ("Select Box"),
@@ -2132,8 +2131,8 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             "PIVOT_CURSOR",
         ]
         name = [
-            ("Select Box"),
-            ("Cursor"),
+            ("builtin.select_box"),
+            ("builtin.cursor"),
         ]
         
         if get_prefs().enable_box_cutter is True:
@@ -2462,17 +2461,17 @@ class SM_PIE_A_NODE(bpy.types.Menu):
         # 6 - RIGHT
         pie.operator("node.select_all",text="Deselect All", icon_value=get_icon("O_DeSelcet_icon", "main")).action = 'DESELECT'
         # 2 - BOTTOM
-        pie.operator("wm.tool_set_by_name",text="Annotate", icon="GREASEPENCIL").name = 'Annotate'
+        pie.operator("wm.tool_set_by_id",text="Annotate", icon="GREASEPENCIL").name = 'builtin.annotate'
         # 8 - TOP
         pie.operator("node.select_all",text="Invert Selection", icon="ARROW_LEFTRIGHT").action = 'INVERT'
         # 7 - TOP - LEFT
-        pie.operator("wm.tool_set_by_name",text="Select", icon="RESTRICT_SELECT_OFF").name = 'Select'
+        pie.operator("wm.tool_set_by_id",text="Select", icon="RESTRICT_SELECT_OFF").name = 'builtin.select'
         # 9 - TOP - RIGHT
-        pie.operator("wm.tool_set_by_name",text="Annotate Eraser", icon="BRUSH_DATA").name = 'Annotate Eraser'
+        pie.operator("wm.tool_set_by_id",text="Annotate Eraser", icon="BRUSH_DATA").name = 'builtin.annotate_eraser'
         # 1 - BOTTOM - LEFT
-        pie.operator("wm.tool_set_by_name",text="Select Box", icon="SHADING_BBOX").name = 'Select Box'
+        pie.operator("wm.tool_set_by_id",text="Select Box", icon="SHADING_BBOX").name = 'builtin.select_box'
         # 3 - BOTTOM - RIGHT
-        pie.operator("wm.tool_set_by_name",text="Links Cut", icon="SCULPTMODE_HLT").name = 'Links Cut'
+        pie.operator("wm.tool_set_by_id",text="Links Cut", icon="SCULPTMODE_HLT").name = 'builtin.links_cut'
             
 class SM_PIE_A_NODE_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_a_node_menu_call'

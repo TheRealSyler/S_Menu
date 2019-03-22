@@ -17,7 +17,9 @@ from . ui.pie_menus import (
     SM_PIE_A_NODE,
     SM_PIE_A_NODE_Call,
 )
+from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
+from . operators.mesh_history_operator import SM_mesh_history_OP, SM_mesh_history_Props
 
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -51,6 +53,9 @@ classes = [
     SM_PIE_A_NODE_Call,
     SM_Prefs,
     SM_Modal_adjust_view,
+    SM_mesh_history_panel,
+    SM_mesh_history_Props,
+    SM_mesh_history_OP,
 ]
 
 def register():

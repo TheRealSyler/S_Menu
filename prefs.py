@@ -147,8 +147,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col = layout.column(align=True)
         row = col.row()
         row.prop(self, "main_tabs", expand=True)
-
-        
+  
         
         if self.main_tabs == "LIST":
             self.List_tab(context, col)
