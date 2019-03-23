@@ -16,15 +16,12 @@ from . ui.pie_menus import (
     SM_PIE_Q_Node_Call,
     SM_PIE_A_NODE,
     SM_PIE_A_NODE_Call,
-    SM_PIE_Tab_Menu,
-    SM_PIE_Tab_Menu_Call,
 )
 from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
 from . operators.mesh_history_operator import (
     SM_mesh_history_Props, 
     SM_mesh_history_make_copy,
-    SM_mesh_history_switch_to_edit_mode,
 )
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -61,9 +58,6 @@ classes = [
     SM_mesh_history_panel,
     SM_mesh_history_Props,
     SM_mesh_history_make_copy,
-    SM_mesh_history_switch_to_edit_mode,
-    SM_PIE_Tab_Menu,
-    SM_PIE_Tab_Menu_Call,
 ]
 
 def register():

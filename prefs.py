@@ -7,7 +7,6 @@ from . ui.pie_menus import (
     SM_PIE_A_OM_Call, 
     SM_PIE_Q_Node_Call,
     SM_PIE_A_NODE_Call,
-    SM_PIE_Tab_Menu_Call,
 )
 # todo create enable all options function for each menu
 
@@ -35,9 +34,7 @@ def add_hotkey():
     kmi = km.keymap_items.new(SM_PIE_A_OM_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
     
-    km = kc.keymaps.new(name='Object Non-modal')
-    kmi = km.keymap_items.new(SM_PIE_Tab_Menu_Call.bl_idname, 'TAB', 'PRESS', ctrl=False, shift=False)
-    addon_keymaps.append((km, kmi))
+ 
 
     km = kc.keymaps.new(name='Node Generic', space_type='NODE_EDITOR')
 
@@ -139,7 +136,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
     collapse_list_node: BoolProperty(name="Nodes:", default=False)
     #§ comp_adjust_view Prefs
-    SM_Modal_adjust_view_suppress_move: BoolProperty(name="Node:", default=False)
+    SM_Modal_adjust_view_suppress_move: BoolProperty(default=False)
+    #§ Mesh History Prefs
+    SM_MH_use_modifiers: BoolProperty(name="", default=True)
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         # keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
@@ -181,7 +180,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
             self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Add_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
-            self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
          
         sub = col.box()
         if self.collapse_list_node is True:
@@ -224,7 +222,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Keymaps:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
-        self.add_keymap_to_ui(context, col, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
         
 
     def add_sub_object(self, context ,col):
@@ -259,4 +256,3 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Options:")
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
-    
