@@ -20,16 +20,47 @@ def get_last_index(parent):
                 continue
     return index
 
+def get_object_at_index(parent, index):
+
+    for ob in bpy.data.objects:
+        
+        if ob.SM_MH_Parent is None:
+            continue
+        else:
+            if ob.SM_MH_Parent == parent:
+                if index == ob.SM_MH_index:
+                    return ob
+            else:
+                continue
+    return None
+
 #+-----------------------------------------------------------------------------------------------------+#
 #? Update 
 #+-----------------------------------------------------------------------------------------------------+#
 
 def update_current_index(self, context):
     print ("update")
+    C = bpy.context
+    active_object = C.active_object
     if self.SM_MH_current_index > get_last_index(context.active_object):
         self.SM_MH_current_index = get_last_index(context.active_object)
     else:
+        
         print("else")
+        for ob in bpy.data.objects:
+            
+            if ob.SM_MH_Parent is None:
+                continue
+            else:
+                
+                if ob.SM_MH_Parent == active_object:
+                    if self.SM_MH_current_index == ob.SM_MH_index:
+                        print (active_object.data)
+                        active_object.data = ob.data
+                        print (active_object.data)
+                        continue
+             
+            
 
 
 
@@ -76,6 +107,25 @@ class SM_mesh_history_make_copy(bpy.types.Operator):
         return True
     
 
+    def copy_object(self, context, object_to_copy, is_first):
+        #create copy 
+        obj_copy = object_to_copy.copy()
+        #set parent
+        obj_copy.SM_MH_Parent = object_to_copy
+        #copy data
+        obj_copy.data = object_to_copy.data.copy()
+        #set index
+        if is_first is False:
+            obj_copy.SM_MH_index = get_last_index(object_to_copy) + 1
+        else:
+            obj_copy.SM_MH_index = 0
+        # make fake user
+        obj_copy.use_fake_user = True
+    def set_first_copy(self, context, active_object):
+        ob = get_object_at_index(active_object, 0)
+        ob.data = active_object.data
+
+
     def execute(self, context):
         #Create Bpy.context Variable
         C = bpy.context
@@ -88,11 +138,28 @@ class SM_mesh_history_make_copy(bpy.types.Operator):
             active_object.SM_MH_Parent = active_object
             active_object.SM_MH_index = -1
             
-            initial_copy = active_object.copy()
-            initial_copy.SM_MH_index = 0
-         
-        obj_copy = active_object.copy()
-        obj_copy.SM_MH_Parent = active_object
-        obj_copy.SM_MH_index = get_last_index(active_object) + 1
+            self.copy_object(context, active_object, True)
+        else:
+            self.set_first_copy(context, active_object)
+            self.copy_object(context, active_object, False)
+     
+        return {'FINISHED'}
 
+class SM_mesh_history_switch_to_edit_mode(bpy.types.Operator):
+    """S.Menu Mesh History Switch to Edit Mode"""
+    bl_idname = 'sop.sm_mesh_switch_to_edit_mode'
+    bl_label = "Switch to Edit Mode"
+    bl_options = {'REGISTER', 'UNDO', "INTERNAL"}
+
+    def execute(self, context):
+        #Create Bpy.context Variable
+        C = bpy.context
+        active_object = C.active_object
+        
+        try:
+            active_object.SM_MH_current_index = 0
+            bpy.ops.object.mode_set(mode='EDIT')
+        except:
+            bpy.ops.object.mode_set(mode='EDIT')
+        
         return {'FINISHED'}

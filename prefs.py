@@ -7,6 +7,7 @@ from . ui.pie_menus import (
     SM_PIE_A_OM_Call, 
     SM_PIE_Q_Node_Call,
     SM_PIE_A_NODE_Call,
+    SM_PIE_Tab_Menu_Call,
 )
 # todo create enable all options function for each menu
 
@@ -34,6 +35,10 @@ def add_hotkey():
     kmi = km.keymap_items.new(SM_PIE_A_OM_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
     
+    km = kc.keymaps.new(name='Object Non-modal')
+    kmi = km.keymap_items.new(SM_PIE_Tab_Menu_Call.bl_idname, 'TAB', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
+
     km = kc.keymaps.new(name='Node Generic', space_type='NODE_EDITOR')
 
     kmi = km.keymap_items.new(SM_PIE_Add_Node_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=True)
@@ -61,6 +66,7 @@ def get_addon_name():
 def get_prefs():
     return bpy.context.preferences.addons[get_addon_name()].preferences
 
+
 # Preferences            
 class SM_Prefs(bpy.types.AddonPreferences):
     bl_idname = get_addon_name()
@@ -80,6 +86,13 @@ class SM_Prefs(bpy.types.AddonPreferences):
         ("OBJECT", "Object Mode Menu", ""),
         ("NODE", "Node Menu", ""),
     ]
+    
+
+    #§ Tab Props
+    main_tabs: EnumProperty(name="Main_Tab", items=tabs)
+    add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
+    q_sub_tabs: EnumProperty(name="Q_sub_Tab", items=q_sub_tabs)
+
     #§ Enable Props
     enable_qblocker: BoolProperty(
         name="QBlocker",
@@ -121,10 +134,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Box Cutter",
         default=True
     )
-    #§ Tab Props
-    main_tabs: EnumProperty(name="Main_Tab", items=tabs)
-    add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
-    q_sub_tabs: EnumProperty(name="Q_sub_Tab", items=q_sub_tabs)
+    
     #§ UI Bool Props
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
     collapse_list_node: BoolProperty(name="Nodes:", default=False)
@@ -157,7 +167,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         if self.main_tabs == "QMENU":
             self.q_main_tab(context, box)
         if self.main_tabs == "UTILS":
-            self.utils_tab(context, box)
+            self.utils_main_tab(context, box)
             
     def List_tab(self, context, col):
         
@@ -171,7 +181,8 @@ class SM_Prefs(bpy.types.AddonPreferences):
             self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Add_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
-            
+            self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
+         
         sub = col.box()
         if self.collapse_list_node is True:
             icon = "TRIA_RIGHT"
@@ -182,6 +193,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
             self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
             self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
+
+    
+            
 
     def add_main_tab(self, context, col):
         
@@ -202,7 +216,17 @@ class SM_Prefs(bpy.types.AddonPreferences):
             self.q_sub_object(context, col)
         elif self.q_sub_tabs == "NODE":
             self.q_sub_node(context, col)
-                
+
+    def utils_main_tab(self, context, col):
+        
+        col.label(text="General Options:")
+        col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
+        col.label(text="Keymaps:")
+        self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
+        self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
+        self.add_keymap_to_ui(context, col, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
+        
+
     def add_sub_object(self, context ,col):
         col.label(text="Options:")
         col.label(text="Please Disable if not installed")
@@ -236,9 +260,3 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
     
-    def utils_tab(self, context, col):
-        col.label(text="General Options:")
-        col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
-        col.label(text="Keymaps:")
-        self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
-        self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
