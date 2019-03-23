@@ -141,7 +141,19 @@ class SM_Prefs(bpy.types.AddonPreferences):
     #§ comp_adjust_view Prefs
     SM_Modal_adjust_view_suppress_move: BoolProperty(default=False)
     #§ SM_MH Prefs
-    SM_MH_help: BoolProperty(name="Help", default=False)
+    show_delete_instances: BoolProperty(name="Delete All Instances", default=False)
+    sm_mh_del_inst = [
+        ("NO", "No", ""),
+        ("YES", "Yes", ""),
+    ]
+    sm_mh_del_inst: EnumProperty(name="Q_sub_Tab", items=sm_mh_del_inst)
+    ''' later ? , IntProperty
+    SM_MH_auto_instance_inerval: IntProperty(
+        name="Auto Instance Interval", 
+        default=2,
+        min=2,
+        description="Auto Instance Interval (In seconds)"
+    )'''
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         # keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
@@ -261,4 +273,3 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Options:")
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
-    

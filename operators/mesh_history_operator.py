@@ -1,5 +1,5 @@
 import bpy 
-
+from .. prefs import get_prefs
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils 
 #+-----------------------------------------------------------------------------------------------------+#
@@ -33,23 +33,58 @@ def get_object_at_index(parent, index):
                 continue
     return None
 
+def copy_object(object_to_copy, is_first):
+    #create copy 
+    obj_copy = object_to_copy.copy()
+    #set parent
+    obj_copy.SM_MH_Parent = object_to_copy
+    #copy data
+    obj_copy.data = object_to_copy.data.copy()
+    #set index
+    if is_first is False:
+        obj_copy.SM_MH_index = get_last_index(object_to_copy) + 1
+    else:
+        obj_copy.SM_MH_index = 0
+    # make fake user
+    obj_copy.use_fake_user = True
+    #set is main status to false
+    obj_copy.SM_MH_is_main_status = False
+    obj_copy.SM_MH_auto_instance_status = False
+    
+def set_first_copy(active_object):
+    ob = get_object_at_index(active_object, 0)
+    ob.data = active_object.data
 #+-----------------------------------------------------------------------------------------------------+#
 #? Update 
 #+-----------------------------------------------------------------------------------------------------+#
 
-# todo modifiers
-# todo animation memery
-# todo help
-# todo delete instances
-# todo auto instance
-# todo materials ?!
+#  todo modifiers
+#  todo animation memery
+#  todo help
+#//     delete instances
+#? todo auto instance maybe later?
+#? todo materials ?!
+
+#§ auto instance Function maybe later?
+
+
+'''
+def SM_MH_Auto_Instance():
+    print("SM_MH_Auto_Instance")
+    for ob in bpy.data.objects:
+        if ob.SM_MH_auto_instance_status is True:
+            print (ob)
+            copy_object(ob, False)
+            #set_first_copy(ob)
+
+    return get_prefs().SM_MH_auto_instance_inerval
+'''
 
 #§ Update Frame Function
 def on_frame_change(scene):
     
+    C = bpy.context
     for ob in bpy.data.objects:
-        C = bpy.context
-
         if C.mode != 'OBJECT':
             return
         if ob.SM_MH_Parent is None:
@@ -84,8 +119,6 @@ def on_frame_change(scene):
 
    
 
-
-
 def update_current_index(self, context):
     active_object = context.active_object
     if self.SM_MH_current_index > get_last_index(context.object):
@@ -108,7 +141,8 @@ class SM_mesh_history_Props(bpy.types.PropertyGroup):
         type=bpy.types.Object
     )
     bpy.types.Object.SM_MH_current_index = bpy.props.IntProperty(
-        name="Mesh History current index",
+        name="Current Instance",
+        description="Mesh History Current Index",
         default=0,
         min=0,
         update=update_current_index,
@@ -125,6 +159,11 @@ class SM_mesh_history_Props(bpy.types.PropertyGroup):
         name="Mesh History is Main Status",
         default=False,
     )
+    # later ?
+    #bpy.types.Object.SM_MH_auto_instance_status = bpy.props.BoolProperty(
+    #    name="Auto Instance",
+    #    default=False,
+    #)
 
 
 
@@ -135,35 +174,12 @@ class SM_mesh_history_make_Instance(bpy.types.Operator):
     bl_label = "Mesh History Instance"
     bl_options = {'REGISTER', 'UNDO', "INTERNAL"}
 
-
     #?Useless !?
     @classmethod
     def poll(cls, context):
 
         return True
     
-
-    def copy_object(self, context, object_to_copy, is_first):
-        #create copy 
-        obj_copy = object_to_copy.copy()
-        #set parent
-        obj_copy.SM_MH_Parent = object_to_copy
-        #copy data
-        obj_copy.data = object_to_copy.data.copy()
-        #set index
-        if is_first is False:
-            obj_copy.SM_MH_index = get_last_index(object_to_copy) + 1
-        else:
-            obj_copy.SM_MH_index = 0
-        # make fake user
-        obj_copy.use_fake_user = True
-        #set is main status to false
-        obj_copy.SM_MH_is_main_status = False
-    def set_first_copy(self, context, active_object):
-        ob = get_object_at_index(active_object, 0)
-        ob.data = active_object.data
-
-
     def execute(self, context):
         #Create Bpy.context Variable
         C = bpy.context
@@ -176,11 +192,11 @@ class SM_mesh_history_make_Instance(bpy.types.Operator):
             active_object.SM_MH_index = -1
             active_object.SM_MH_is_main_status = True
             
-            self.copy_object(context, active_object, True)
-            self.copy_object(context, active_object, False)
+            copy_object(active_object, True)
+            copy_object(active_object, False)
         else:
-            self.set_first_copy(context, active_object)
-            self.copy_object(context, active_object, False)
+            set_first_copy(active_object)
+            copy_object(active_object, False)
      
         return {'FINISHED'}
 
@@ -201,4 +217,112 @@ class SM_mesh_history_switch_to_edit_mode(bpy.types.Operator):
         except:
             bpy.ops.object.mode_set(mode='EDIT')
         
+        return {'FINISHED'}
+
+class SM_mesh_history_delete_instances(bpy.types.Operator):
+    """S.Menu Mesh History Delete All Instances"""
+    bl_idname = 'sop.sm_mesh_history_delete_instances'
+    bl_label = "Delete All Instances"
+    bl_options = {'REGISTER', 'UNDO', "INTERNAL"}
+
+    def execute(self, context):
+        #Create Bpy.context Variable
+        C = bpy.context
+        active_object = C.active_object
+        # reset ui
+        get_prefs().show_delete_instances = False
+        get_prefs().sm_mh_del_inst = 'NO'
+        objects_to_delete = []
+        instance_num_info = 0
+        # report if active_object has no SM MH Parent
+        if active_object.SM_MH_Parent is None:
+            self.report({'INFO'}, "No Instances to Delete")
+            return {'FINISHED'}
+        # add objects to objects_to_delete
+        for ob in bpy.data.objects:
+            if ob.SM_MH_Parent is None:
+                continue
+            else:
+                if ob.SM_MH_Parent == active_object:
+                    if ob == active_object:
+                        continue
+                    else:
+                        objects_to_delete.append(ob)
+                        instance_num_info = instance_num_info + 1
+                else:
+                    continue
+        objects = bpy.data.objects
+        # delete active_object props 
+        del active_object['SM_MH_Parent']
+        del active_object['SM_MH_is_main_status']
+        del active_object['SM_MH_index']
+
+        # delete objects_to_delete
+        if objects_to_delete is not None:
+            for obj in objects_to_delete:
+                obj.use_fake_user = False
+                objects.remove(obj, do_unlink=True)
+        # report instance_num_info + " Instances Deleted"
+        self.report({'INFO'}, str(instance_num_info) + " Instances Deleted")
+        return {'FINISHED'}
+
+class SM_mesh_history_delete_current_instance(bpy.types.Operator):
+    """S.Menu Mesh History Delete Current Instance"""
+    bl_idname = 'sop.sm_mesh_history_delete_current_instance'
+    bl_label = "Delete Current Instance"
+    bl_options = {'REGISTER', 'UNDO', "INTERNAL"}
+
+    def execute(self, context):
+        #Create Bpy.context Variable
+        C = bpy.context
+        active_object = C.active_object
+      
+        # report if active_object has no SM MH Parent
+        if active_object.SM_MH_Parent is None:
+            self.report({'INFO'}, "No Instances to Delete")
+            return {'FINISHED'}
+        if active_object.SM_MH_current_index == 0:
+            self.report({'INFO'}, "Cannot Delete Instance 0")
+            return {'FINISHED'}
+        if get_last_index(active_object) == 1:
+            bpy.ops.sop.sm_mesh_history_delete_instances()
+            active_object.SM_MH_current_index = active_object.SM_MH_current_index -1
+            self.report({'INFO'}, "Last Instance Deleted")
+            return {'FINISHED'}
+        
+
+        objects = bpy.data.objects
+        obj_to_delete = get_object_at_index(active_object, active_object.SM_MH_current_index)
+
+        for ob in bpy.data.objects:
+            if ob.SM_MH_Parent is None:
+                continue
+            else:
+                if ob.SM_MH_Parent == active_object:
+                    if ob == active_object:
+                        continue
+                    else:
+                        if ob == obj_to_delete:
+                            continue
+                        else:
+                            if ob.SM_MH_index >= active_object.SM_MH_current_index:
+                                print ("ob:")
+                                print (ob)
+                                ob.SM_MH_index = ob.SM_MH_index - 1
+                            else:
+                                print("ELSE")
+                                continue
+                else:
+                    continue
+
+        if obj_to_delete is None:
+            self.report({'ERROR'}, "NO Instance To Delete")
+            return {'FINISHED'}
+  
+        obj_to_delete.use_fake_user = False
+        objects.remove(obj_to_delete, do_unlink=True)
+        active_object.SM_MH_current_index = active_object.SM_MH_current_index -1
+
+        # report Instance Deleted"
+        self.report({'INFO'}, "Instance Deleted")
         return {'FINISHED'}

@@ -26,6 +26,9 @@ from . operators.mesh_history_operator import (
     SM_mesh_history_make_Instance,
     SM_mesh_history_switch_to_edit_mode,
     on_frame_change,
+    #SM_MH_Auto_Instance, later?
+    SM_mesh_history_delete_instances,
+    SM_mesh_history_delete_current_instance,
 )
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -65,6 +68,8 @@ classes = [
     SM_mesh_history_switch_to_edit_mode,
     SM_PIE_Tab_Menu,
     SM_PIE_Tab_Menu_Call,
+    SM_mesh_history_delete_instances,
+    SM_mesh_history_delete_current_instance,
 ]
 
 def register():
@@ -78,7 +83,8 @@ def register():
     bpy.types.VIEW3D_MT_editor_menus.append(add_pose_copy_buttons)
     # add on_frame_change handler to blender
     try:
-        bpy.app.handlers.frame_change_pre.append(on_frame_change)
+        bpy.app.handlers.frame_change_pre.append(on_frame_change) 
+        #bpy.app.timers.register(SM_MH_Auto_Instance) later?
         print ("add Handler")
     except:
         pass
@@ -95,7 +101,8 @@ def unregister():
     remove_hotkey()
     # remove on_frame_change handler from blender
     try:
-        bpy.app.handlers.frame_change_pre.remove(on_frame_change)
+        bpy.app.handlers.frame_change_pre.remove(on_frame_change) 
+        #bpy.app.timers.unregister(SM_MH_Auto_Instance) later?
         print ("remove Handler")
     except:
         pass

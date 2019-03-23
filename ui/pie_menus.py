@@ -2680,7 +2680,13 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         if bpy.context.active_object.SM_MH_Parent is None:
             pie.separator()
         else:
-            pie.operator("object.mode_set",text="Edit Instance", icon="EDITMODE_HLT").mode = 'EDIT'
+            if bpy.context.mode == "EDIT_MESH":
+                pie.separator()
+            else:
+                if bpy.context.active_object.SM_MH_current_index == 0:
+                    pie.separator()
+                else:
+                    pie.operator("object.mode_set",text="Edit Instance", icon="EDITMODE_HLT").mode = 'EDIT'
 
 class SM_PIE_Tab_Menu_Call(bpy.types.Operator):
 

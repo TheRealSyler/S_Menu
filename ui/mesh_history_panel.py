@@ -3,7 +3,6 @@ from .. prefs import get_prefs
 
 
 
-
 class SM_mesh_history_panel(bpy.types.Panel):
     """S.Menu Mesh History Panel"""
     bl_label = "Mesh History"
@@ -11,6 +10,7 @@ class SM_mesh_history_panel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'History'
+
 
     def get_last_index(self, parent):
         index = 0
@@ -28,11 +28,14 @@ class SM_mesh_history_panel(bpy.types.Panel):
                     continue
         return index
 
+
     def draw(self, context):
         layout = self.layout
         
         C = bpy.context
         active_object = C.active_object
+
+        
 
         if active_object is not None:
             history_length = self.get_last_index(active_object)
@@ -45,9 +48,10 @@ class SM_mesh_history_panel(bpy.types.Panel):
             if active_object.SM_MH_Parent is None:
                 text = "Initialize History"
             else:
-                text = "Make Instance"
-                col.label(text="History Length: " + str(history_length))
-            
+                box = col.box()
+                box.label(text="Instances: " + str(history_length))
+                text = "Add New Instance"
+    
             col.operator("sop.sm_mesh_history_make_instance", text=text)
             layout.label(text="Switch Mode:")
             col = layout.column()
@@ -65,12 +69,30 @@ class SM_mesh_history_panel(bpy.types.Panel):
                 col.enabled = False
             col.label(text="Animation:")
             col.prop(active_object, "SM_MH_auto_animate", text="Auto Animate")
-            #SM_MH_auto_animate
-            col.label(text="Current Index:")
             col.prop(active_object, "SM_MH_current_index")
-            
-            
-            col = layout.column()
-            col.prop(get_prefs(), "SM_MH_help")
-            if get_prefs().SM_MH_help is True:
-                col.label(text="help is Enabled WIP")
+
+            row = col.row()
+            row.operator("sop.sm_mesh_history_delete_current_instance", text="Delete Current Instance", icon="CANCEL")
+
+            if get_prefs().show_delete_instances is True:
+                text = "Delete All Instances"
+                box = col.box()
+                box.label(text=text)
+                row = col.row()
+                row.prop(get_prefs(), "sm_mh_del_inst", expand=True)
+                if get_prefs().sm_mh_del_inst == 'NO':
+                    row = col.row()
+                    row.prop(get_prefs(), "show_delete_instances", text="Return", icon="CANCEL", expand=True)
+                elif get_prefs().sm_mh_del_inst == 'YES':
+                    row = col.row()
+                    row.operator("sop.sm_mesh_history_delete_instances", text="Delete All Instances", icon="CANCEL")
+            else:
+                text = ""
+                box = col.box()
+                box.label(text=text) 
+                row = col.row()
+                row.prop(get_prefs(), "show_delete_instances", icon="CANCEL")
+           
+
+            #col.prop(active_object, "SM_MH_auto_instance_status") later ?
+            #col.prop(get_prefs(), "SM_MH_auto_instance_inerval")
