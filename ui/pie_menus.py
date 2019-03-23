@@ -2655,3 +2655,37 @@ class SM_PIE_Q_Node_Call(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_PIE_Q_Node")
         return {'FINISHED'}
+
+class SM_PIE_Tab_Menu(bpy.types.Menu):
+    bl_label = "S.Menu 'Tab' Menu"
+    #bpy.ops.object.mode_set(mode='EDIT')
+    
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+        # 4 - LEFT
+        pie.operator("object.mode_set",text="Object Mode", icon="OBJECT_DATAMODE").mode = 'OBJECT'
+        # 6 - RIGHT
+        pie.operator("sop.sm_mesh_switch_to_edit_mode",text="Edit Mode", icon="EDITMODE_HLT")
+        # 2 - BOTTOM
+        pie.operator("object.mode_set",text="Sculpt Mode", icon="SCULPTMODE_HLT").mode = 'SCULPT'
+        # 8 - TOP
+        pie.operator("object.mode_set",text="Vertex Paint", icon="WPAINT_HLT").mode = 'VERTEX_PAINT'
+        # 7 - TOP - LEFT
+        pie.operator("object.mode_set",text="Weight Paint", icon="WPAINT_HLT").mode = 'WEIGHT_PAINT'
+        # 9 - TOP - RIGHT
+        pie.operator("object.mode_set",text="Texture Paint", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
+        # 1 - BOTTOM - LEFT
+
+        # 3 - BOTTOM - RIGHT
+
+class SM_PIE_Tab_Menu_Call(bpy.types.Operator):
+
+    bl_idname = 'sop.sm_pie_tab_menu_call'
+    bl_label = "S.Menu 'Tab' Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.wm.call_menu_pie(name="SM_PIE_Tab_Menu")
+        return {'FINISHED'}
