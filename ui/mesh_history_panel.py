@@ -1,5 +1,5 @@
 import bpy 
-
+from .. prefs import get_prefs
 
 class SM_mesh_history_panel(bpy.types.Panel):
     """S.Menu Mesh History Panel"""
@@ -13,7 +13,6 @@ class SM_mesh_history_panel(bpy.types.Panel):
         index = 0
 
         for ob in bpy.data.objects:
-
 
             if ob.SM_MH_Parent is None:
                 return 0
@@ -32,9 +31,12 @@ class SM_mesh_history_panel(bpy.types.Panel):
         C = bpy.context
         active_object = C.active_object
 
-        history_length = self.get_last_index(active_object)
+        if active_object is not None:
+            history_length = self.get_last_index(active_object)
 
-        layout.label(text="History Length: " + str(history_length))
-        layout.operator("sop.sm_mesh_history_make_copy", text="Make Copy")
-        layout.label(text="wdwad")
-        layout.prop(active_object, "SM_MH_current_index")
+            layout.label(text="History Length: " + str(history_length))
+            layout.operator("sop.sm_mesh_history_make_copy", text="Make Copy")
+            layout.label(text="Mode:")
+            layout.label(text="wdwad")
+            layout.prop(get_prefs(), "SM_MH_use_modifiers")
+            layout.prop(active_object, "SM_MH_current_index")

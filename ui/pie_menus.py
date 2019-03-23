@@ -2646,6 +2646,7 @@ class SM_PIE_Q_Node(bpy.types.Menu):
         col.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
 
 class SM_PIE_Q_Node_Call(bpy.types.Operator):
+
     bl_idname = 'sop.sm_pie_q_node_menu_call'
     bl_label = "S.Menu 'Q' Node Menu"
     bl_description = 'Calls pie menu'
