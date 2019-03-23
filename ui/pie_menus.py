@@ -2673,7 +2673,10 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         # 9 - TOP - RIGHT
         pie.operator("object.mode_set",text="Texture Paint", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
         # 1 - BOTTOM - LEFT
-        pie.separator()
+        if bpy.context.mode == "OBJECT":
+            pie.operator("object.mode_set",text="Particle Edit", icon="PARTICLEMODE").mode = 'PARTICLE_EDIT'
+        else:
+            pie.separator()
         # 3 - BOTTOM - RIGHT
         if bpy.context.active_object.SM_MH_Parent is None:
             pie.separator()
