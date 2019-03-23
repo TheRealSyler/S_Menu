@@ -286,33 +286,32 @@ class SM_PIE_Add(bpy.types.Menu):
             ("object.camera_add"),
             ("object.load_reference_image"),
             ("object.load_background_image"),
-            ("import_image.to_plane"),
             ("object.speaker_add"),
-            ("object.build_dolly_rig"),
-            ("object.build_crane_rig"),
         ]
         text = [
             ("Camera"),
             ("Reference"),
             ("Background"),
-            ("As Plane"),
             ("Speaker"),
-            ("Dolly Camera Rig"),
-            ("Crane Camera Rig"),
         ]
         icon = [
             ("OUTLINER_DATA_CAMERA"),
             ("IMAGE_REFERENCE"),
             ("IMAGE_BACKGROUND"),
-            ("TEXTURE_DATA"),
             ("OUTLINER_OB_SPEAKER"),
-            ("OUTLINER_OB_CAMERA"),
-            ("CAMERA_DATA"),
         ]
   
         spacer(col, snum)
         op_loop(col, enum, text, icon, False, 3)
-    
+        if get_prefs().enable_images_as_planes is True:
+            if col.operator("import_image.to_plane", text="As Plane",icon="TEXTURE_DATA") is None:
+                col.label(text="Not Installed")
+        if get_prefs().enable_camera_rigs is True:
+            if col.operator("object.build_dolly_rig", text="Dolly Camera Rig",icon="OUTLINER_OB_CAMERA") is None:
+                col.label(text="Not Installed")
+            if col.operator("object.build_crane_rig", text="Crane Camera Rig",icon="CAMERA_DATA") is None:
+                col.label(text="Not Installed")
+
     def forces(self, col, snum):
         col.scale_x = 1
         col.scale_y = 1.2
@@ -463,7 +462,6 @@ class SM_PIE_Add(bpy.types.Menu):
             if col.operator("object.sphere_create", text="Q Sphere") is None:
                 col.label(text="Not Installed")
         
-
     def extra_objects(self, col):
         col.scale_x = 1
         col.scale_y = 1.2

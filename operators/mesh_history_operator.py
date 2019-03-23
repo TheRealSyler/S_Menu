@@ -33,6 +33,21 @@ def get_object_at_index(parent, index):
                 continue
     return None
 
+def copy_object_modifiers(object_to_copy_from, object_to_copy_to):
+    
+    for mSrc in object_to_copy_from.modifiers:
+        mDst = object_to_copy_to.modifiers.get(mSrc.name, None)
+        if not mDst:
+            mDst = object_to_copy_to.modifiers.new(mSrc.name, mSrc.type)
+
+        # collect names of writable properties
+        properties = [p.identifier for p in mSrc.bl_rna.properties
+                      if not p.is_readonly]
+
+        # copy those properties
+        for prop in properties:
+            setattr(mDst, prop, getattr(mSrc, prop))
+
 def copy_object(object_to_copy, is_first):
     #create copy 
     obj_copy = object_to_copy.copy()
@@ -50,17 +65,23 @@ def copy_object(object_to_copy, is_first):
     #set is main status to false
     obj_copy.SM_MH_is_main_status = False
     obj_copy.SM_MH_auto_instance_status = False
+
+    copy_object_modifiers(object_to_copy, obj_copy)
+
+
     
 def set_first_copy(active_object):
     ob = get_object_at_index(active_object, 0)
     ob.data = active_object.data
+    ob.modifiers.clear()
+    copy_object_modifiers(active_object, ob)
 #+-----------------------------------------------------------------------------------------------------+#
 #? Update 
 #+-----------------------------------------------------------------------------------------------------+#
 
-#  todo modifiers
+#//     modifiers
 #  todo animation memery
-#  todo help
+#  todo prepend delete (so that all the instances also get deleted)
 #//     delete instances
 #? todo auto instance maybe later?
 #? todo materials ?!
@@ -117,7 +138,15 @@ def on_frame_change(scene):
             else:             
                 continue
 
-   
+def update_copy_modifiers(self, context):
+    active_object = context.active_object
+    if active_object.SH_MH_copy_modifiers is True:
+        ob = get_object_at_index(active_object, active_object.SM_MH_current_index)
+        active_object.modifiers.clear()
+        copy_object_modifiers(ob, active_object)
+    else:
+        ob = get_object_at_index(active_object, 0)
+        copy_object_modifiers(ob, active_object)
 
 def update_current_index(self, context):
     active_object = context.active_object
@@ -131,6 +160,9 @@ def update_current_index(self, context):
                 if ob.SM_MH_Parent == context.object:
                     if self.SM_MH_current_index == ob.SM_MH_index:
                         active_object.data = ob.data
+                        if active_object.SH_MH_copy_modifiers is True:
+                            active_object.modifiers.clear()
+                            copy_object_modifiers(ob, active_object)
                         continue
              
 
@@ -159,14 +191,17 @@ class SM_mesh_history_Props(bpy.types.PropertyGroup):
         name="Mesh History is Main Status",
         default=False,
     )
+    bpy.types.Object.SH_MH_copy_modifiers = bpy.props.BoolProperty(
+        name="Copy Modifiers",
+        description="Mesh History Copy Modifiers",
+        default=True,
+        update=update_copy_modifiers,
+    )
     # later ?
     #bpy.types.Object.SM_MH_auto_instance_status = bpy.props.BoolProperty(
     #    name="Auto Instance",
     #    default=False,
     #)
-
-
-
 
 class SM_mesh_history_make_Instance(bpy.types.Operator):
     """S.Menu Mesh History Make Instance"""

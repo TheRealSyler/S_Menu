@@ -51,8 +51,11 @@ class SM_mesh_history_panel(bpy.types.Panel):
                 box = col.box()
                 box.label(text="Instances: " + str(history_length))
                 text = "Add New Instance"
-    
+
             col.operator("sop.sm_mesh_history_make_instance", text=text)
+            box = col.box()
+            box.prop(active_object, "SH_MH_copy_modifiers", icon='MODIFIER', expand=True)
+
             layout.label(text="Switch Mode:")
             col = layout.column()
             if C.mode == 'OBJECT':

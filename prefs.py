@@ -131,7 +131,15 @@ class SM_Prefs(bpy.types.AddonPreferences):
         default=True
     )
     enable_pose_buttons: BoolProperty(
-        name="Box Cutter",
+        name="Pose Buttons",
+        default=True
+    )
+    enable_images_as_planes: BoolProperty(
+        name="Images as Planes",
+        default=True
+    )
+    enable_camera_rigs: BoolProperty(
+        name="Add Camera Rigs",
         default=True
     )
     
@@ -250,6 +258,8 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.prop(self, "enable_rock", text="Rock Generator")
         col.prop(self, "enable_pipenightmare", text="Pipe Nightmare")
         col.prop(self, "enable_extra_objects_mesh", text="Extra Objects (Mesh)")
+        col.prop(self, "enable_images_as_planes", text="Import Images as Planes")
+        col.prop(self, "enable_camera_rigs", text="Add Camera Rigs")
 
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_Add_Call.bl_idname)
