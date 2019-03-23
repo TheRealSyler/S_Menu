@@ -69,6 +69,7 @@ def copy_object(object_to_copy, is_first):
     copy_object_modifiers(object_to_copy, obj_copy)
 
 
+
     
 def set_first_copy(active_object):
     ob = get_object_at_index(active_object, 0)
@@ -86,8 +87,8 @@ def set_first_copy(active_object):
 #? todo auto instance maybe later?
 #? todo materials ?!
 
-#§ auto instance Function maybe later?
 
+#§ auto instance Function maybe later?
 
 '''
 def SM_MH_Auto_Instance():
@@ -160,9 +161,12 @@ def update_current_index(self, context):
                 if ob.SM_MH_Parent == context.object:
                     if self.SM_MH_current_index == ob.SM_MH_index:
                         active_object.data = ob.data
+                        
                         if active_object.SH_MH_copy_modifiers is True:
                             active_object.modifiers.clear()
                             copy_object_modifiers(ob, active_object)
+                        
+
                         continue
              
 
@@ -232,6 +236,9 @@ class SM_mesh_history_make_Instance(bpy.types.Operator):
         else:
             set_first_copy(active_object)
             copy_object(active_object, False)
+        
+        if active_object.SM_MH_current_index != 0:
+            active_object.SM_MH_current_index = 0
      
         return {'FINISHED'}
 
@@ -329,6 +336,7 @@ class SM_mesh_history_delete_current_instance(bpy.types.Operator):
         objects = bpy.data.objects
         obj_to_delete = get_object_at_index(active_object, active_object.SM_MH_current_index)
 
+        # sort indexes
         for ob in bpy.data.objects:
             if ob.SM_MH_Parent is None:
                 continue
@@ -340,12 +348,11 @@ class SM_mesh_history_delete_current_instance(bpy.types.Operator):
                         if ob == obj_to_delete:
                             continue
                         else:
+                            # if ob index is >= than current active object index set ob index = index -1
                             if ob.SM_MH_index >= active_object.SM_MH_current_index:
-                                print ("ob:")
-                                print (ob)
                                 ob.SM_MH_index = ob.SM_MH_index - 1
                             else:
-                                print("ELSE")
+
                                 continue
                 else:
                     continue
