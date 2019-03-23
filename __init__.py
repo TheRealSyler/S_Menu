@@ -23,8 +23,9 @@ from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
 from . operators.mesh_history_operator import (
     SM_mesh_history_Props, 
-    SM_mesh_history_make_copy,
+    SM_mesh_history_make_Instance,
     SM_mesh_history_switch_to_edit_mode,
+    on_frame_change,
 )
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -60,7 +61,7 @@ classes = [
     SM_Modal_adjust_view,
     SM_mesh_history_panel,
     SM_mesh_history_Props,
-    SM_mesh_history_make_copy,
+    SM_mesh_history_make_Instance,
     SM_mesh_history_switch_to_edit_mode,
     SM_PIE_Tab_Menu,
     SM_PIE_Tab_Menu_Call,
@@ -75,6 +76,12 @@ def register():
     # Append Register stuff
     # ------------------------------------------------------------------------------------------------------------
     bpy.types.VIEW3D_MT_editor_menus.append(add_pose_copy_buttons)
+    # add on_frame_change handler to blender
+    try:
+        bpy.app.handlers.frame_change_pre.append(on_frame_change)
+        print ("add Handler")
+    except:
+        pass
 
     # ------------------------------------------------------------------------------------------------------------
     # Icons Register stuff
@@ -86,13 +93,18 @@ def unregister():
         bpy.utils.unregister_class(c)
     #+ remove hotkey
     remove_hotkey()
+    # remove on_frame_change handler from blender
+    try:
+        bpy.app.handlers.frame_change_pre.remove(on_frame_change)
+        print ("remove Handler")
+    except:
+        pass
 
     # ------------------------------------------------------------------------------------------------------------
     # Append Unregister stuff
     # ------------------------------------------------------------------------------------------------------------
 
     bpy.types.VIEW3D_MT_editor_menus.remove(add_pose_copy_buttons)
-
     # ------------------------------------------------------------------------------------------------------------
     # Icons Unregister stuff
     # ------------------------------------------------------------------------------------------------------------

@@ -139,7 +139,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
     collapse_list_node: BoolProperty(name="Nodes:", default=False)
     #§ comp_adjust_view Prefs
-    SM_Modal_adjust_view_suppress_move: BoolProperty(name="Node:", default=False)
+    SM_Modal_adjust_view_suppress_move: BoolProperty(default=False)
+    #§ SM_MH Prefs
+    SM_MH_help: BoolProperty(name="Help", default=False)
 
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         # keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items

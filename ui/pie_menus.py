@@ -2658,7 +2658,6 @@ class SM_PIE_Q_Node_Call(bpy.types.Operator):
 
 class SM_PIE_Tab_Menu(bpy.types.Menu):
     bl_label = "S.Menu 'Tab' Menu"
-    #bpy.ops.object.mode_set(mode='EDIT')
     
     def draw(self, context):
         layout = self.layout
@@ -2676,8 +2675,12 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         # 9 - TOP - RIGHT
         pie.operator("object.mode_set",text="Texture Paint", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
         # 1 - BOTTOM - LEFT
-
+        pie.separator()
         # 3 - BOTTOM - RIGHT
+        if bpy.context.active_object.SM_MH_Parent is None:
+            pie.separator()
+        else:
+            pie.operator("object.mode_set",text="Edit Instance", icon="EDITMODE_HLT").mode = 'EDIT'
 
 class SM_PIE_Tab_Menu_Call(bpy.types.Operator):
 
