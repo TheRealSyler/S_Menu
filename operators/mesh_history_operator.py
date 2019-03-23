@@ -129,7 +129,8 @@ class SM_mesh_history_make_copy(bpy.types.Operator):
         print ("--------------COPY--------------")
         print (active_object)
         print ("--------------COPY--------------")
-        active_object.SM_MH_current_index = 0
+        if active_object.SM_MH_current_index != 0:
+            active_object.SM_MH_current_index = 0
         if active_object.SM_MH_Parent is None:
             active_object.SM_MH_Parent = active_object
             active_object.SM_MH_index = -1
