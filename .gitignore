@@ -1,8 +1,9 @@
 
 __pycache__/__init__.cpython-37.pyc
 __pycache__/prefs.cpython-37.pyc
+.vscode/launch.json
+
 ui/__pycache__/get_icon.cpython-37.pyc
 ui/__pycache__/pie_menus.cpython-37.pyc
-.vscode/launch.json
 operators/__pycache__/comp_adjust_view.cpython-37.pyc
-*.pyc
+operators/__pycache__/mesh_history_operator.cpython-37.pyc
