@@ -7,3 +7,5 @@ ui/__pycache__/get_icon.cpython-37.pyc
 ui/__pycache__/pie_menus.cpython-37.pyc
 operators/__pycache__/comp_adjust_view.cpython-37.pyc
 operators/__pycache__/mesh_history_operator.cpython-37.pyc
+ui/__pycache__/mesh_history_panel.cpython-37.pyc
+ui/__pycache__/add_pose_copy_buttons.cpython-37.pyc
