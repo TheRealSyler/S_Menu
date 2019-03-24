@@ -288,7 +288,6 @@ class SM_Prefs(bpy.types.AddonPreferences):
             row.label(text="Pie Menu Radius WIP")
             row.prop(self, "SM_PIE_Radius", icon='PROP_CON')
 
-   
     def add_main_tab(self, context, col):
         
         row = col.row()

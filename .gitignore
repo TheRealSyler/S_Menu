@@ -7,3 +7,5 @@ ui/__pycache__/pie_menus.cpython-37.pyc
 *.pyc
 operators/__pycache__/mesh_history_operator.cpython-37.pyc
 operators/__pycache__/mesh_history_operator.cpython-37.pyc
+*.pyc
+ui/__pycache__/mesh_history_panel.cpython-37.pyc
