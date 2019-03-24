@@ -2743,8 +2743,7 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         pie.separator()
     
     def M4_pivot_menu(self, col):
-        col.scale_x = 1.3
-        col.scale_y = 1.6
+        
 
     
         context = bpy.context
@@ -2754,38 +2753,50 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         mode = context.mode
         col = col.column(align=True)
         
+        if object_mode == 'EDIT':
+            col.scale_x = 1.3
+            col.scale_y = 1.6
+        else:
+            col.scale_x = 1.3
+            col.scale_y = 1.4
         # Proportional editing
         gpd = context.gpencil_data
         if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
             col.prop(tool_settings, "proportional_edit", icon_only=True)
+            col.separator()
 
         elif object_mode == 'OBJECT':
             col.prop(tool_settings, "use_proportional_edit_objects", icon_only=True) 
+            col.separator()
 
         elif gpd is not None and obj.type == 'GPENCIL':
             if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
                 col.prop(tool_settings, "proportional_edit", icon_only=True)
+                col.separator()
         #pivot
-        col.separator()
+        
         col.prop(tool_settings, "transform_pivot_point", text="", expand=True)
 
         if (obj is None) or (mode in {'OBJECT', 'POSE', 'WEIGHT_PAINT'}):
             col.prop(tool_settings, "use_transform_pivot_point_align", text="")
-        col.separator()
+        
         # Proportional editing
         if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
             col_2 = col.column()
             col_2.active = tool_settings.proportional_edit != 'DISABLED'
             col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+            col.separator()
 
         elif object_mode == 'OBJECT':
             col_2.active = tool_settings.use_proportional_edit_objects
             col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+            col.separator()
 
         elif gpd is not None and obj.type == 'GPENCIL':
             if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
                 col_2.active = tool_settings.proportional_edit != 'DISABLED'
                 col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+                col.separator()
 
     def M4_snaping_menu(self, col):
         
