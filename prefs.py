@@ -1,5 +1,5 @@
 import bpy, os  
-from bpy.props import EnumProperty, BoolProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 from . ui.pie_menus import (
     SM_PIE_Add_Call,
     SM_PIE_Add_Node_Call, 
@@ -8,6 +8,7 @@ from . ui.pie_menus import (
     SM_PIE_Q_Node_Call,
     SM_PIE_A_NODE_Call,
     SM_PIE_Tab_Menu_Call,
+    SM_PIE_M4_Menu_Call,
 )
 # todo create enable all options function for each menu
 
@@ -25,7 +26,7 @@ def add_hotkey():
     if not kc:
         print('Keymap Error')
         return
-    
+    # object Mode
     km = kc.keymaps.new(name='Object Mode', space_type='EMPTY')
 
     kmi = km.keymap_items.new(SM_PIE_Add_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=True)
@@ -34,11 +35,17 @@ def add_hotkey():
     addon_keymaps.append((km, kmi))
     kmi = km.keymap_items.new(SM_PIE_A_OM_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
-    
+    # object Mode
     km = kc.keymaps.new(name='Object Non-modal')
+    
     kmi = km.keymap_items.new(SM_PIE_Tab_Menu_Call.bl_idname, 'TAB', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
-
+    kmi = km.keymap_items.new(SM_PIE_M4_Menu_Call.bl_idname, 'BUTTON4MOUSE', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
+    # edit mode (Mesh)
+    km = kc.keymaps.new(name='Mesh')
+    
+    # node edtitors (comp/shader/texture)
     km = kc.keymaps.new(name='Node Generic', space_type='NODE_EDITOR')
 
     kmi = km.keymap_items.new(SM_PIE_Add_Node_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=True)
@@ -73,15 +80,21 @@ class SM_Prefs(bpy.types.AddonPreferences):
     
     tabs = [
         ("LIST", "Menu List", ""),
-        ("ADD", "Add", ""),
-        ("QMENU", "Q Menu", ""),
-        ("UTILS", "Utils", ""),
+        #("ADD", "Add", ""),
+        #("QMENU", "Q Menu", ""),
+        ("OPTIONS", "Options", ""),
+        #("UTILS", "Utils", ""),
     ]
     add_sub_tabs = [
         ("OBJECT", "Object Add Menu", ""),
         ("NODE", "Node Add Menu", ""),
     ]
-
+    options_sub_tabs = [
+        ("MAIN", "Main", ""),
+        ("ADD", "Add", ""),
+        ("QMENU", "Q Menu", ""),
+        ("UTILS", "Utils", ""),
+    ]
     q_sub_tabs = [
         ("OBJECT", "Object Mode Menu", ""),
         ("NODE", "Node Menu", ""),
@@ -92,6 +105,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     main_tabs: EnumProperty(name="Main_Tab", items=tabs)
     add_sub_tabs: EnumProperty(name="Add_Sub_Tab", items=add_sub_tabs)
     q_sub_tabs: EnumProperty(name="Q_sub_Tab", items=q_sub_tabs)
+    options_sub_tabs: EnumProperty(name="Options_sub_Tab", items=options_sub_tabs)
 
     #§ Enable Props
     enable_qblocker: BoolProperty(
@@ -142,8 +156,12 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Add Camera Rigs",
         default=True
     )
-    
+    #§ UI Pie Menu Radius
+    SM_PIE_Radius: IntProperty(name="      ", default=120, min=0)
     #§ UI Bool Props
+    collapse_list_options: BoolProperty(name="Options", default=False)
+    collapse_list_menus: BoolProperty(name="Menus", default=False)
+    collapse_list_view3d: BoolProperty(name="View 3D:", default=False)
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
     collapse_list_node: BoolProperty(name="Nodes:", default=False)
     #§ comp_adjust_view Prefs
@@ -183,42 +201,94 @@ class SM_Prefs(bpy.types.AddonPreferences):
         
         if self.main_tabs == "LIST":
             self.List_tab(context, col)
-        box = col.box()
-        if self.main_tabs == "ADD":
-            self.add_main_tab(context, box)
-        if self.main_tabs == "QMENU":
-            self.q_main_tab(context, box)
-        if self.main_tabs == "UTILS":
-            self.utils_main_tab(context, box)
+        #if self.main_tabs == "ADD":
+        #    box = col.box()
+        #    self.add_main_tab(context, box)
+        #if self.main_tabs == "QMENU":
+        #    box = col.box()
+        #    self.q_main_tab(context, box)
+        if self.main_tabs == "OPTIONS":
+            box = col.box()
+            self.Options_tab(context, box)
+        #if self.main_tabs == "UTILS":
+        #    box = col.box()
+        #    self.utils_main_tab(context, box)
             
     def List_tab(self, context, col):
         
         sub = col.box()
-        if self.collapse_list_object_mode is True:
+        
+        if self.collapse_list_menus is True:
             icon = "TRIA_RIGHT"
         else:
             icon = "TRIA_DOWN"
-        sub.prop(self,"collapse_list_object_mode", icon=icon)
-        if self.collapse_list_object_mode is False:
-            self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Add_Call.bl_idname)
-            self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
-            self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
-            self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
-         
-        sub = col.box()
-        if self.collapse_list_node is True:
-            icon = "TRIA_RIGHT"
-        else:
-            icon = "TRIA_DOWN"
-        sub.prop(self,"collapse_list_node", icon=icon)
-        if self.collapse_list_node is False:
-            self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
-            self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
-            self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
-
-    
+        sub.prop(self,"collapse_list_menus", icon=icon)
+        
+        if self.collapse_list_menus is False:
+            sub = sub.box()
             
+            if self.collapse_list_object_mode is True:
+                icon = "TRIA_RIGHT"
+            else:
+                icon = "TRIA_DOWN"
+            sub.prop(self,"collapse_list_object_mode", icon=icon)
+            if self.collapse_list_object_mode is False:
+                self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Add_Call.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Object Mode', SM_PIE_Q_Menu_Call.bl_idname)
+            
+            if self.collapse_list_view3d is True:
+                icon = "TRIA_RIGHT"
+            else:
+                icon = "TRIA_DOWN"
+            sub.prop(self,"collapse_list_view3d", icon=icon)
+            if self.collapse_list_view3d is False:
+                self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_M4_Menu_Call.bl_idname)
 
+            if self.collapse_list_node is True:
+                icon = "TRIA_RIGHT"
+            else:
+                icon = "TRIA_DOWN"
+            sub.prop(self,"collapse_list_node", icon=icon)
+            if self.collapse_list_node is False:
+                self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Add_Node_Call.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
+  
+    def Options_tab(self, context, col):
+        
+        row = col.row()
+        row.prop(self, "options_sub_tabs", expand=True)
+
+
+        if self.options_sub_tabs == "MAIN":
+            self.Options_sub_tab_main(context, col)
+        
+        if self.options_sub_tabs == "ADD":
+            self.add_main_tab(context, col)
+       
+        if self.options_sub_tabs == "QMENU":
+            self.q_main_tab(context, col)
+       
+        if self.options_sub_tabs == "UTILS":
+            self.utils_main_tab(context, col)
+
+    def Options_sub_tab_main(self, context, col):
+       
+        sub = col.box()
+        if self.collapse_list_options is True:
+            icon = "TRIA_RIGHT"
+        else:
+            icon = "TRIA_DOWN"
+        sub.prop(self,"collapse_list_options", icon=icon)
+        if self.collapse_list_options is False:
+            row = sub.row()
+            row.use_property_split = True
+            row.label(text="Pie Menu Radius WIP")
+            row.prop(self, "SM_PIE_Radius", icon='PROP_CON')
+
+   
     def add_main_tab(self, context, col):
         
         row = col.row()
@@ -241,12 +311,13 @@ class SM_Prefs(bpy.types.AddonPreferences):
 
     def utils_main_tab(self, context, col):
         
-        col.label(text="General Options:")
+        col.label(text="Options:")
         col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
         col.label(text="Keymaps:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)
         self.add_keymap_to_ui(context, col, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
+        self.add_keymap_to_ui(context, col, 'Object Non-modal', SM_PIE_M4_Menu_Call.bl_idname)
         
 
     def add_sub_object(self, context ,col):

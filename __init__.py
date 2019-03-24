@@ -18,6 +18,8 @@ from . ui.pie_menus import (
     SM_PIE_A_NODE_Call,
     SM_PIE_Tab_Menu,
     SM_PIE_Tab_Menu_Call,
+    SM_PIE_M4_Menu,
+    SM_PIE_M4_Menu_Call,
 )
 from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
@@ -70,6 +72,8 @@ classes = [
     SM_PIE_Tab_Menu_Call,
     SM_mesh_history_delete_instances,
     SM_mesh_history_delete_current_instance,
+    SM_PIE_M4_Menu,
+    SM_PIE_M4_Menu_Call,
 ]
 
 def register():

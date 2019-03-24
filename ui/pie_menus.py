@@ -3,6 +3,7 @@ from . get_icon import get_icon
 
 
 # todo add Extra Object (Curve) support
+# todo pie menu radius 
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils 
@@ -58,6 +59,14 @@ def get_addon_name():
 
 def get_prefs():
     return bpy.context.preferences.addons[get_addon_name()].preferences
+
+def call_pie_menu(name):
+    a = bpy.context.preferences.view.pie_menu_radius
+    bpy.context.preferences.view.pie_menu_radius = get_prefs().SM_PIE_Radius
+    
+    bpy.ops.wm.call_menu_pie(name=name)
+    
+    bpy.context.preferences.view.pie_menu_radius = a
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
@@ -493,7 +502,8 @@ class SM_PIE_Add_Call(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_Add")
+        call_pie_menu('SM_PIE_Add')
+        #bpy.ops.wm.call_menu_pie(name="SM_PIE_Add")
         return {'FINISHED'}
 
 class SM_PIE_Add_Node(bpy.types.Menu):
@@ -794,6 +804,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("Gamma"),
             ("Invert"),
             ("Light Falloff"),
+            ("Bevel"),
             ("Wireframe"),
             ("Fresnel"),
             ("Tangent"),
@@ -805,6 +816,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             (get_icon("Invert_icon", "main")),
             (get_icon("Light_Falloff_icon", "main")),
             (get_icon("Value_icon", "main")), 
+            (get_icon("Value_icon", "main")), 
             (get_icon("Fresnel_icon", "main")),
             (get_icon("Tangent_icon", "main")),
             (get_icon("UV_Map_icon", "main")),
@@ -814,6 +826,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             ("ShaderNodeGamma"),
             ("ShaderNodeInvert"),
             ("ShaderNodeLightFalloff"),
+            ("ShaderNodeBevel"),
             ("ShaderNodeWireframe"),
             ("ShaderNodeFresnel"),
             ("ShaderNodeTangent"),
@@ -1502,7 +1515,7 @@ class SM_Add_Texture_Node(bpy.types.Menu):
         col.scale_x = 1
         col.scale_y = 1.8
         text = [
-            ("Bick"),
+            ("Brick"),
             ("Checker"),
         ]
         icon = [
@@ -2651,7 +2664,7 @@ class SM_PIE_Q_Node_Call(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_Q_Node")
+        call_pie_menu('SM_PIE_Q_Node')
         return {'FINISHED'}
 
 class SM_PIE_Tab_Menu(bpy.types.Menu):
@@ -2698,4 +2711,159 @@ class SM_PIE_Tab_Menu_Call(bpy.types.Operator):
 
     def execute(self, context):
         bpy.ops.wm.call_menu_pie(name="SM_PIE_Tab_Menu")
+        return {'FINISHED'}
+
+class SM_PIE_M4_Menu(bpy.types.Menu):
+    bl_label = "S.Menu 'M4' Menu"
+    
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+        # 4 - LEFT
+        split = pie.split()
+        box = split.box()
+        self.M4_snaping_menu(box)
+        # 6 - RIGHT
+        split = pie.split()
+        box = split.box()
+        self.M4_pivot_menu(box)
+        # 2 - BOTTOM
+        split = pie.split()
+        box = split.box()
+        self.M4_trans_orient(box)
+        # 8 - TOP
+        pie.separator()
+        # 7 - TOP - LEFT
+        pie.separator()
+        # 9 - TOP - RIGHT
+        pie.separator()
+        # 1 - BOTTOM - LEFT
+        pie.separator()
+        # 3 - BOTTOM - RIGHT
+        pie.separator()
+    
+    def M4_pivot_menu(self, col):
+        col.scale_x = 1.3
+        col.scale_y = 1.6
+
+    
+        context = bpy.context
+        tool_settings = context.tool_settings
+        obj = context.active_object
+        object_mode = 'OBJECT' if obj is None else obj.mode
+        mode = context.mode
+        col = col.column(align=True)
+        
+        # Proportional editing
+        gpd = context.gpencil_data
+        if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
+            col.prop(tool_settings, "proportional_edit", icon_only=True)
+
+        elif object_mode == 'OBJECT':
+            col.prop(tool_settings, "use_proportional_edit_objects", icon_only=True) 
+
+        elif gpd is not None and obj.type == 'GPENCIL':
+            if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
+                col.prop(tool_settings, "proportional_edit", icon_only=True)
+        #pivot
+        col.separator()
+        col.prop(tool_settings, "transform_pivot_point", text="", expand=True)
+
+        if (obj is None) or (mode in {'OBJECT', 'POSE', 'WEIGHT_PAINT'}):
+            col.prop(tool_settings, "use_transform_pivot_point_align", text="")
+        col.separator()
+        # Proportional editing
+        if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
+            col_2 = col.column()
+            col_2.active = tool_settings.proportional_edit != 'DISABLED'
+            col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        elif object_mode == 'OBJECT':
+            col_2.active = tool_settings.use_proportional_edit_objects
+            col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        elif gpd is not None and obj.type == 'GPENCIL':
+            if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
+                col_2.active = tool_settings.proportional_edit != 'DISABLED'
+                col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+    def M4_snaping_menu(self, col):
+        
+        col.scale_x = 2
+        col.scale_y = 1.6
+        context = bpy.context
+        # snaping
+        tool_settings = context.tool_settings
+        snap_elements = tool_settings.snap_elements
+        obj = context.active_object
+        object_mode = 'OBJECT' if obj is None else obj.mode
+
+        row = col.row()
+       
+            
+        if tool_settings.use_snap is True:
+            if snap_elements != {'INCREMENT'}:
+                box = row.column(align=True)
+                box.scale_x = 0.4
+                box.scale_y = 0.6
+                box.label(text="Target")
+                row_2 = box.row(align=True)
+                row_2.prop(tool_settings, "snap_target", expand=True)
+
+                if obj:
+                    col = box.column(align=True)
+                    if object_mode == 'EDIT':
+                        col.prop(tool_settings, "use_snap_self", icon='PROP_ON')
+                    if object_mode in {'OBJECT', 'POSE', 'EDIT', 'WEIGHT_PAINT'}:
+                        col.prop(tool_settings, "use_snap_align_rotation", icon='SNAP_NORMAL')
+
+                if 'FACE' in snap_elements:
+                    col.prop(tool_settings, "use_snap_project", icon='ONIONSKIN_ON')
+                if 'VOLUME' in snap_elements:
+                    col.prop(tool_settings, "use_snap_peel_object", icon='SNAP_PEEL_OBJECT')
+
+                box.label(text="Affect")
+
+                box.prop(tool_settings, "use_snap_translate", text="Move", toggle=True)
+                box.prop(tool_settings, "use_snap_rotate", text="Rotate", toggle=True)
+                box.prop(tool_settings, "use_snap_scale", text="Scale", toggle=True)
+
+        if tool_settings.use_snap is False:    
+            col.active = False
+        else:
+            col.active = True
+        col = row.column(align=True)
+        col.prop(tool_settings, "use_snap", text="")
+        col.prop(tool_settings, "snap_elements", text="", expand=True)
+        if 'INCREMENT' in snap_elements:
+            col.prop(tool_settings, "use_snap_grid_absolute", text="", icon='SNAP_GRID')
+ 
+    def M4_trans_orient(self, col):
+        layout = col
+        layout.label(text="Transform Orientations")
+        context = bpy.context
+        scene = context.scene
+        orient_slot = scene.transform_orientation_slots[0]
+        orientation = orient_slot.custom_orientation
+
+        row = layout.row()
+        col = row.column()
+        col.prop(orient_slot, "type", expand=True)
+        row.operator("transform.create_orientation", text="", icon='ADD', emboss=False).use = True
+
+        if orientation:
+            row = layout.row(align=False)
+            row.prop(orientation, "name", text="", icon='OBJECT_ORIGIN')
+            row.operator("transform.delete_orientation", text="", icon='X', emboss=False)
+
+class SM_PIE_M4_Menu_Call(bpy.types.Operator):
+    
+    bl_idname = 'sop.sm_pie_m4_menu_call'
+    bl_label = "S.Menu 'M4' Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        call_pie_menu('SM_PIE_M4_Menu')
+        
         return {'FINISHED'}
