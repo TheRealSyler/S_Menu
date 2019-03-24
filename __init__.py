@@ -87,7 +87,7 @@ def register():
     bpy.types.VIEW3D_MT_editor_menus.append(add_pose_copy_buttons)
     # add on_frame_change handler to blender
     try:
-        bpy.app.handlers.frame_change_pre.append(on_frame_change) 
+        #bpy.app.handlers.frame_change_pre.append(on_frame_change) 
         #bpy.app.timers.register(SM_MH_Auto_Instance) later?
         print ("add Handler")
     except:

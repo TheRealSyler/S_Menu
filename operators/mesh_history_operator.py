@@ -1,5 +1,8 @@
-import bpy 
+import bpy
 from .. prefs import get_prefs
+from bpy.app.handlers import persistent
+
+
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils 
 #+-----------------------------------------------------------------------------------------------------+#
@@ -64,7 +67,6 @@ def copy_object(object_to_copy, is_first):
     obj_copy.use_fake_user = True
     #set is main status to false
     obj_copy.SM_MH_is_main_status = False
-    obj_copy.SM_MH_auto_instance_status = False
 
     copy_object_modifiers(object_to_copy, obj_copy)
 
@@ -103,9 +105,10 @@ def SM_MH_Auto_Instance():
 '''
 
 #§ Update Frame Function
+@persistent
 def on_frame_change(scene):
-    
     C = bpy.context
+    print("abc")
     for ob in bpy.data.objects:
         if C.mode != 'OBJECT':
             return
@@ -138,6 +141,10 @@ def on_frame_change(scene):
                         continue
             else:             
                 continue
+
+
+# add handler
+bpy.app.handlers.frame_change_pre.append(on_frame_change) 
 
 def update_copy_modifiers(self, context):
     active_object = context.active_object
@@ -223,9 +230,6 @@ class SM_mesh_history_make_Instance(bpy.types.Operator):
         #Create Bpy.context Variable
         C = bpy.context
         active_object = C.active_object
-        print ("--------------COPY--------------")
-        print (active_object)
-        print ("--------------COPY--------------")
         if active_object.SM_MH_Parent is None:
             active_object.SM_MH_Parent = active_object
             active_object.SM_MH_index = -1
