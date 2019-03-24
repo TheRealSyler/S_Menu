@@ -4,3 +4,5 @@ __pycache__/prefs.cpython-37.pyc
 ui/__pycache__/get_icon.cpython-37.pyc
 ui/__pycache__/pie_menus.cpython-37.pyc
 .vscode/launch.json
+operators/__pycache__/comp_adjust_view.cpython-37.pyc
+*.pyc
