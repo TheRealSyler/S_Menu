@@ -60,10 +60,12 @@ def get_addon_name():
 def get_prefs():
     return bpy.context.preferences.addons[get_addon_name()].preferences
 
-def call_pie_menu(name):
+def call_pie_menu(name, custom, custom_r):
     a = bpy.context.preferences.view.pie_menu_radius
-    bpy.context.preferences.view.pie_menu_radius = get_prefs().SM_PIE_Radius
-    
+    if custom is False:
+        bpy.context.preferences.view.pie_menu_radius = get_prefs().SM_PIE_Radius
+    else:
+        bpy.context.preferences.view.pie_menu_radius = custom_r
     bpy.ops.wm.call_menu_pie(name=name)
     
     bpy.context.preferences.view.pie_menu_radius = a
@@ -502,7 +504,7 @@ class SM_PIE_Add_Call(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        call_pie_menu('SM_PIE_Add')
+        call_pie_menu('SM_PIE_Add', False, None)
         #bpy.ops.wm.call_menu_pie(name="SM_PIE_Add")
         return {'FINISHED'}
 
@@ -2664,7 +2666,7 @@ class SM_PIE_Q_Node_Call(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        call_pie_menu('SM_PIE_Q_Node')
+        call_pie_menu('SM_PIE_Q_Node', False, None)
         return {'FINISHED'}
 
 class SM_PIE_Tab_Menu(bpy.types.Menu):
@@ -2676,31 +2678,55 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         # 4 - LEFT
         pie.operator("object.mode_set",text="Object Mode", icon="OBJECT_DATAMODE").mode = 'OBJECT'
         # 6 - RIGHT
-        pie.operator("sop.sm_mesh_switch_to_edit_mode",text="Edit Mode", icon="EDITMODE_HLT")
+        if bpy.context.active_object is None:
+            pie.separator()
+        else:
+            pie.operator("sop.sm_mesh_switch_to_edit_mode",text="Edit Mode", icon="EDITMODE_HLT")
         # 2 - BOTTOM
-        pie.operator("object.mode_set",text="Sculpt Mode", icon="SCULPTMODE_HLT").mode = 'SCULPT'
+        if bpy.context.active_object is None:
+            pie.separator()
+        else:
+            pie.operator("object.mode_set",text="Sculpt Mode", icon="SCULPTMODE_HLT").mode = 'SCULPT'
         # 8 - TOP
-        pie.operator("object.mode_set",text="Vertex Paint", icon="WPAINT_HLT").mode = 'VERTEX_PAINT'
+        if bpy.context.active_object is None:
+            pie.separator()
+        else:
+            pie.operator("object.mode_set",text="Vertex Paint", icon="WPAINT_HLT").mode = 'VERTEX_PAINT'
         # 7 - TOP - LEFT
-        pie.operator("object.mode_set",text="Weight Paint", icon="WPAINT_HLT").mode = 'WEIGHT_PAINT'
+        if bpy.context.active_object is None:
+            pie.separator()
+        else:
+            pie.operator("object.mode_set",text="Weight Paint", icon="WPAINT_HLT").mode = 'WEIGHT_PAINT'
         # 9 - TOP - RIGHT
-        pie.operator("object.mode_set",text="Texture Paint", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
+        if bpy.context.active_object is None:
+            pie.separator()
+        else:
+            pie.operator("object.mode_set",text="Texture Paint", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
         # 1 - BOTTOM - LEFT
         if bpy.context.mode == "OBJECT":
-            pie.operator("object.mode_set",text="Particle Edit", icon="PARTICLEMODE").mode = 'PARTICLE_EDIT'
+            if bpy.context.active_object is None:
+                pie.separator()
+            else:
+                if bpy.context.active_object.particle_systems.active is None:
+                    pie.separator()
+                else:
+                    pie.operator("object.mode_set",text="Particle Edit", icon="PARTICLEMODE").mode = 'PARTICLE_EDIT'
         else:
             pie.separator()
         # 3 - BOTTOM - RIGHT
-        if bpy.context.active_object.SM_MH_Parent is None:
+        if bpy.context.active_object is None:
             pie.separator()
         else:
-            if bpy.context.mode == "EDIT_MESH":
+            if bpy.context.active_object.SM_MH_Parent is None:
                 pie.separator()
             else:
-                if bpy.context.active_object.SM_MH_current_index == 0:
+                if bpy.context.mode == "EDIT_MESH":
                     pie.separator()
                 else:
-                    pie.operator("object.mode_set",text="Edit Instance", icon="EDITMODE_HLT").mode = 'EDIT'
+                    if bpy.context.active_object.SM_MH_current_index == 0:
+                        pie.separator()
+                    else:
+                        pie.operator("object.mode_set",text="Edit Instance", icon="EDITMODE_HLT").mode = 'EDIT'
 
 class SM_PIE_Tab_Menu_Call(bpy.types.Operator):
 
@@ -2719,6 +2745,7 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
+
         # 4 - LEFT
         split = pie.split()
         box = split.box()
@@ -2732,7 +2759,9 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         box = split.box()
         self.M4_trans_orient(box)
         # 8 - TOP
-        pie.separator()
+        split = pie.split()
+        box = split.box()
+        self.M4_tools(box)
         # 7 - TOP - LEFT
         pie.separator()
         # 9 - TOP - RIGHT
@@ -2744,8 +2773,6 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
     
     def M4_pivot_menu(self, col):
         
-
-    
         context = bpy.context
         tool_settings = context.tool_settings
         obj = context.active_object
@@ -2782,23 +2809,26 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         
         # Proportional editing
         if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
+            col.separator()
             col_2 = col.column()
             col_2.active = tool_settings.proportional_edit != 'DISABLED'
             col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-            col.separator()
+            
 
         elif object_mode == 'OBJECT':
+            col.separator()
             col_2 = col.column()
             col_2.active = tool_settings.use_proportional_edit_objects
             col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-            col.separator()
+            
 
         elif gpd is not None and obj.type == 'GPENCIL':
             if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
+                col.separator()
                 col_2 = col.column()
                 col_2.active = tool_settings.proportional_edit != 'DISABLED'
                 col_2.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-                col.separator()
+                
 
     def M4_snaping_menu(self, col):
         
@@ -2812,8 +2842,7 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         object_mode = 'OBJECT' if obj is None else obj.mode
 
         row = col.row()
-       
-            
+          
         if tool_settings.use_snap is True:
             if snap_elements != {'INCREMENT'}:
                 box = row.column(align=True)
@@ -2869,6 +2898,44 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
             row.prop(orientation, "name", text="", icon='OBJECT_ORIGIN')
             row.operator("transform.delete_orientation", text="", icon='X', emboss=False)
 
+    def M4_tools(self, col):
+        
+        context = bpy.context
+        mode = context.mode
+        col = col.column(align=True)
+        if mode == 'EDIT_MESH':
+            col.scale_x = 1.6
+            col.scale_y = 1.4
+            if get_prefs().enable_tinycad is True:
+                row = col.row(align=True)
+
+                row.operator("tinycad.autovtx", text="", icon_value=get_icon("VTX", "main"))
+                row.operator("tinycad.vertintersect", text="", icon_value=get_icon("V2X", "main"))
+                row.operator("tinycad.intersectall", text="", icon_value=get_icon("XALL", "main"))
+                row.operator("tinycad.linetobisect", text="", icon_value=get_icon("BIX", "main"))
+                row.operator("tinycad.circlecenter", text="", icon_value=get_icon("CCEN", "main"))
+                row.operator("tinycad.edge_to_face", text="", icon_value=get_icon("E2F", "main"))
+
+            if get_prefs().enable_looptools is True:
+                row = col.row(align=True)
+                row.operator("mesh.looptools_bridge", text="", icon_value=get_icon("LP_Bridge_icon", "main")).loft = False
+                row.operator("mesh.looptools_bridge", text="", icon_value=get_icon("LP_Loft_icon", "main")).loft = True
+                row.operator("mesh.looptools_circle", text="", icon_value=get_icon("LP_Circle_icon", "main"))
+                #row.operator("mesh.looptools_curve", text="", icon="ERROR")
+                row.operator("mesh.looptools_flatten", text="", icon_value=get_icon("LP_Flatten_icon", "main"))
+                #row.operator("mesh.looptools_gstretch", text="", icon="ERROR")
+                #row.operator("mesh.looptools_relax", text="", icon="ERROR")
+                row.operator("mesh.looptools_space", text="", icon_value=get_icon("LP_Space_icon", "main"))
+        elif mode == 'OBJECT':
+            col.scale_x = 1
+            col.scale_y = 1.4
+            if get_prefs().enable_machin3_tools is True:
+                row = col.row(align=True)
+                row.operator("machin3.select_center_objects", text="Select Center Objects", icon_value=get_icon("Machin3", "main"))
+                row.operator("machin3.apply_transformations", text="Apply Transformations", icon_value=get_icon("Machin3", "main"))
+        else:
+            col.label(text="WIP")
+        
 class SM_PIE_M4_Menu_Call(bpy.types.Operator):
     
     bl_idname = 'sop.sm_pie_m4_menu_call'
@@ -2877,6 +2944,6 @@ class SM_PIE_M4_Menu_Call(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        call_pie_menu('SM_PIE_M4_Menu')
+        call_pie_menu('SM_PIE_M4_Menu', True, get_prefs().SM_PIE_Radius_M4)
         
         return {'FINISHED'}

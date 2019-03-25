@@ -11,6 +11,8 @@ from . ui.pie_menus import (
     SM_PIE_M4_Menu_Call,
 )
 # todo create enable all options function for each menu
+# todo code clean up
+
 
 # -----------------------------------------------------------------------------
 #    Keymap      
@@ -156,8 +158,21 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Add Camera Rigs",
         default=True
     )
+    enable_tinycad: BoolProperty(
+        name="Tiny CAD",
+        default=True
+    )
+    enable_looptools: BoolProperty(
+        name="Loop Tools",
+        default=True
+    )
+    enable_machin3_tools: BoolProperty(
+        name="Machin3 Tools",
+        default=True
+    )
     #§ UI Pie Menu Radius
     SM_PIE_Radius: IntProperty(name="      ", default=120, min=0)
+    SM_PIE_Radius_M4: IntProperty(name="      ", default=140, min=0)
     #§ UI Bool Props
     collapse_list_options: BoolProperty(name="Options", default=False)
     collapse_list_menus: BoolProperty(name="Menus", default=False)
@@ -288,6 +303,9 @@ class SM_Prefs(bpy.types.AddonPreferences):
             row.label(text="Pie Menu Radius WIP")
             row.prop(self, "SM_PIE_Radius", icon='PROP_CON')
 
+            sub.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
+
+
     def add_main_tab(self, context, col):
         
         row = col.row()
@@ -311,7 +329,16 @@ class SM_Prefs(bpy.types.AddonPreferences):
     def utils_main_tab(self, context, col):
         
         col.label(text="Options:")
-        col.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
+        row = col.row()
+        row.use_property_split = True
+        row.label(text="M4 Pie Menu Radius")
+        row.prop(self, "SM_PIE_Radius_M4", icon='PROP_CON')
+        sub = col.column()
+        sub.label(text="M4 Enable:")
+        sub.prop(self, "enable_tinycad")
+        sub.prop(self, "enable_looptools")
+        sub.prop(self, "enable_machin3_tools")
+
         col.label(text="Keymaps:")
         self.add_keymap_to_ui(context, col, 'Object Mode', SM_PIE_A_OM_Call.bl_idname)
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_A_NODE_Call.bl_idname)

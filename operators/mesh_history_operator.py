@@ -258,7 +258,11 @@ class SM_mesh_history_switch_to_edit_mode(bpy.types.Operator):
         active_object = C.active_object
         
         try:
-            active_object.SM_MH_current_index = 0
+            if active_object.SM_MH_current_index == 0:
+                copy_object_modifiers(active_object, get_object_at_index(active_object, 0))
+                active_object.SM_MH_current_index = 0
+            else:
+                active_object.SM_MH_current_index = 0
             bpy.ops.object.mode_set(mode='EDIT')
         except:
             bpy.ops.object.mode_set(mode='EDIT')
