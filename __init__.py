@@ -46,7 +46,7 @@ from . ui.render_settings_popup import (
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
-    "version": (0, 0, 1, 2),
+    "version": (0, 0, 1, 3),
     "description": "Adds Pie Menus",
     "blender" : (2, 80, 0),
     "category" : "3D view"
