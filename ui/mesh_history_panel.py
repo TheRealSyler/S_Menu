@@ -38,23 +38,27 @@ class SM_mesh_history_panel(bpy.types.Panel):
         
 
         if active_object is not None:
-            history_length = self.get_last_index(active_object)
+            history_length = len(active_object.SM_MH_Instances) -1
             col = layout.column()
             if C.mode == 'OBJECT':
                 col.enabled = True
             else:
                 col.enabled = False
             
-            if active_object.SM_MH_Parent is None:
+            #if active_object.SM_MH_Parent is None:
+            if len(active_object.SM_MH_Instances) == 0:
+                panel_enabled = False
                 text = "Initialize History"
             else:
-                box = col.box()
-                box.label(text="Instances: " + str(history_length))
+                panel_enabled = True
+                
                 text = "Add New Instance"
 
             col.operator("sop.sm_mesh_history_make_instance", text=text)
-            box = col.box()
-            box.prop(active_object, "SH_MH_copy_modifiers", icon='MODIFIER', expand=True)
+            if panel_enabled is True:
+                box = col.box()
+                box.label(text="Instances: " + str(history_length))
+              
 
             layout.label(text="Switch Mode:")
             col = layout.column()
@@ -64,37 +68,37 @@ class SM_mesh_history_panel(bpy.types.Panel):
             elif C.mode == 'EDIT_MESH':
                 col.operator("object.mode_set",text="Object Mode", icon="OBJECT_DATAMODE").mode = 'OBJECT'
                 
-            
-            col = layout.column()
-            if C.mode == 'OBJECT':
-                col.enabled = True
-            else:
-                col.enabled = False
-            col.label(text="Animation:")
-            col.prop(active_object, "SM_MH_auto_animate", text="Auto Animate")
-            col.prop(active_object, "SM_MH_current_index")
+            if panel_enabled is True:
+                col = layout.column()
+                if C.mode == 'OBJECT':
+                    col.enabled = True
+                else:
+                    col.enabled = False
+                col.label(text="Animation:")
+                col.prop(active_object, "SM_MH_auto_animate", text="Auto Animate")
+                col.prop(active_object, "SM_MH_current_index")
 
-            row = col.row()
-            row.operator("sop.sm_mesh_history_delete_current_instance", text="Delete Current Instance", icon="CANCEL")
+                row = col.row()
+                row.operator("sop.sm_mesh_history_delete_current_instance", text="Delete Current Instance", icon="CANCEL")
 
-            if get_prefs().show_delete_instances is True:
-                text = "Delete All Instances"
-                box = col.box()
-                box.label(text=text)
-                row = col.row()
-                row.prop(get_prefs(), "sm_mh_del_inst", expand=True)
-                if get_prefs().sm_mh_del_inst == 'NO':
+                if get_prefs().show_delete_instances is True:
+                    text = "Delete All Instances"
+                    box = col.box()
+                    box.label(text=text)
                     row = col.row()
-                    row.prop(get_prefs(), "show_delete_instances", text="Return", icon="CANCEL", expand=True)
-                elif get_prefs().sm_mh_del_inst == 'YES':
+                    row.prop(get_prefs(), "sm_mh_del_inst", expand=True)
+                    if get_prefs().sm_mh_del_inst == 'NO':
+                        row = col.row()
+                        row.prop(get_prefs(), "show_delete_instances", text="Return", icon="CANCEL", expand=True)
+                    elif get_prefs().sm_mh_del_inst == 'YES':
+                        row = col.row()
+                        row.operator("sop.sm_mesh_history_delete_instances", text="Delete All Instances", icon="CANCEL")
+                else:
+                    text = ""
+                    box = col.box()
+                    box.label(text=text) 
                     row = col.row()
-                    row.operator("sop.sm_mesh_history_delete_instances", text="Delete All Instances", icon="CANCEL")
-            else:
-                text = ""
-                box = col.box()
-                box.label(text=text) 
-                row = col.row()
-                row.prop(get_prefs(), "show_delete_instances", icon="CANCEL")
+                    row.prop(get_prefs(), "show_delete_instances", icon="CANCEL")
            
 
             #col.prop(active_object, "SM_MH_auto_instance_status") later ?

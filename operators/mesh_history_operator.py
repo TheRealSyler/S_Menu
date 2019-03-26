@@ -70,29 +70,40 @@ def copy_object(object_to_copy, is_first):
 
     copy_object_modifiers(object_to_copy, obj_copy)
 
-
-
-    
 def set_first_copy(active_object):
+    ac_i = active_object.SM_MH_Instances[0]
+    obj = ac_i.object
+
+    ac_i.data = active_object.data
+    obj.modifiers.clear()
+    copy_object_modifiers(active_object, obj)
+    
+    if get_prefs().enable_debug_messages is True:
+        print("mesh_history_operator.set_first_copy")
+    
+    '''
     ob = get_object_at_index(active_object, 0)
     ob.data = active_object.data
-    ob.modifiers.clear()
-    copy_object_modifiers(active_object, ob)
+    
+    '''
+
+
+
 #+-----------------------------------------------------------------------------------------------------+#
 #? Update 
 #+-----------------------------------------------------------------------------------------------------+#
 
-#//     modifiers
+#  todo edit modifiers in instance modifiers
 #  todo animation memery
 #  todo prepend delete (so that all the instances also get deleted)
 #//     delete instances
 #? todo auto instance maybe later?
 #? todo materials ?!
 
-
 #§ auto instance Function maybe later?
 
-'''
+
+""" 
 def SM_MH_Auto_Instance():
     print("SM_MH_Auto_Instance")
     for ob in bpy.data.objects:
@@ -102,21 +113,23 @@ def SM_MH_Auto_Instance():
             #set_first_copy(ob)
 
     return get_prefs().SM_MH_auto_instance_inerval
-'''
+"""
 
 #§ Update Frame Function
 @persistent
 def on_frame_change(scene):
     C = bpy.context
-    print("abc")
+    if get_prefs().enable_debug_messages is True:
+        print("mesh_history_operator.on_frame_change: Start")
     for ob in bpy.data.objects:
         if C.mode != 'OBJECT':
             return
-        if ob.SM_MH_Parent is None:
+        if len(ob.SM_MH_Instances) == 0:
             continue
         else:
-            if ob.SM_MH_is_main_status is True and ob.SM_MH_auto_animate is True:
-                index_l = get_last_index(ob)
+            if ob.SM_MH_auto_animate is True:
+                
+                index_l = len(ob.SM_MH_Instances) -1
                 animation_l = C.scene.frame_end - C.scene.frame_start
                 current_frame = C.scene.frame_current
                 
@@ -128,17 +141,10 @@ def on_frame_change(scene):
                 
                 if index_value >= index_l:
                     index_value = index_l
-                if ob == C.active_object:
-                    ob.SM_MH_current_index = index_value
-                else:
-                    for obj in bpy.data.objects:
-                        if obj.SM_MH_Parent is None:
-                            continue
-                        else:
-                            if obj.SM_MH_Parent == ob:
-                                if obj.SM_MH_index == index_value:
-                                    ob.data = obj.data
-                        continue
+                
+                ob.SM_MH_current_index = index_value
+                if get_prefs().enable_debug_messages is True:
+                    print("mesh_history_operator.on_frame_change: {'Finished'} Obj: " + ob.name)
             else:             
                 continue
 
@@ -146,36 +152,58 @@ def on_frame_change(scene):
 # add handler
 bpy.app.handlers.frame_change_pre.append(on_frame_change) 
 
-def update_copy_modifiers(self, context):
-    active_object = context.active_object
-    if active_object.SH_MH_copy_modifiers is True:
-        ob = get_object_at_index(active_object, active_object.SM_MH_current_index)
-        active_object.modifiers.clear()
-        copy_object_modifiers(ob, active_object)
-    else:
-        ob = get_object_at_index(active_object, 0)
-        copy_object_modifiers(ob, active_object)
 
 def update_current_index(self, context):
-    active_object = context.active_object
-    if self.SM_MH_current_index > get_last_index(context.object):
-        self.SM_MH_current_index = get_last_index(context.object)
-    else:
-        for ob in bpy.data.objects:
-            if ob.SM_MH_Parent is None:
-                continue
-            else:
-                if ob.SM_MH_Parent == context.object:
-                    if self.SM_MH_current_index == ob.SM_MH_index:
-                        active_object.data = ob.data
-                        
-                        if active_object.SH_MH_copy_modifiers is True:
-                            active_object.modifiers.clear()
-                            copy_object_modifiers(ob, active_object)
-                        
+    c_index = self.SM_MH_current_index
+    instances = self.SM_MH_Instances
 
-                        continue
+    if c_index > len(instances) -1:
+        self.SM_MH_current_index = len(instances) - 1
+        if get_prefs().enable_debug_messages is True:
+            print("mesh_history_operator.update_current_index: SM_MH_current_index is more than SM_MH_Instances items")
+    else:
+        print(self.SM_MH_current_index)
+        print(self.SM_MH_current_index -1)
+        #? useless
+        #if self.SM_MH_current_index - 1 == 0:
+        #    print("aw")
+        #    set_first_copy(self) 
+
+        obj_copy = self.copy()
+  
+        self.data = instances[c_index].object.data
+        #self.modifiers.clear()
+        copy_object_modifiers(instances[c_index].object, self)
+
+        print(instances[c_index].object.name)
+        #instances[c_index].object.modifiers.clear()
+        #copy_object_modifiers(obj_copy, instances[c_index].object)
+
+        bpy.data.objects.remove(obj_copy, do_unlink=True)
+
+        if get_prefs().enable_debug_messages is True:
+            print("mesh_history_operator.update_current_index: {'Finished (1)'} Obj: " + self.name)
+       
+
              
+class SM_MH_Instances(bpy.types.PropertyGroup):
+    object : bpy.props.PointerProperty(type=bpy.types.Object)    
+
+    def add_instance(self, obj):
+        self.object = self.id_data.copy()
+        self.object.data = self.object.data.copy()
+        self.object.SM_MH_index = len(obj.SM_MH_Instances)
+        self.name = self.object.name
+        return self.object
+
+    def add_first_instance(self, obj):
+        self.object = obj
+        self.name = obj.name
+        return self.object
+
+
+    
+
 
 class SM_mesh_history_Props(bpy.types.PropertyGroup):
     
@@ -202,12 +230,6 @@ class SM_mesh_history_Props(bpy.types.PropertyGroup):
         name="Mesh History is Main Status",
         default=False,
     )
-    bpy.types.Object.SH_MH_copy_modifiers = bpy.props.BoolProperty(
-        name="Copy Modifiers",
-        description="Mesh History Copy Modifiers",
-        default=True,
-        update=update_copy_modifiers,
-    )
     # later ?
     #bpy.types.Object.SM_MH_auto_instance_status = bpy.props.BoolProperty(
     #    name="Auto Instance",
@@ -230,19 +252,29 @@ class SM_mesh_history_make_Instance(bpy.types.Operator):
         #Create Bpy.context Variable
         C = bpy.context
         active_object = C.active_object
-        if active_object.SM_MH_Parent is None:
-            active_object.SM_MH_Parent = active_object
-            active_object.SM_MH_index = -1
-            active_object.SM_MH_is_main_status = True
-            
-            copy_object(active_object, True)
-            copy_object(active_object, False)
+        
+        if len(active_object.SM_MH_Instances) == 0:
+            active_object.SM_MH_Instances.add().add_first_instance(active_object)
+            active_object.SM_MH_Instances.add().add_instance(active_object)
         else:
             set_first_copy(active_object)
-            copy_object(active_object, False)
+            active_object.SM_MH_Instances.add().add_instance(active_object)
+            
+            
+        #if active_object.SM_MH_Parent is None:
+            #active_object.SM_MH_Parent = active_object
+            #active_object.SM_MH_index = -1
+            #active_object.SM_MH_is_main_status = True
+            
+            #copy_object(active_object, True)
+            #copy_object(active_object, False) 
+            
+        #else:
+            #set_first_copy(active_object)
+            #copy_object(active_object, False)
         
-        if active_object.SM_MH_current_index != 0:
-            active_object.SM_MH_current_index = 0
+        #if active_object.SM_MH_current_index != 0:
+            #active_object.SM_MH_current_index = 0
      
         return {'FINISHED'}
 

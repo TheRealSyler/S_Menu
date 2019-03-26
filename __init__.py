@@ -31,6 +31,7 @@ from . operators.mesh_history_operator import (
     #SM_MH_Auto_Instance, later?
     SM_mesh_history_delete_instances,
     SM_mesh_history_delete_current_instance,
+    SM_MH_Instances,
 )
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
@@ -44,7 +45,6 @@ bl_info = {
     "blender" : (2, 80, 0),
     "category" : "3D view"
 }
-
 
 
 classes = [
@@ -74,13 +74,20 @@ classes = [
     SM_mesh_history_delete_current_instance,
     SM_PIE_M4_Menu,
     SM_PIE_M4_Menu_Call,
+    SM_MH_Instances,
 ]
+
+    
 
 def register():
     for c in classes:
         bpy.utils.register_class(c)
     #+ add hotkey
     add_hotkey()
+    # ------------------------------------------------------------------------------------------------------------
+    # Register prop group
+    # ------------------------------------------------------------------------------------------------------------
+    bpy.types.Object.SM_MH_Instances = bpy.props.CollectionProperty(type=SM_MH_Instances)
     # ------------------------------------------------------------------------------------------------------------
     # Append Register stuff
     # ------------------------------------------------------------------------------------------------------------
@@ -110,7 +117,10 @@ def unregister():
         print ("remove Handler")
     except:
         pass
-
+    # ------------------------------------------------------------------------------------------------------------
+    # delete prop group
+    # ------------------------------------------------------------------------------------------------------------
+    del(bpy.types.Object.SM_MH_Instances)
     # ------------------------------------------------------------------------------------------------------------
     # Append Unregister stuff
     # ------------------------------------------------------------------------------------------------------------

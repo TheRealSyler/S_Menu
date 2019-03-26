@@ -170,6 +170,11 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Machin3 Tools",
         default=True
     )
+    #§ debug options
+    enable_debug_messages: BoolProperty(
+        name="Enable Debug Messages",
+        default=True
+    )
     #§ UI Pie Menu Radius
     SM_PIE_Radius: IntProperty(name="      ", default=120, min=0)
     SM_PIE_Radius_M4: IntProperty(name="      ", default=140, min=0)
@@ -181,7 +186,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     collapse_list_node: BoolProperty(name="Nodes:", default=False)
     #§ comp_adjust_view Prefs
     SM_Modal_adjust_view_suppress_move: BoolProperty(default=False)
-    #§ SM_MH Prefs
+    #§ SM Mesh History Prefs
     show_delete_instances: BoolProperty(name="Delete All Instances", default=False)
     sm_mh_del_inst = [
         ("NO", "No", ""),
