@@ -37,8 +37,12 @@ from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
 from . ui.add_pose_copy_buttons import add_pose_copy_buttons
 from . ui.properties_popup_panel import SM_Properties_Popup
-from . ui.render_settings_popup import SM_Render_Settings_Popup
-
+from . ui.render_settings_popup import (
+    SM_Render_Settings_Popup, 
+    SM_Render_Settings_Panel,
+    Init_Render_Settings_Props,
+    Del_Render_Settings_Props,
+)
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
@@ -83,10 +87,12 @@ classes = [
     SM_MH_Instances,
     #? Popup Panels
     SM_Properties_Popup,
+    # Render Settings
     SM_Render_Settings_Popup,
+    SM_Render_Settings_Panel,
 ]
 
-    
+
 
 def register():
     for c in classes:
@@ -94,20 +100,19 @@ def register():
     #+ add hotkey
     add_hotkey()
     # ------------------------------------------------------------------------------------------------------------
-    # Register prop group
+    #§ Register prop group
     # ------------------------------------------------------------------------------------------------------------
     bpy.types.Object.SM_MH_Instances = bpy.props.CollectionProperty(type=SM_MH_Instances)
+    Init_Render_Settings_Props()
     # ------------------------------------------------------------------------------------------------------------
-    # Append Register stuff
+    #+ Append Register stuff
     # ------------------------------------------------------------------------------------------------------------
     bpy.types.VIEW3D_MT_editor_menus.append(add_pose_copy_buttons)
     # add on_frame_change handler to blender
-    try:
-        #bpy.app.handlers.frame_change_pre.append(on_frame_change) 
-        #bpy.app.timers.register(SM_MH_Auto_Instance) later?
-        print ("add Handler")
-    except:
-        pass
+ 
+    #bpy.app.handlers.frame_change_pre.append(on_frame_change) 
+    #bpy.app.timers.register(SM_MH_Auto_Instance) later?
+   
 
     # ------------------------------------------------------------------------------------------------------------
     # Icons Register stuff
@@ -123,17 +128,17 @@ def unregister():
     try:
         bpy.app.handlers.frame_change_pre.remove(on_frame_change) 
         #bpy.app.timers.unregister(SM_MH_Auto_Instance) later?
-        print ("remove Handler")
+       
     except:
         pass
     # ------------------------------------------------------------------------------------------------------------
-    # delete prop group
+    #$ delete prop group
     # ------------------------------------------------------------------------------------------------------------
     del(bpy.types.Object.SM_MH_Instances)
+    Del_Render_Settings_Props()
     # ------------------------------------------------------------------------------------------------------------
     # Append Unregister stuff
     # ------------------------------------------------------------------------------------------------------------
-
     bpy.types.VIEW3D_MT_editor_menus.remove(add_pose_copy_buttons)
     # ------------------------------------------------------------------------------------------------------------
     # Icons Unregister stuff

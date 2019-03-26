@@ -100,20 +100,7 @@ def set_first_copy(active_object):
 #? todo auto instance maybe later?
 #? todo materials ?!
 
-#§ auto instance Function maybe later?
 
-
-""" 
-def SM_MH_Auto_Instance():
-    print("SM_MH_Auto_Instance")
-    for ob in bpy.data.objects:
-        if ob.SM_MH_auto_instance_status is True:
-            print (ob)
-            copy_object(ob, False)
-            #set_first_copy(ob)
-
-    return get_prefs().SM_MH_auto_instance_inerval
-"""
 
 #§ Update Frame Function
 @persistent
