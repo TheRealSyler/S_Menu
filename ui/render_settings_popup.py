@@ -59,30 +59,8 @@ def Init_Render_Settings_Props():
 def Del_Render_Settings_Props():
     del(bpy.types.Scene.SM_RS_cycles_tabs)
 
-def CYCLES_RENDER_sampling_sub_samples(col):
-    context = bpy.context
-    scene = context.scene
-    cscene = scene.cycles
 
-    if cscene.progressive != 'PATH' and use_branched_path(context) is True:
-        layout = col
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        col = layout.column(align=True)
-        col.prop(cscene, "diffuse_samples", text="Diffuse")
-        col.prop(cscene, "glossy_samples", text="Glossy")
-        col.prop(cscene, "transmission_samples", text="Transmission")
-        col.prop(cscene, "ao_samples", text="AO")
-        
-        sub = col.row(align=True)
-        sub.active = use_sample_all_lights(context)
-        sub.prop(cscene, "mesh_light_samples", text="Mesh Light")
-        col.prop(cscene, "subsurface_samples", text="Subsurface")
-        col.prop(cscene, "volume_samples", text="Volume")
-       
-        draw_samples_info(layout, context)    
-
+     
 #------------------------------------------------
 #------------------------------------------------
 
@@ -132,7 +110,23 @@ class SM_Render_Settings_Panel(bpy.types.Panel):
             if scene.SM_RS_cycles_tabs == 'SAMPLING':
                 CYCLES_RENDER_PT_sampling.draw(self, context)
                 ui_spacer(layout, 1)
-                CYCLES_RENDER_sampling_sub_samples(layout)
+                if cscene.progressive != 'PATH' and use_branched_path(context) is True:
+                    layout.use_property_split = True
+                    layout.use_property_decorate = False
+
+                    col = layout.column(align=True)
+                    col.prop(cscene, "diffuse_samples", text="Diffuse")
+                    col.prop(cscene, "glossy_samples", text="Glossy")
+                    col.prop(cscene, "transmission_samples", text="Transmission")
+                    col.prop(cscene, "ao_samples", text="AO")
+
+                    sub = col.row(align=True)
+                    sub.active = use_sample_all_lights(context)
+                    sub.prop(cscene, "mesh_light_samples", text="Mesh Light")
+                    col.prop(cscene, "subsurface_samples", text="Subsurface")
+                    col.prop(cscene, "volume_samples", text="Volume")
+
+                    draw_samples_info(layout, context)   
                 CYCLES_RENDER_PT_sampling_advanced.draw(self, context)
 
             if scene.SM_RS_cycles_tabs == 'PERFORMANCE':
