@@ -1980,7 +1980,9 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 # 9 - TOP - RIGHT
                 pie.separator()
                 # 1 - BOTTOM - LEFT
-                pie.separator()
+                split = pie.split()
+                col = split.column()
+                self.text_fill_menu(col)
                 # 3 - BOTTOM - RIGHT
                 pie.separator()
 
@@ -2351,36 +2353,18 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         col.scale_y = 1.2
         
         curve = bpy.context.object.data
-        col.label(text="Geometry")
+        col.label(text="Geometry:")
         sub = col.column()
-        edv = sub.operator("wm.context_modal_mouse",text="Adjust Offset", icon="ARROW_LEFTRIGHT")
-        edv.input_scale = 0.001
-        edv.data_path_iter = "selected_objects"
-        edv.data_path_item = "data.offset"
-
-        
         sub.active = (curve.bevel_object is None)
-        edv = sub.operator("wm.context_modal_mouse",text="Adjust Extrusion", icon="ARROW_LEFTRIGHT")
-        edv.input_scale = 0.001
-        edv.data_path_iter = "selected_objects"
-        edv.data_path_item = "data.extrude"
-
-        col.prop(curve, "taper_object")
-
-        sub = col.column()
+        
+        sub.prop(curve, "taper_object")
+        
         sub.active = curve.taper_object is not None
         sub.prop(curve, "use_map_taper")
 
         sub.label(text="Bevel")
         sub.active = (curve.bevel_object is None)
-        edv = sub.operator("wm.context_modal_mouse",text="Adjust Bevel Depth", icon="ARROW_LEFTRIGHT")
-        edv.input_scale = 0.001
-        edv.data_path_iter = "selected_objects"
-        edv.data_path_item = "data.bevel_depth"
-        edv = sub.operator("wm.context_modal_mouse",text="Adjust Bevel Resolution", icon="ARROW_LEFTRIGHT")
-        edv.input_scale = 0.1
-        edv.data_path_iter = "selected_objects"
-        edv.data_path_item = "data.bevel_resolution"
+        
         col.prop(curve, "bevel_object", text="Bevel Object")
         sub = col.column()
         sub.active = curve.bevel_object is not None
@@ -2391,40 +2375,47 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         sub = col.column(align=True)
         sub.prop(curve, "render_resolution_u", text="Render U")
         col.prop(curve, "use_fast_edit", text="Fast Editing")
+        
+        
+    def text_font_menu(self, col):
+        col = col.box()
+        col.scale_x = 1.1
+        col.scale_y = 1.2
+
+
+       
+        sub = col.column()
+
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Extrusion", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.001
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.extrude"
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Offset", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.001
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.offset"
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Bevel Depth", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.001
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.bevel_depth"
+        edv = sub.operator("wm.context_modal_mouse",text="Adjust Bevel Resolution", icon="ARROW_LEFTRIGHT")
+        edv.input_scale = 0.1
+        edv.data_path_iter = "selected_objects"
+        edv.data_path_item = "data.bevel_resolution"
+
+    def text_fill_menu(self, col):
+        spacer(col,2)
+        col = col.box()
+        col.scale_x = 1
+        col.scale_y = 1
+        
+        curve = bpy.context.object.data
         sub = col.column()
         sub.active = (curve.dimensions == '2D' or (curve.bevel_object is None and curve.dimensions == '3D'))
         sub.prop(curve, "fill_mode")
         col.prop(curve, "use_fill_deform")
+
         
-    def text_font_menu(self, col):
-        col = col.box()
-        col.scale_x = 1
-        col.scale_y = 1.2
-
-
-        text = bpy.context.object.data
-        char = bpy.context.object.data.edit_format
-
-        row = col.split(factor=0.25)
-        row.label(text="Regular")
-        row.template_ID(text, "font", open="font.open", unlink="font.unlink")
-        row = col.split(factor=0.25)
-        row.label(text="Bold")
-        row.template_ID(text, "font_bold", open="font.open", unlink="font.unlink")
-        row = col.split(factor=0.25)
-        row.label(text="Italic")
-        row.template_ID(text, "font_italic", open="font.open", unlink="font.unlink")
-        row = col.split(factor=0.25)
-        row.label(text="Bold & Italic")
-        row.template_ID(text, "font_bold_italic", open="font.open", unlink="font.unlink")
-
-        col.separator()
-
-        row = col.row(align=True)
-        row.prop(char, "use_bold", toggle=True)
-        row.prop(char, "use_italic", toggle=True)
-        row.prop(char, "use_underline", toggle=True)
-        row.prop(char, "use_small_caps", toggle=True)
 
 class SM_PIE_Q_Menu_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_menu_call'

@@ -187,7 +187,8 @@ def update_current_index(self, context):
 
              
 class SM_MH_Instances(bpy.types.PropertyGroup):
-    object : bpy.props.PointerProperty(type=bpy.types.Object)    
+    object : bpy.props.PointerProperty(type=bpy.types.Object)   
+    
 
     def add_instance(self, obj):
         self.object = self.id_data.copy()
@@ -257,7 +258,8 @@ class SM_mesh_history_make_Instance(bpy.types.Operator):
             active_object.SM_MH_Instances.add().add_first_instance(active_object)
             active_object.SM_MH_Instances.add().add_instance(active_object)
         else:
-            set_first_copy(active_object)
+            if active_object.SM_MH_current_index == 0:
+                set_first_copy(active_object)
             active_object.SM_MH_Instances.add().add_instance(active_object)
             
             

@@ -36,6 +36,8 @@ from . operators.mesh_history_operator import (
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
 from . ui.add_pose_copy_buttons import add_pose_copy_buttons
+from . ui.properties_popup_panel import SM_Properties_Popup
+from . ui.render_settings_popup import SM_Render_Settings_Popup
 
 bl_info = {
     "name" : "S.Menu",
@@ -48,6 +50,7 @@ bl_info = {
 
 
 classes = [
+    #? PIE Menus and pie menu calls
     SM_PIE_Add,
     SM_PIE_Add_Call,
     SM_PIE_Add_Node,
@@ -62,19 +65,25 @@ classes = [
     SM_PIE_Q_Node_Call,
     SM_PIE_A_NODE,
     SM_PIE_A_NODE_Call,
+    SM_PIE_Tab_Menu,
+    SM_PIE_Tab_Menu_Call,
+    SM_PIE_M4_Menu,
+    SM_PIE_M4_Menu_Call,
+    #? Prefs
     SM_Prefs,
+    #* Modals
     SM_Modal_adjust_view,
+    #+ Mesh Hisrtory
     SM_mesh_history_panel,
     SM_mesh_history_Props,
     SM_mesh_history_make_Instance,
     SM_mesh_history_switch_to_edit_mode,
-    SM_PIE_Tab_Menu,
-    SM_PIE_Tab_Menu_Call,
     SM_mesh_history_delete_instances,
-    SM_mesh_history_delete_current_instance,
-    SM_PIE_M4_Menu,
-    SM_PIE_M4_Menu_Call,
+    SM_mesh_history_delete_current_instance, 
     SM_MH_Instances,
+    #? Popup Panels
+    SM_Properties_Popup,
+    SM_Render_Settings_Popup,
 ]
 
     
