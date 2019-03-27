@@ -41,6 +41,9 @@ from bl_ui.properties_render import (
     RENDER_PT_eevee_bloom,
     RENDER_PT_eevee_screen_space_reflections,
     RENDER_PT_eevee_volumetric,
+    RENDER_PT_opengl_film,
+    RENDER_PT_simplify_viewport,
+    RENDER_PT_simplify_render,
 )
 from bl_ui.properties_freestyle import (
     RENDER_PT_freestyle, 
@@ -53,6 +56,12 @@ from bl_ui.properties_output import (
     RENDER_PT_stereoscopy,
     RENDER_PT_output_views,
 ) 
+from bl_ui.space_view3d import (
+    VIEW3D_PT_shading_lighting,
+    VIEW3D_PT_shading_color,
+    VIEW3D_PT_shading_options,
+    VIEW3D_PT_shading, 
+)
 
 
 def Init_Render_Settings_Props():
@@ -91,11 +100,18 @@ def Init_Render_Settings_Props():
         ("VOLUMETRIC", "Volumetric", ""),
         ("OTHER", "Other", "Freestyle/ Hair/ Simplify/ Film/ Motion Blur"),
     ]
+    workbench_tabs = [
+        ("MAIN", "Main", ""),
+        ("OUTPUT", "Output", ""),
+        ("CM", "Color Management", "Color Management"),
+        ("SIMPLIFY", "Simplify", ""),
+    ]
     bpy.types.Scene.SM_RS_cycles_tabs = bpy.props.EnumProperty(items=cycles_tabs)
     bpy.types.Scene.SM_RS_cycles_sub_tabs = bpy.props.EnumProperty(items=cycles_sub_tabs)
     bpy.types.Scene.SM_RS_output_sub_tabs = bpy.props.EnumProperty(items=output_sub_tabs)
     bpy.types.Scene.SM_RS_eevee_tabs = bpy.props.EnumProperty(items=eevee_tabs)
     bpy.types.Scene.SM_RS_eevee_sub_tabs = bpy.props.EnumProperty(items=eevee_sub_tabs)
+    bpy.types.Scene.SM_RS_workbench_tabs = bpy.props.EnumProperty(items=workbench_tabs)
     
     
 def Del_Render_Settings_Props():
@@ -103,8 +119,6 @@ def Del_Render_Settings_Props():
     del(bpy.types.Scene.SM_RS_cycles_sub_tabs)
     del(bpy.types.Scene.SM_RS_output_sub_tabs)
 
-
-     
 #------------------------------------------------
 #------------------------------------------------
 
@@ -399,12 +413,84 @@ class SM_Render_Settings_Panel(bpy.types.Panel):
                     box.label(text="Depth of Field")
                     box.prop(props, "bokeh_max_size")
 
+        elif context.engine == 'BLENDER_WORKBENCH':
+            layout.prop(scene, "SM_RS_workbench_tabs", expand=True)
+            if scene.SM_RS_workbench_tabs == 'OUTPUT':
+                layout.prop(scene, "SM_RS_output_sub_tabs", expand=True)
+                
+                if scene.SM_RS_output_sub_tabs == 'DIM':
+                    RENDER_PT_dimensions.draw(self, context)
+                    layout.label(text="Time Remapping")
+                    RENDER_PT_frame_remapping.draw(self, context)
+                
+                if scene.SM_RS_output_sub_tabs == 'OUTPUT':
+                    RENDER_PT_output.draw(self, context)
+                    box = layout.box()
+                    col = box.column(align=True)
+                    col.prop(scene, 'auto_save_after_render')
+                    if scene.auto_save_after_render is True:
+                        col = box.column(align=True)
+                        col.prop(context.scene, 'auto_save_format', text='as', expand=False)
+                        col.prop(context.scene, 'auto_save_blend', toggle=False)
+                        col.prop(context.scene, 'auto_save_subfolders', toggle=False)
+                        col.prop(context.scene, 'auto_save_use_framenumber', toggle=False)
+                
+                if scene.SM_RS_output_sub_tabs == 'META': 
+                    RENDER_PT_stamp.draw(self, context)
+                    
+                    box = layout.box()
+                    box.prop(rd, "use_stamp_note")
+                    if rd.use_stamp_note is True:
+                        box.active = rd.use_stamp_note
+                        box.prop(rd, "stamp_note_text", text="")
+                    
+                    box = layout.box()
+                    box.prop(rd, "use_stamp")
+                    if rd.use_stamp is True:
+                        col = layout.column()
+                        col.active = rd.use_stamp
+                        col.prop(rd, "stamp_font_size", text="Font Size")
+                        col.column().prop(rd, "stamp_foreground", slider=True)
+                        col.column().prop(rd, "stamp_background", slider=True)
+                        col.prop(rd, "use_stamp_labels", text="Include Labels")
+                
+                if scene.SM_RS_output_sub_tabs == 'OTHER':
+                    CYCLES_PT_post_processing.draw(self, context)
+                    box = layout.box()
+                    box.prop(rd, "use_multiview", text="Stereoscopy")
+                    if rd.use_multiview is True:
+                        RENDER_PT_stereoscopy.draw(self, context)
+                        ui_spacer(layout, 1)
+                        RENDER_PT_output_views.draw(self, context)
+
+            if scene.SM_RS_workbench_tabs == 'MAIN':
+                VIEW3D_PT_shading_lighting.draw(self, context)
+                VIEW3D_PT_shading_color.draw(self, context)
+                VIEW3D_PT_shading_options.draw(self, context)
+                RENDER_PT_opengl_film.draw(self, context)
+            
+            if scene.SM_RS_workbench_tabs == 'CM':
+                RENDER_PT_color_management.draw(self, context)
+                ui_spacer(layout, 1)
+                layout.prop(view, "use_curve_mapping", text="Use Curves")
+                if view.use_curve_mapping is True:
+                    RENDER_PT_color_management_curves.draw(self, context)
+            
+            if scene.SM_RS_workbench_tabs == 'SIMPLIFY':
+                layout.prop(rd, "use_simplify", text="Enable Simplify")
+                if rd.use_simplify is True:
+                    RENDER_PT_simplify_viewport.draw(self, context)
+                    RENDER_PT_simplify_render.draw(self, context)
+
+             
+    
+        
         else:
-            layout.label(text="WIP")
+            layout.label(text="Not Supported")
 
 class SM_Render_Settings_Popup(bpy.types.Operator):
     bl_idname = 'sop.sm_render_settings_popup'
-    bl_description = 'Displays Render Settings'
+    bl_description = 'Displays Render and Output Settings'
     bl_label = 'Render Settings'
 
     bl_options = {'UNDO'}
@@ -464,6 +550,24 @@ class SM_Render_Settings_Popup(bpy.types.Operator):
             col = layout.column(align=True)
             col.prop(rd, "fps")
             col.prop(rd, "fps_base", text="Base")
+    #----------------------------------------------------------------------------------------
+    #+ workbench stuff
+    def _draw_color_type(self, context):
+        layout = self.layout
+        shading = VIEW3D_PT_shading.get_shading(context)
+
+        layout.row().prop(shading, "color_type", expand=True)
+        if shading.color_type == 'SINGLE':
+            layout.row().prop(shading, "single_color", text="")
+
+    def _draw_background_color(self, context):
+        layout = self.layout
+        shading = VIEW3D_PT_shading.get_shading(context)
+
+        layout.row().label(text="Background")
+        layout.row().prop(shading, "background_type", expand=True)
+        if shading.background_type == 'VIEWPORT':
+            layout.row().prop(shading, "background_color", text="")
     #----------------------------------------------------------------------------------------
     
     def draw(self, context):

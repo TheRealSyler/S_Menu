@@ -20,6 +20,8 @@ from . ui.pie_menus import (
     SM_PIE_Tab_Menu_Call,
     SM_PIE_M4_Menu,
     SM_PIE_M4_Menu_Call,
+    SM_PIE_W_Menu,
+    SM_PIE_W_Menu_Call,
 )
 from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
@@ -43,6 +45,7 @@ from . ui.render_settings_popup import (
     Init_Render_Settings_Props,
     Del_Render_Settings_Props,
 )
+from . operators.change_area_type import SM_change_area_type
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
@@ -73,6 +76,8 @@ classes = [
     SM_PIE_Tab_Menu_Call,
     SM_PIE_M4_Menu,
     SM_PIE_M4_Menu_Call,
+    SM_PIE_W_Menu,
+    SM_PIE_W_Menu_Call,
     #? Prefs
     SM_Prefs,
     #* Modals
@@ -90,6 +95,8 @@ classes = [
     # Render Settings
     SM_Render_Settings_Popup,
     SM_Render_Settings_Panel,
+    #§ Operators
+    SM_change_area_type
 ]
 
 

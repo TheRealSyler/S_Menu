@@ -9,6 +9,7 @@ from . ui.pie_menus import (
     SM_PIE_A_NODE_Call,
     SM_PIE_Tab_Menu_Call,
     SM_PIE_M4_Menu_Call,
+    SM_PIE_W_Menu_Call,
 )
 # todo create enable all options function for each menu
 # todo code clean up
@@ -37,13 +38,19 @@ def add_hotkey():
     addon_keymaps.append((km, kmi))
     kmi = km.keymap_items.new(SM_PIE_A_OM_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
-    # object Mode
+    kmi = km.keymap_items.new(SM_PIE_W_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
+    # object Mode non modal
     km = kc.keymaps.new(name='Object Non-modal')
     
     kmi = km.keymap_items.new(SM_PIE_Tab_Menu_Call.bl_idname, 'TAB', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
     kmi = km.keymap_items.new(SM_PIE_M4_Menu_Call.bl_idname, 'BUTTON4MOUSE', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
+    
+    # Window
+    km = kc.keymaps.new(name='Window')
+    
     # edit mode (Mesh)
     km = kc.keymaps.new(name='Mesh')
     
@@ -178,6 +185,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     #§ UI Pie Menu Radius
     SM_PIE_Radius: IntProperty(name="      ", default=120, min=0)
     SM_PIE_Radius_M4: IntProperty(name="      ", default=140, min=0)
+    SM_PIE_Radius_W: IntProperty(name="      ", default=100, min=0)
     #§ UI Bool Props
     collapse_list_options: BoolProperty(name="Options", default=False)
     collapse_list_menus: BoolProperty(name="Menus", default=False)

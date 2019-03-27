@@ -12,6 +12,14 @@ from . get_icon import get_icon
 def disabled_button(col, text, icon):
     col.label(text=text, icon_value=icon)
 
+def op_button(col, op, text, icon, x, y):
+    col.scale_x = x
+    col.scale_y = y
+    col.operator(op, text=text, icon=icon)
+
+def op_button_val(col, op, text, icon):
+    col.operator(op, text=text, icon_value=icon)
+
 def op_loop_val(col, enum, text, icon, spacer, spinum):
     for index, e in enumerate(enum):            
         if index == spinum and spacer is True:
@@ -2936,5 +2944,72 @@ class SM_PIE_M4_Menu_Call(bpy.types.Operator):
 
     def execute(self, context):
         call_pie_menu('SM_PIE_M4_Menu', True, get_prefs().SM_PIE_Radius_M4)
+        
+        return {'FINISHED'}
+
+class SM_PIE_W_Menu(bpy.types.Menu):
+    bl_label = "S.Menu 'W' Menu"
+    
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        # 4 - LEFT
+        split = pie.split()
+        self.left_options(split)
+        # 6 - RIGHT
+        split = pie.split()
+  
+        # 2 - BOTTOM
+        split = pie.split()
+        box = split.box()
+        self.area_options(box)
+        
+  
+        # 8 - TOP
+        split = pie.split()
+        row = split.row(align=True)
+        
+        op_button(row, "sop.sm_render_settings_popup", "Render Settings", "SCENE", 1.1, 2)
+        row.template_header()
+        # 7 - TOP - LEFT
+        pie.separator()
+        # 9 - TOP - RIGHT
+        pie.separator()
+        # 1 - BOTTOM - LEFT
+        pie.separator()
+        # 3 - BOTTOM - RIGHT
+        pie.separator()
+    def area_options(self, col):
+        col.scale_x = 1.6
+        col.scale_y = 2
+        
+        row = col.row(align=True)
+        
+        #$ needs custom icon
+        row.operator('screen.region_quadview', text="", icon_value=get_icon("Quadview_icon", "main"))
+        row.operator('screen.screen_full_area', text="", icon="FULLSCREEN_ENTER").use_hide_panels = True
+        row.operator('screen.area_split', text="", icon_value=get_icon("H_split_icon", "main")).direction='HORIZONTAL'
+        row.operator('screen.area_split', text="", icon_value=get_icon("V_split_icon", "main")).direction='VERTICAL'
+       
+    def left_options(self, col):
+        col.scale_x = 1.6
+        col.scale_y = 2
+
+
+        col.operator('sop.sm_change_area_type', text="View 3D", icon="ERROR").a_type = 'VIEW_3D'
+
+
+
+class SM_PIE_W_Menu_Call(bpy.types.Operator):
+    
+    bl_idname = 'sop.sm_pie_w_menu_call'
+    bl_label = "S.Menu 'W' Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        call_pie_menu('SM_PIE_W_Menu', True, get_prefs().SM_PIE_Radius_W)
         
         return {'FINISHED'}

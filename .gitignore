@@ -12,3 +12,4 @@ ui/__pycache__/add_pose_copy_buttons.cpython-37.pyc
 ui/__pycache__/render_settings_popup.cpython-37.pyc
 ui/__pycache__/utils.cpython-37.pyc
 .vscode/settings.json
+operators/__pycache__/change_area_type.cpython-37.pyc
