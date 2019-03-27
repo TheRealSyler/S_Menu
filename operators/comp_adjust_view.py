@@ -7,7 +7,7 @@ class SM_Modal_adjust_view(bpy.types.Operator):
     bl_idname = 'sop.sm_modal_adjust_view'
     bl_label = "S.Menu Change Channel"
     bl_description = 'Calls Change Channel'
-    bl_options = {'REGISTER', 'UNDO', "INTERNAL"}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL', 'GRAB_CURSOR', 'BLOCKING'}
 
     first_mouse_x: IntProperty()
     first_mouse_y: IntProperty()

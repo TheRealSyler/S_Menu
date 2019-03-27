@@ -143,9 +143,10 @@ bpy.app.handlers.frame_change_pre.append(on_frame_change)
 def update_current_index(self, context):
     c_index = self.SM_MH_current_index
     instances = self.SM_MH_Instances
-
-    if c_index > len(instances) -1:
-        self.SM_MH_current_index = len(instances) - 1
+    
+    if len(instances) != 0:
+        if c_index > len(instances) -1:
+            self.SM_MH_current_index = len(instances) - 1
         if get_prefs().enable_debug_messages is True:
             print("mesh_history_operator.update_current_index: SM_MH_current_index is more than SM_MH_Instances items")
     else:
@@ -278,14 +279,14 @@ class SM_mesh_history_switch_to_edit_mode(bpy.types.Operator):
         C = bpy.context
         active_object = C.active_object
         
-        try:
-            if active_object.SM_MH_current_index == 0:
-                copy_object_modifiers(active_object, get_object_at_index(active_object, 0))
-                active_object.SM_MH_current_index = 0
-            else:
-                active_object.SM_MH_current_index = 0
+        instances = active_object.SM_MH_Instances
+    
+        if len(instances) != 0:
+            
+            active_object.SM_MH_current_index = 0
+            
             bpy.ops.object.mode_set(mode='EDIT')
-        except:
+        else:
             bpy.ops.object.mode_set(mode='EDIT')
         
         return {'FINISHED'}
