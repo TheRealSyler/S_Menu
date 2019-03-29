@@ -93,12 +93,7 @@ def set_first_copy(active_object):
 #? Update 
 #+-----------------------------------------------------------------------------------------------------+#
 
-#  todo edit modifiers in instance modifiers
-#  todo animation memery
-#  todo prepend delete (so that all the instances also get deleted)
-#//     delete instances
-#? todo auto instance maybe later?
-#? todo materials ?!
+
 
 
 

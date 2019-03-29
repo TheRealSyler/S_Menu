@@ -76,6 +76,22 @@ def call_pie_menu(name, custom, custom_r):
     
     bpy.context.preferences.view.pie_menu_radius = a
 
+def custom_pie_slot_tool_set_by_id(pie_ref, slot, icon, id):
+    #- 1 -----------------------------------------------------------------
+    if slot == '':
+        pie_ref.separator()
+    else:
+        if icon == '':
+            icon = "ANTIALIASED"
+        else:
+            icon = icon
+        
+        pie_ref.operator(
+            "wm.tool_set_by_id", 
+            text=slot,
+            icon=icon,
+        ).name = id
+
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
 #+-----------------------------------------------------------------------------------------------------+#
@@ -3008,5 +3024,43 @@ class SM_PIE_W_Menu_Call(bpy.types.Operator):
 
     def execute(self, context):
         call_pie_menu('SM_PIE_W_Menu', True, get_prefs().SM_PIE_Radius_W)
+        
+        return {'FINISHED'}
+
+class SM_PIE_W_Sculpt_Menu(bpy.types.Menu):
+    bl_label = "S.Menu 'W' Sculpt Menu"
+    
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        # 4 - LEFT
+        custom_pie_slot_tool_set_by_id(pie, "Draw", "BRUSH_SCULPT_DRAW", "builtin_brush.Draw")
+        # 6 - RIGHT
+        custom_pie_slot_tool_set_by_id(pie, "Clay Strips", "BRUSH_CLAY_STRIPS", "builtin_brush.Clay Strips")
+        # 2 - BOTTOM
+        custom_pie_slot_tool_set_by_id(pie, "Crease", "BRUSH_CREASE", "builtin_brush.Crease")
+        # 8 - TOP
+        custom_pie_slot_tool_set_by_id(pie, "Flatten", "BRUSH_FLATTEN", "builtin_brush.Flatten")
+        # 7 - TOP - LEFT
+        custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+        # 9 - TOP - RIGHT
+        custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+        # 1 - BOTTOM - LEFT
+        custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+        # 3 - BOTTOM - RIGHT
+        custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+    
+    
+
+class SM_OT_W_Sculpt_Menu_Call(bpy.types.Operator):
+    bl_idname = 'sop.sm_pie_w_sculpt_menu_call'
+    bl_label = "S.Menu 'W' Sculpt Menu"
+    bl_description = 'Calls pie menu'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        call_pie_menu('SM_PIE_W_Sculpt_Menu', True, get_prefs().SM_PIE_Radius_W)
         
         return {'FINISHED'}

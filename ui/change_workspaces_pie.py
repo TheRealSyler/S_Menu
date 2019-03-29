@@ -4,6 +4,23 @@ import bpy
 from . pie_menus import call_pie_menu, get_prefs
 
 
+def custom_pie_slot_change_workspace(pie_ref ,slot, text, icon, type):
+
+    #- 1 -----------------------------------------------------------------
+    if slot == '':
+        pie_ref.separator()
+    else:
+        if icon == '':
+            icon = "ANTIALIASED"
+        else:
+            icon = icon
+        pie_ref.operator(
+            "sop.sm_change_workspace", 
+            text=text,
+            icon=icon,
+        ).w_type = type
+
+
 class SM_change_workspace(bpy.types.Operator):
     bl_idname = 'sop.sm_change_workspace'
     bl_label = "S.Menu Change Workspaces"
@@ -44,109 +61,69 @@ class SM_PIE_Workspaces_Menu(bpy.types.Menu):
         # fill menu based on slot variables in prefs
         if get_prefs().custom_workspace_pie is True:
             #- 1 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_1 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_1_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_1_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_1,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_1
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_1,
+                get_prefs().workspace_pie_slot_1,
+                get_prefs().workspace_pie_slot_1_icon,
+                get_prefs().workspace_pie_slot_1,
+            )
             #- 2 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_2 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_2_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_2_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_2,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_2
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_2,
+                get_prefs().workspace_pie_slot_2,
+                get_prefs().workspace_pie_slot_2_icon,
+                get_prefs().workspace_pie_slot_2,
+            )
             #- 3 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_3 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_3_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_3_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_3,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_3
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_3,
+                get_prefs().workspace_pie_slot_3,
+                get_prefs().workspace_pie_slot_3_icon,
+                get_prefs().workspace_pie_slot_3,
+            )
             #- 4 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_4 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_4_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_4_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_4,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_4
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_4,
+                get_prefs().workspace_pie_slot_4,
+                get_prefs().workspace_pie_slot_4_icon,
+                get_prefs().workspace_pie_slot_4,
+            )
             #- 5 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_5 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_5_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_5_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_5,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_5
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_5,
+                get_prefs().workspace_pie_slot_5,
+                get_prefs().workspace_pie_slot_5_icon,
+                get_prefs().workspace_pie_slot_5,
+            )
             #- 6 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_6 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_6_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_6_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_6,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_6
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_6,
+                get_prefs().workspace_pie_slot_6,
+                get_prefs().workspace_pie_slot_6_icon,
+                get_prefs().workspace_pie_slot_6,
+            )
             #- 7 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_7 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_7_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_7_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_7,
-                    icon=icon,
-                ).w_type = get_prefs().workspace_pie_slot_7
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_7,
+                get_prefs().workspace_pie_slot_7,
+                get_prefs().workspace_pie_slot_7_icon,
+                get_prefs().workspace_pie_slot_7,
+            )
             #- 8 -----------------------------------------------------------------
-            if get_prefs().workspace_pie_slot_8 == '':
-                pie.separator()
-            else:
-                if get_prefs().workspace_pie_slot_8_icon == '':
-                    icon = "ANTIALIASED"
-                else:
-                    icon = get_prefs().workspace_pie_slot_8_icon
-                pie.operator(
-                    "sop.sm_change_workspace", 
-                    text=get_prefs().workspace_pie_slot_8,
-                    icon=icon
-                ).w_type = get_prefs().workspace_pie_slot_8
+            custom_pie_slot_change_workspace(
+                pie,
+                get_prefs().workspace_pie_slot_8,
+                get_prefs().workspace_pie_slot_8,
+                get_prefs().workspace_pie_slot_8_icon,
+                get_prefs().workspace_pie_slot_8,
+            )
             #------------------------------------------------------------------
             
         else:

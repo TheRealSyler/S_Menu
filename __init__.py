@@ -22,6 +22,8 @@ from . ui.pie_menus import (
     SM_PIE_M4_Menu_Call,
     SM_PIE_W_Menu,
     SM_PIE_W_Menu_Call,
+    SM_PIE_W_Sculpt_Menu,
+    SM_OT_W_Sculpt_Menu_Call,
 )
 from . ui.mesh_history_panel import SM_mesh_history_panel
 from . operators.comp_adjust_view import SM_Modal_adjust_view
@@ -80,6 +82,8 @@ classes = [
     SM_PIE_M4_Menu_Call,
     SM_PIE_W_Menu,
     SM_PIE_W_Menu_Call,
+    SM_PIE_W_Sculpt_Menu,
+    SM_OT_W_Sculpt_Menu_Call,
     #------
     SM_PIE_Workspaces_Menu, 
     SM_PIE_Workspaces_Menu_Call,

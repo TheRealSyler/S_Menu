@@ -10,6 +10,7 @@ from . ui.pie_menus import (
     SM_PIE_Tab_Menu_Call,
     SM_PIE_M4_Menu_Call,
     SM_PIE_W_Menu_Call,
+    SM_OT_W_Sculpt_Menu_Call,
 )
 from . ui.change_workspaces_pie import SM_PIE_Workspaces_Menu_Call
 from . ui.get_icon import get_icon
@@ -55,7 +56,9 @@ def add_hotkey():
     addon_keymaps.append((km, kmi))
     
     # edit mode (Mesh)
-    km = kc.keymaps.new(name='Mesh')
+    km = kc.keymaps.new(name='Sculpt')
+    kmi = km.keymap_items.new(SM_OT_W_Sculpt_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
     
     # node edtitors (comp/shader/texture)
     km = kc.keymaps.new(name='Node Generic', space_type='NODE_EDITOR')
