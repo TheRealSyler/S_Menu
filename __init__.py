@@ -45,11 +45,13 @@ from . ui.render_settings_popup import (
     Init_Render_Settings_Props,
     Del_Render_Settings_Props,
 )
-from . operators.change_area_type import SM_change_area_type
+from . operators.change_area_type import SM_change_area_type, SM_change_area_type_modal
+from . ui.change_workspaces_pie import SM_PIE_Workspaces_Menu, SM_PIE_Workspaces_Menu_Call, SM_change_workspace
+
 bl_info = {
     "name" : "S.Menu",
     "author" : "Syler",
-    "version": (0, 0, 1, 3),
+    "version": (0, 0, 1, 5),
     "description": "Adds Pie Menus",
     "blender" : (2, 80, 0),
     "category" : "3D view"
@@ -78,10 +80,11 @@ classes = [
     SM_PIE_M4_Menu_Call,
     SM_PIE_W_Menu,
     SM_PIE_W_Menu_Call,
+    #------
+    SM_PIE_Workspaces_Menu, 
+    SM_PIE_Workspaces_Menu_Call,
     #? Prefs
     SM_Prefs,
-    #* Modals
-    SM_Modal_adjust_view,
     #+ Mesh Hisrtory
     SM_mesh_history_panel,
     SM_mesh_history_Props,
@@ -96,7 +99,11 @@ classes = [
     SM_Render_Settings_Popup,
     SM_Render_Settings_Panel,
     #§ Operators
-    SM_change_area_type
+    SM_change_area_type,
+    SM_change_workspace,
+    #§ Modals
+    SM_Modal_adjust_view,
+    SM_change_area_type_modal,
 ]
 
 

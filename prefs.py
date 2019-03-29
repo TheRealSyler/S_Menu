@@ -1,5 +1,5 @@
 import bpy, os  
-from bpy.props import EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty, StringProperty
 from . ui.pie_menus import (
     SM_PIE_Add_Call,
     SM_PIE_Add_Node_Call, 
@@ -11,8 +11,8 @@ from . ui.pie_menus import (
     SM_PIE_M4_Menu_Call,
     SM_PIE_W_Menu_Call,
 )
-# todo create enable all options function for each menu
-# todo code clean up
+from . ui.change_workspaces_pie import SM_PIE_Workspaces_Menu_Call
+from . ui.get_icon import get_icon
 
 
 # -----------------------------------------------------------------------------
@@ -38,8 +38,7 @@ def add_hotkey():
     addon_keymaps.append((km, kmi))
     kmi = km.keymap_items.new(SM_PIE_A_OM_Call.bl_idname, 'A', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(SM_PIE_W_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=False, shift=False)
-    addon_keymaps.append((km, kmi))
+    
     # object Mode non modal
     km = kc.keymaps.new(name='Object Non-modal')
     
@@ -48,8 +47,12 @@ def add_hotkey():
     kmi = km.keymap_items.new(SM_PIE_M4_Menu_Call.bl_idname, 'BUTTON4MOUSE', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
     
-    # Window
+    # 
     km = kc.keymaps.new(name='Window')
+    kmi = km.keymap_items.new(SM_PIE_W_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km, kmi))
+    kmi = km.keymap_items.new(SM_PIE_Workspaces_Menu_Call.bl_idname, 'RIGHTMOUSE', 'PRESS', ctrl=True, shift=False)
+    addon_keymaps.append((km, kmi))
     
     # edit mode (Mesh)
     km = kc.keymaps.new(name='Mesh')
@@ -101,6 +104,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     options_sub_tabs = [
         ("MAIN", "Main", ""),
         ("ADD", "Add", ""),
+        ("WORKSPACES", "Workspace", ""),
         ("QMENU", "Q Menu", ""),
         ("UTILS", "Utils", ""),
     ]
@@ -180,8 +184,29 @@ class SM_Prefs(bpy.types.AddonPreferences):
     #§ debug options
     enable_debug_messages: BoolProperty(
         name="Enable Debug Messages",
-        default=True
+        default=False
     )
+    #$ Workspaces options
+    custom_workspace_pie: BoolProperty(name="Customize Workspace Pie", default=False)
+    workspace_pie_slot_1: StringProperty(name="Slot 1 (Left) ")
+    workspace_pie_slot_2: StringProperty(name="Slot 2 (Right) ")
+    workspace_pie_slot_3: StringProperty(name="Slot 3 (Bottom) ")
+    workspace_pie_slot_4: StringProperty(name="Slot 4 (Top) ")
+    workspace_pie_slot_5: StringProperty(name="Slot 5 (Top - Left) ")
+    workspace_pie_slot_6: StringProperty(name="Slot 6 (Top - Right) ")
+    workspace_pie_slot_7: StringProperty(name="Slot 7 (Bottom - Left) ")
+    workspace_pie_slot_8: StringProperty(name="Slot 8 (Bottom - Right) ")
+    workspace_pie_slot_1_icon: StringProperty(name="Slot 1 Icon")
+    workspace_pie_slot_2_icon: StringProperty(name="Slot 2 Icon")
+    workspace_pie_slot_3_icon: StringProperty(name="Slot 3 Icon")
+    workspace_pie_slot_4_icon: StringProperty(name="Slot 4 Icon")
+    workspace_pie_slot_5_icon: StringProperty(name="Slot 5 Icon")
+    workspace_pie_slot_6_icon: StringProperty(name="Slot 6 Icon")
+    workspace_pie_slot_7_icon: StringProperty(name="Slot 7 Icon")
+    workspace_pie_slot_8_icon: StringProperty(name="Slot 8 Icon")
+
+    workspace_pie_slot_options: StringProperty(name="")
+    
     #§ UI Pie Menu Radius
     SM_PIE_Radius: IntProperty(name="      ", default=120, min=0)
     SM_PIE_Radius_M4: IntProperty(name="      ", default=140, min=0)
@@ -208,7 +233,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         min=2,
         description="Auto Instance Interval (In seconds)"
     )'''
-
+    
     def add_keymap_to_ui(self, context, layout, k_name, idname):
         # keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
         keymap_item = context.window_manager.keyconfigs.user.keymaps[k_name].keymap_items
@@ -295,7 +320,10 @@ class SM_Prefs(bpy.types.AddonPreferences):
         
         if self.options_sub_tabs == "ADD":
             self.add_main_tab(context, col)
-       
+
+        if self.options_sub_tabs == "WORKSPACES":
+            self.workspaces_options_tab(context, col)
+        
         if self.options_sub_tabs == "QMENU":
             self.q_main_tab(context, col)
        
@@ -393,3 +421,45 @@ class SM_Prefs(bpy.types.AddonPreferences):
         col.label(text="Options:")
         col.label(text="Keymap:")
         self.add_keymap_to_ui(context, col, 'Node Generic', SM_PIE_Q_Node_Call.bl_idname)
+
+    def get_workspaces(self):
+        ws = ""
+        for w in bpy.data.workspaces:
+            ws = ws + " '" + w.name + "'"
+        return ws
+    
+
+    def workspaces_options_tab(self, context, col):
+ 
+        col.label(text="Keymap:")
+        self.add_keymap_to_ui(context, col, 'Window', SM_PIE_Workspaces_Menu_Call.bl_idname)
+
+        col.separator()
+        col.prop(self, "custom_workspace_pie")
+        box = col.box()  
+        box.active = self.custom_workspace_pie
+        
+        self.workspace_pie_slot_options = self.get_workspaces() #("test \n" + str(self.get_workspaces()))
+        
+        box.label(text="Available Workspaces:")
+        
+        box.prop(self, "workspace_pie_slot_options")
+        box.prop(self, "workspace_pie_slot_1", icon_value=get_icon("pie_01_icon", "main"))
+        box.prop(self, "workspace_pie_slot_1_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_2", icon_value=get_icon("pie_02_icon", "main"))
+        box.prop(self, "workspace_pie_slot_2_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_3", icon_value=get_icon("pie_03_icon", "main"))
+        box.prop(self, "workspace_pie_slot_3_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_4", icon_value=get_icon("pie_04_icon", "main"))
+        box.prop(self, "workspace_pie_slot_4_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_5", icon_value=get_icon("pie_05_icon", "main"))
+        box.prop(self, "workspace_pie_slot_5_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_6", icon_value=get_icon("pie_06_icon", "main"))
+        box.prop(self, "workspace_pie_slot_6_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_7", icon_value=get_icon("pie_07_icon", "main"))
+        box.prop(self, "workspace_pie_slot_7_icon", icon="HIDE_OFF")
+        box.prop(self, "workspace_pie_slot_8", icon_value=get_icon("pie_08_icon", "main"))
+        box.prop(self, "workspace_pie_slot_8_icon", icon="HIDE_OFF")
+
+        if box.operator('iv.icons_show') is None:
+            box.label(text="Please Enable The 'Icon Viewer' Addon")

@@ -2,8 +2,6 @@ import bpy, os
 from . get_icon import get_icon
 
 
-# todo add Extra Object (Curve) support
-# todo pie menu radius 
 
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils 
@@ -2423,8 +2421,6 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         sub.prop(curve, "fill_mode")
         col.prop(curve, "use_fill_deform")
 
-        
-
 class SM_PIE_Q_Menu_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_q_menu_call'
     bl_label = 'S.Menu Q Menu Pie'
@@ -2972,7 +2968,7 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         row = split.row(align=True)
         
         op_button(row, "sop.sm_render_settings_popup", "Render Settings", "SCENE", 1.1, 2)
-        row.template_header()
+        
         # 7 - TOP - LEFT
         pie.separator()
         # 9 - TOP - RIGHT
@@ -2985,10 +2981,12 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         col.scale_x = 1.6
         col.scale_y = 2
         
+        context = bpy.context 
+        ui_type = context.area.ui_type
         row = col.row(align=True)
         
-        #$ needs custom icon
-        row.operator('screen.region_quadview', text="", icon_value=get_icon("Quadview_icon", "main"))
+        if ui_type == 'VIEW_3D':
+            row.operator('screen.region_quadview', text="", icon_value=get_icon("Quadview_icon", "main"))
         row.operator('screen.screen_full_area', text="", icon="FULLSCREEN_ENTER").use_hide_panels = True
         row.operator('screen.area_split', text="", icon_value=get_icon("H_split_icon", "main")).direction='HORIZONTAL'
         row.operator('screen.area_split', text="", icon_value=get_icon("V_split_icon", "main")).direction='VERTICAL'
@@ -2997,9 +2995,9 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         col.scale_x = 1.6
         col.scale_y = 2
 
-
-        col.operator('sop.sm_change_area_type', text="View 3D", icon="ERROR").a_type = 'VIEW_3D'
-
+        op = col.operator('sop.sm_change_area_type', text="View 3D", icon="ERROR")
+        op.a_type = 'VIEW_3D'
+        op.chose_from_list = False
 
 
 class SM_PIE_W_Menu_Call(bpy.types.Operator):
