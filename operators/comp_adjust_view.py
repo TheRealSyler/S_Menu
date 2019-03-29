@@ -64,7 +64,7 @@ class SM_Modal_adjust_view(bpy.types.Operator):
     def modal(self, context, event):
         snode = bpy.context.space_data
         
-        bpy.context.area.header_text_set("       {} {}       {} {}       {} {} {} {} {}       {} {}       {}".format(
+        bpy.context.area.header_text_set("       {} {}       {} {}       {} {} {} {} {}       {} {}       {} {}".format(
             "Zoom (Wheel Up/Down + Shift for more Precision):",
             round(snode.backdrop_zoom,2),
             "Channel (Ctrl Wheel Up/Down):",
@@ -76,7 +76,8 @@ class SM_Modal_adjust_view(bpy.types.Operator):
             snode.backdrop_offset[1],
             "Suppress Movement (S):",
             get_prefs().SM_Modal_adjust_view_suppress_move,
-            "Exit (LMB, RMG Or Esc)",
+            "Apply: (LMB)",
+            "Cancel: (RMB Or Esc)",
         ))
         # -------------------------------------------------------------#     
         if event.type == 'WHEELUPMOUSE':

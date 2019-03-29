@@ -5,7 +5,7 @@ class SM_change_area_type(bpy.types.Operator):
 
     bl_idname = 'sop.sm_change_area_type'
     bl_label = "S.Menu Change Area Type"
-    bl_description = 'Calls pie menu'
+    bl_description = '(Old) Change area Type'
     bl_options = {'REGISTER', 'UNDO'}
 
     areas = [
@@ -61,67 +61,75 @@ class SM_change_area_type(bpy.types.Operator):
         return {'FINISHED'}
 
 
-def get_next_area(area, reverse):
-    #context = bpy.context
-    
-    areas = [
-        "VIEW_3D",
-        "VIEW",
-        "UV",
-    ]
-    
-    if reverse is False:
-        for index, c in enumerate(areas):
-            if c == area.ui_type:
-                if index == len(areas) - 1:
-                    return areas[0]
-                else:
-                    return areas[index + 1]
-    else:
-        for index, c in enumerate(areas):
-            if c == area.ui_type:
-                if index == 0:
-                    return areas[len(areas) - 1]
-                else:
-                    return areas[index - 1]
-
 class SM_change_area_type_modal(bpy.types.Operator):
-
     bl_idname = 'sop.sm_change_area_type_modal'
     bl_label = "S.Menu Change Area Type Modal"
     bl_description = 'Calls Change Area Type Modal'
-    bl_options = {'REGISTER', 'UNDO', 'GRAB_CURSOR', 'BLOCKING'}
+    #bl_options = {'GRAB_CURSOR', 'BLOCKING'}
+    index = 0
+    screen_area_index = 0
+    save_area_ui_type = ''
 
+    def get_next_area(self, area, delta):
 
+        areas = [
+            "VIEW_3D",
+            "VIEW",
+            "UV",
+            "ShaderNodeTree",
+            "CompositorNodeTree",
+            "TextureNodeTree",
+            "SEQUENCE_EDITOR",
+            "CLIP_EDITOR",
+            "DOPESHEET",
+            "TIMELINE",
+            "FCURVES",
+            "DRIVERS",
+            "NLA_EDITOR",
+            "TEXT_EDITOR",
+            "CONSOLE",
+            "INFO",
+            "OUTLINER",
+            "PROPERTIES",
+            "FILE_BROWSER",
+            "PREFERENCES",
+        ]
 
-    
+        self.index = (self.index + len(areas) + delta) % len(areas)
+        area.ui_type = areas[self.index]
+
     def modal(self, context, event):
-        
-        area = bpy.context.area
-        print (area)
+        area = context.screen.areas[self.screen_area_index]
+        area.header_text_set(" {} {}                    {}    {}    {}    {}".format(
+            "Current Area:",
+            area.type,
+            "Next: (Wheel Up)",
+            "Previous: (Wheel Down)",
+            "Apply: (LMB)",
+            "Cancel: (RMB Or Esc)",
+        ))
 
         if event.type == 'WHEELUPMOUSE':
-            area.ui_type = get_next_area(area, False)
-
-        if event.type == 'WHEELDOWNMOUSE':
-            area.ui_type = get_next_area(area, True)
-            
-        # -------------------------------------------------------------#   
-        #+ Finish/Cancel Modal
-        elif event.type == 'LEFTMOUSE':
-            return {'FINISHED'}
-
-        elif event.type in {'RIGHTMOUSE', 'ESC'}:
-            return {'CANCELLED'}
+            self.get_next_area(area, 1)
+            return {'RUNNING_MODAL'}
         
-        return {'RUNNING_MODAL'}
+        elif event.type == 'WHEELDOWNMOUSE':
+            self.get_next_area(area, -1)
+            return {'RUNNING_MODAL'}
+
+        elif event.type == 'LEFTMOUSE':
+            area.header_text_set(None)
+            return {'FINISHED'}
+        
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+            area.header_text_set(None)
+            area.ui_type = self.save_area_ui_type
+            return {'CANCELLED'}
+
+        return {'PASS_THROUGH'}
 
     def invoke(self, context, event):
-        #self.first_mouse_x = event.mouse_x
-        #self.first_mouse_y = event.mouse_y
-       
-        # self.initial_backdrop_offset = bpy.context.space_data.backdrop_offset
-
-        #self.mouse_path = []
+        self.screen_area_index = context.screen.areas[:].index(context.area)
+        self.save_area_ui_type = context.area.ui_type
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}

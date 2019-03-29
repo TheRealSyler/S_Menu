@@ -158,8 +158,6 @@ class SM_PIE_Workspaces_Menu(bpy.types.Menu):
                 else:
                     return
         
-
-
 class SM_PIE_Workspaces_Menu_Call(bpy.types.Operator):
     
     bl_idname = 'sop.sm_pie_workspaces_menu_call'

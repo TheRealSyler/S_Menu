@@ -2992,13 +2992,12 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         row.operator('screen.area_split', text="", icon_value=get_icon("V_split_icon", "main")).direction='VERTICAL'
        
     def left_options(self, col):
-        col.scale_x = 1.6
+        col.scale_x = 1
         col.scale_y = 2
 
-        op = col.operator('sop.sm_change_area_type', text="View 3D", icon="ERROR")
-        op.a_type = 'VIEW_3D'
-        op.chose_from_list = False
-
+        col.operator('sop.sm_change_area_type_modal', text="Area Scroll", icon="ERROR")
+        #op.a_type = 'VIEW_3D'
+        #op.chose_from_list = False
 
 class SM_PIE_W_Menu_Call(bpy.types.Operator):
     

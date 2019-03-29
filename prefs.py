@@ -184,7 +184,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
     #§ debug options
     enable_debug_messages: BoolProperty(
         name="Enable Debug Messages",
-        default=False
+        default=True
     )
     #$ Workspaces options
     custom_workspace_pie: BoolProperty(name="Customize Workspace Pie", default=False)
