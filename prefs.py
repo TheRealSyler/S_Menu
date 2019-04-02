@@ -52,7 +52,7 @@ def add_hotkey():
     km = kc.keymaps.new(name='Window')
     kmi = km.keymap_items.new(SM_PIE_W_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(SM_PIE_Workspaces_Menu_Call.bl_idname, 'RIGHTMOUSE', 'PRESS', ctrl=True, shift=False)
+    kmi = km.keymap_items.new(SM_PIE_Workspaces_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=True, shift=False)
     addon_keymaps.append((km, kmi))
     
     # edit mode (Mesh)

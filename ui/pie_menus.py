@@ -3036,23 +3036,97 @@ class SM_PIE_W_Sculpt_Menu(bpy.types.Menu):
         pie = layout.menu_pie()
 
         # 4 - LEFT
-        custom_pie_slot_tool_set_by_id(pie, "Draw", "BRUSH_SCULPT_DRAW", "builtin_brush.Draw")
-        # 6 - RIGHT
         custom_pie_slot_tool_set_by_id(pie, "Clay Strips", "BRUSH_CLAY_STRIPS", "builtin_brush.Clay Strips")
+        # 6 - RIGHT
+        split = pie.split()
+        self.brush_options(split, context)
         # 2 - BOTTOM
         custom_pie_slot_tool_set_by_id(pie, "Crease", "BRUSH_CREASE", "builtin_brush.Crease")
         # 8 - TOP
         custom_pie_slot_tool_set_by_id(pie, "Flatten", "BRUSH_FLATTEN", "builtin_brush.Flatten")
         # 7 - TOP - LEFT
-        custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+        split = pie.split()
+        self.brush_menu_01(split) 
         # 9 - TOP - RIGHT
         custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
         # 1 - BOTTOM - LEFT
-        custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+        split = pie.split()
+        box = split.box()
+        self.brush_menu_02(box) 
         # 3 - BOTTOM - RIGHT
         custom_pie_slot_tool_set_by_id(pie, "", "", "builtin_brush.Draw")
+
+    def brush_options(self, col, context):
+        col.scale_x = 1
+        col.scale_y = 1.2
+        box = col.box()
+        tool_settings = context.tool_settings
+        brush = tool_settings.sculpt.brush
+        capabilities = brush.sculpt_capabilities
+        ups = tool_settings.unified_paint_settings
+       
+        row = box.row(align=True)
+        op = row.operator("wm.radial_control", text="", icon="ARROW_LEFTRIGHT")
+        op.data_path_primary = "tool_settings.sculpt.brush.size"
+        op.data_path_secondary = "tool_settings.unified_paint_settings.size"
+        op.use_secondary = "tool_settings.unified_paint_settings.use_unified_size"
+        op.rotation_path = "tool_settings.sculpt.brush.texture_slot.angle"
+        op.color_path = "tool_settings.sculpt.brush.cursor_color_add"
+        op.image_id = "tool_settings.sculpt.brush"
+        if capabilities.has_strength_pressure:
+            row.prop(brush, "use_pressure_strength", text="")
+        if (
+                (ups.use_unified_size and ups.use_locked_size == 'SCENE') or
+                ((not ups.use_unified_size) and brush.use_locked_size == 'SCENE')
+        ):
+            row.prop(brush, "unprojected_radius", slider=True, text="Radius")
+        else:
+            row.prop(ups, "size", slider=True)
+        row = box.row(align=True)
+        op = row.operator("wm.radial_control", text="", icon="ARROW_LEFTRIGHT")
+        op.data_path_primary = "tool_settings.sculpt.brush.strength"
+        op.data_path_secondary = "tool_settings.unified_paint_settings.strength"
+        op.use_secondary = "tool_settings.unified_paint_settings.use_unified_strength"
+        op.rotation_path = "tool_settings.sculpt.brush.texture_slot.angle"
+        op.color_path = "tool_settings.sculpt.brush.cursor_color_add"
+        op.image_id = "tool_settings.sculpt.brush"
+        row.prop(brush, "use_pressure_size", text="")
+        row.prop(brush, "strength")
+       
+        row = box.row(align=True)
+        if capabilities.has_direction is False:
+            row.prop(brush, "direction", expand=True, text="")
+        op = row.operator("wm.radial_control", text="Angle", icon="ARROW_LEFTRIGHT")
+        op.data_path_primary = "tool_settings.sculpt.brush.texture_slot.angle"
+        op.rotation_path = "tool_settings.sculpt.brush.texture_slot.angle"
+        op.color_path = "tool_settings.sculpt.brush.cursor_color_add"
+        op.image_id = "tool_settings.sculpt.brush"
+        row = box.row(align=True)
+        row.popover_group(space_type='PROPERTIES', region_type='WINDOW', context=".paint_common", category="")
+        row = box.row(align=True)
+        row.popover_group(space_type='PROPERTIES', region_type='WINDOW', context=".sculpt_mode", category="")
+        
+    def brush_menu_01(self, col):
+        col.scale_x = 1.3
+        col.scale_y = 1.4
+        box = col.box()
+        row = box.row(align=True)
+        custom_pie_slot_tool_set_by_id(row, "Clay", "BRUSH_CLAY", "builtin_brush.Clay")
+        row = box.row(align=True)
+        custom_pie_slot_tool_set_by_id(row, "Draw", "BRUSH_SCULPT_DRAW", "builtin_brush.Draw")
+        row = box.row(align=True)
+        custom_pie_slot_tool_set_by_id(row, "Layer", "BRUSH_LAYER", "builtin_brush.Layer")
     
-    
+    def brush_menu_02(self, col):
+        col.scale_x = 1.3
+        col.scale_y = 1.4
+        
+        row = col.row(align=True)
+        custom_pie_slot_tool_set_by_id(row, "Inflate", "BRUSH_INFLATE", "builtin_brush.Inflate")
+        row = col.row(align=True)
+        custom_pie_slot_tool_set_by_id(row, "Blob", "BRUSH_BLOB", "builtin_brush.Blob")
+        row = col.row(align=True)
+        custom_pie_slot_tool_set_by_id(row, "Grab", "BRUSH_GRAB", "builtin_brush.Grab")
 
 class SM_OT_W_Sculpt_Menu_Call(bpy.types.Operator):
     bl_idname = 'sop.sm_pie_w_sculpt_menu_call'
