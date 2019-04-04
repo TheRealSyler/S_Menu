@@ -43,12 +43,14 @@ from . ui.add_pose_copy_buttons import add_pose_copy_buttons
 from . ui.properties_popup_panel import SM_Properties_Popup
 from . ui.render_settings_popup import (
     SM_Render_Settings_Popup, 
-    SM_Render_Settings_Panel,
-    Init_Render_Settings_Props,
-    Del_Render_Settings_Props,
+    Render_Settings_Props
 )
 from . operators.change_area_type import SM_change_area_type, SM_change_area_type_modal
 from . ui.change_workspaces_pie import SM_PIE_Workspaces_Menu, SM_PIE_Workspaces_Menu_Call, SM_change_workspace
+from . ui.gos_popup_panel import (
+    SM_OT_GOS_Popup, 
+    GOS_Props,
+)
 
 bl_info = {
     "name" : "S.Menu",
@@ -61,6 +63,9 @@ bl_info = {
 
 
 classes = [
+    #§ Props
+    GOS_Props,
+    Render_Settings_Props,
     #? PIE Menus and pie menu calls
     SM_PIE_Add,
     SM_PIE_Add_Call,
@@ -99,9 +104,9 @@ classes = [
     SM_MH_Instances,
     #? Popup Panels
     SM_Properties_Popup,
+    SM_OT_GOS_Popup,
     # Render Settings
     SM_Render_Settings_Popup,
-    SM_Render_Settings_Panel,
     #§ Operators
     SM_change_area_type,
     SM_change_workspace,
@@ -121,7 +126,8 @@ def register():
     #§ Register prop group
     # ------------------------------------------------------------------------------------------------------------
     bpy.types.Object.SM_MH_Instances = bpy.props.CollectionProperty(type=SM_MH_Instances)
-    Init_Render_Settings_Props()
+    bpy.types.Scene.SM_GOS_Props = bpy.props.PointerProperty(type=GOS_Props)
+    bpy.types.Scene.SM_Render_Settings_Props = bpy.props.PointerProperty(type=Render_Settings_Props)
     # ------------------------------------------------------------------------------------------------------------
     #+ Append Register stuff
     # ------------------------------------------------------------------------------------------------------------
@@ -153,7 +159,8 @@ def unregister():
     #$ delete prop group
     # ------------------------------------------------------------------------------------------------------------
     del(bpy.types.Object.SM_MH_Instances)
-    Del_Render_Settings_Props()
+    del(bpy.types.Scene.SM_GOS_Props)
+    del(bpy.types.Scene.SM_Render_Settings_Props)
     # ------------------------------------------------------------------------------------------------------------
     # Append Unregister stuff
     # ------------------------------------------------------------------------------------------------------------

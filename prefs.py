@@ -14,7 +14,7 @@ from . ui.pie_menus import (
 )
 from . ui.change_workspaces_pie import SM_PIE_Workspaces_Menu_Call
 from . ui.get_icon import get_icon
-
+from . ui.gos_popup_panel import SM_OT_GOS_Popup
 
 # -----------------------------------------------------------------------------
 #    Keymap      
@@ -53,6 +53,8 @@ def add_hotkey():
     kmi = km.keymap_items.new(SM_PIE_W_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=False, shift=False)
     addon_keymaps.append((km, kmi))
     kmi = km.keymap_items.new(SM_PIE_Workspaces_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=True, shift=False)
+    addon_keymaps.append((km, kmi))
+    kmi = km.keymap_items.new(SM_OT_GOS_Popup.bl_idname, 'X', 'PRESS', ctrl=True, shift=True)
     addon_keymaps.append((km, kmi))
     
     # edit mode (Mesh)
@@ -189,6 +191,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
         name="Enable Debug Messages",
         default=True
     )
+    
     #$ Workspaces options
     custom_workspace_pie: BoolProperty(name="Customize Workspace Pie", default=False)
     workspace_pie_slot_1: StringProperty(name="Slot 1 (Left) ")

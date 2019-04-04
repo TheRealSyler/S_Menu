@@ -2993,7 +2993,10 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         # 7 - TOP - LEFT
         pie.separator()
         # 9 - TOP - RIGHT
-        pie.separator()
+        split = pie.split()
+        row = split.row(align=True)
+        
+        op_button(row, "sop.sm_gos_popup", "GOS Popup", "MENU_PANEL", 1.1, 2)
         # 1 - BOTTOM - LEFT
         pie.separator()
         # 3 - BOTTOM - RIGHT
@@ -3081,8 +3084,7 @@ class SM_PIE_W_Sculpt_Menu(bpy.types.Menu):
         if capabilities.has_strength_pressure:
             row.prop(brush, "use_pressure_strength", text="")
         if (
-                (ups.use_unified_size and ups.use_locked_size == 'SCENE') or
-                ((not ups.use_unified_size) and brush.use_locked_size == 'SCENE')
+                (ups.use_unified_size and ups.use_locked_size == 'SCENE') or ((not ups.use_unified_size) and brush.use_locked_size == 'SCENE')
         ):
             row.prop(brush, "unprojected_radius", slider=True, text="Radius")
         else:
