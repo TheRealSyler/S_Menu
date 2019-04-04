@@ -218,6 +218,8 @@ class SM_Prefs(bpy.types.AddonPreferences):
     collapse_list_options: BoolProperty(name="Options", default=False)
     collapse_list_menus: BoolProperty(name="Menus", default=False)
     collapse_list_view3d: BoolProperty(name="View 3D:", default=False)
+    collapse_list_window: BoolProperty(name="Window:", default=False)
+    collapse_list_sculpt: BoolProperty(name="Sculpt:", default=False)
     collapse_list_object_mode: BoolProperty(name="Object Mode:", default=False)
     collapse_list_node: BoolProperty(name="Nodes:", default=False)
     #§ comp_adjust_view Prefs
@@ -238,11 +240,11 @@ class SM_Prefs(bpy.types.AddonPreferences):
     )'''
     
     def add_keymap_to_ui(self, context, layout, k_name, idname):
-        # keymap_item = context.window_manager.keyconfigs.addon.keymaps[k_name].keymap_items
+       
         keymap_item = context.window_manager.keyconfigs.user.keymaps[k_name].keymap_items
         row = layout.row()
-        km = context.window_manager.keyconfigs.user.keymaps[k_name]  # added
-        layout.context_pointer_set("keymap", km)  # added
+        km = context.window_manager.keyconfigs.user.keymaps[k_name]
+        layout.context_pointer_set("keymap", km)
         row.prop(keymap_item[idname], 'active', text="",full_event=True)
         row.prop(keymap_item[idname], 'type', text=keymap_item[idname].name, full_event=True) 
 
@@ -302,6 +304,23 @@ class SM_Prefs(bpy.types.AddonPreferences):
                 self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_Tab_Menu_Call.bl_idname)
                 self.add_keymap_to_ui(context, sub, 'Object Non-modal', SM_PIE_M4_Menu_Call.bl_idname)
 
+            if self.collapse_list_window is True:
+                icon = "TRIA_RIGHT"
+            else:
+                icon = "TRIA_DOWN"
+            sub.prop(self,"collapse_list_window", icon=icon)
+            if self.collapse_list_window is False:
+                self.add_keymap_to_ui(context, sub, 'Window', SM_PIE_W_Menu_Call.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Window', SM_PIE_Workspaces_Menu_Call.bl_idname)
+
+            if self.collapse_list_sculpt is True:
+                icon = "TRIA_RIGHT"
+            else:
+                icon = "TRIA_DOWN"
+            sub.prop(self,"collapse_list_sculpt", icon=icon)
+            if self.collapse_list_sculpt is False:
+                self.add_keymap_to_ui(context, sub, 'Sculpt', SM_OT_W_Sculpt_Menu_Call.bl_idname)
+
             if self.collapse_list_node is True:
                 icon = "TRIA_RIGHT"
             else:
@@ -348,6 +367,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
             row.prop(self, "SM_PIE_Radius", icon='PROP_CON')
 
             sub.prop(self, "enable_pose_buttons", text="Enable Copy/Paste Buttons In Header")
+            sub.prop(self, "enable_debug_messages", text="Enable Debug Messages")
 
 
     def add_main_tab(self, context, col):

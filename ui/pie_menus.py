@@ -2689,7 +2689,7 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         # 4 - LEFT
         pie.operator("object.mode_set",text="Object Mode", icon="OBJECT_DATAMODE").mode = 'OBJECT'
         # 6 - RIGHT
-        if bpy.context.active_object is None:
+        if bpy.context.active_object is None or context.active_object.type == "CAMERA":
             pie.separator()
         else:
             pie.operator("sop.sm_mesh_switch_to_edit_mode",text="Edit Mode", icon="EDITMODE_HLT")
@@ -2697,19 +2697,24 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         if bpy.context.active_object is None:
             pie.separator()
         else:
-            pie.operator("object.mode_set",text="Sculpt Mode", icon="SCULPTMODE_HLT").mode = 'SCULPT'
+            if context.active_object.type == "MESH":
+                pie.operator("object.mode_set",text="Sculpt Mode", icon="SCULPTMODE_HLT").mode = 'SCULPT'
+            elif context.active_object.type == "ARMATURE":
+                pie.operator("object.mode_set",text="Pose Mode", icon="POSE_HLT").mode = 'POSE'
+            else:
+                pie.separator()
         # 8 - TOP
-        if bpy.context.active_object is None:
+        if bpy.context.active_object is None or context.active_object.type != "MESH":
             pie.separator()
         else:
             pie.operator("object.mode_set",text="Vertex Paint", icon="WPAINT_HLT").mode = 'VERTEX_PAINT'
         # 7 - TOP - LEFT
-        if bpy.context.active_object is None:
+        if bpy.context.active_object is None or context.active_object.type != "MESH":
             pie.separator()
         else:
             pie.operator("object.mode_set",text="Weight Paint", icon="WPAINT_HLT").mode = 'WEIGHT_PAINT'
         # 9 - TOP - RIGHT
-        if bpy.context.active_object is None:
+        if bpy.context.active_object is None or context.active_object.type != "MESH":
             pie.separator()
         else:
             pie.operator("object.mode_set",text="Texture Paint", icon="TPAINT_HLT").mode = 'TEXTURE_PAINT'
@@ -2934,7 +2939,7 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
                 row.operator("mesh.looptools_circle", text="", icon_value=get_icon("LP_Circle_icon", "main"))
                 #row.operator("mesh.looptools_curve", text="", icon="ERROR")
                 row.operator("mesh.looptools_flatten", text="", icon_value=get_icon("LP_Flatten_icon", "main"))
-                #row.operator("mesh.looptools_gstretch", text="", icon="ERROR")
+                row.operator("mesh.looptools_gstretch", text="", icon_value=get_icon("LP_GS_icon", "main"))
                 #row.operator("mesh.looptools_relax", text="", icon="ERROR")
                 row.operator("mesh.looptools_space", text="", icon_value=get_icon("LP_Space_icon", "main"))
         elif mode == 'OBJECT':
@@ -2946,7 +2951,7 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
                 row.operator("machin3.apply_transformations", text="Apply Transformations", icon_value=get_icon("Machin3", "main"))
         else:
             col.label(text="WIP")
-        
+       
 class SM_PIE_M4_Menu_Call(bpy.types.Operator):
     
     bl_idname = 'sop.sm_pie_m4_menu_call'
