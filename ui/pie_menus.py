@@ -2020,8 +2020,8 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
             pie.separator()
             pie.separator()
             split = pie.split()
-            split = pie.split()
-            disabled_button(split,"No Object Selected", 2)
+            self.QA_03(split)
+            #disabled_button(split,"No Object Selected", 2)
 
 
 

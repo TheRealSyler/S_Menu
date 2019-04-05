@@ -51,6 +51,7 @@ from . ui.gos_popup_panel import (
     SM_OT_GOS_Popup, 
     GOS_Props,
 )
+from . ui.main_popup_panel import SM_OT_Main_Popup, Main_Popup_Props
 
 bl_info = {
     "name" : "S.Menu",
@@ -64,6 +65,7 @@ bl_info = {
 
 classes = [
     #§ Props
+    Main_Popup_Props,
     GOS_Props,
     Render_Settings_Props,
     #? PIE Menus and pie menu calls
@@ -103,6 +105,7 @@ classes = [
     SM_mesh_history_delete_current_instance, 
     SM_MH_Instances,
     #? Popup Panels
+    SM_OT_Main_Popup,
     SM_Properties_Popup,
     SM_OT_GOS_Popup,
     # Render Settings
@@ -128,6 +131,7 @@ def register():
     bpy.types.Object.SM_MH_Instances = bpy.props.CollectionProperty(type=SM_MH_Instances)
     bpy.types.Scene.SM_GOS_Props = bpy.props.PointerProperty(type=GOS_Props)
     bpy.types.Scene.SM_Render_Settings_Props = bpy.props.PointerProperty(type=Render_Settings_Props)
+    bpy.types.Scene.SM_Main_Popup_Props = bpy.props.PointerProperty(type=Main_Popup_Props)
     # ------------------------------------------------------------------------------------------------------------
     #+ Append Register stuff
     # ------------------------------------------------------------------------------------------------------------
@@ -161,6 +165,7 @@ def unregister():
     del(bpy.types.Object.SM_MH_Instances)
     del(bpy.types.Scene.SM_GOS_Props)
     del(bpy.types.Scene.SM_Render_Settings_Props)
+    del(bpy.types.Scene.SM_Main_Popup_Props)
     # ------------------------------------------------------------------------------------------------------------
     # Append Unregister stuff
     # ------------------------------------------------------------------------------------------------------------
