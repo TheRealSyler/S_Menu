@@ -55,6 +55,8 @@ def add_hotkey():
     kmi = km.keymap_items.new(SM_PIE_Workspaces_Menu_Call.bl_idname, 'W', 'PRESS', ctrl=True, shift=False)
     addon_keymaps.append((km, kmi))
     kmi = km.keymap_items.new(SM_OT_Main_Popup.bl_idname, 'X', 'PRESS', ctrl=True, shift=True)
+    kmi.properties.main_tabs = "GOS"
+    kmi.properties.single_panel = True
     addon_keymaps.append((km, kmi))
     
     # edit mode (Mesh)
@@ -315,7 +317,7 @@ class SM_Prefs(bpy.types.AddonPreferences):
             if self.collapse_list_window is False:
                 self.add_keymap_to_ui(context, sub, 'Window', SM_PIE_W_Menu_Call.bl_idname)
                 self.add_keymap_to_ui(context, sub, 'Window', SM_PIE_Workspaces_Menu_Call.bl_idname)
-                self.add_keymap_to_ui(context, sub, 'Window', SM_OT_GOS_Popup.bl_idname)
+                self.add_keymap_to_ui(context, sub, 'Window', SM_OT_Main_Popup.bl_idname)
 
             if self.collapse_list_sculpt is True:
                 icon = "TRIA_RIGHT"

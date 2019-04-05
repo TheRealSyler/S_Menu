@@ -139,6 +139,24 @@ class Render_Settings_Props(bpy.types.PropertyGroup):
     SM_RS_eevee_sub_tabs: bpy.props.EnumProperty(items=eevee_sub_tabs)
     SM_RS_workbench_tabs: bpy.props.EnumProperty(items=workbench_tabs)
 
+class GOS_Props(bpy.types.PropertyGroup):
+    SM_GOS_gaffer_tabs: bpy.props.EnumProperty(
+        name="Gaffer Tabs", 
+        items=(
+            ("LIGHTS","Lights",""),
+            ("TOOLS","Tools",""),
+            ("OVERLAYS","Overlays",""),
+            ("SHADING","Shading",""),
+        )
+    )
+    SM_GOS_tabs: bpy.props.EnumProperty(
+        name="GOS Tabs", 
+        items=(
+            ("OVERLAYS","Overlays",""),
+            ("SHADING","Shading",""),
+        )
+    )
+    SM_GOS_test: bpy.props.BoolProperty(name="test", default=True)
 
 def render_settings_panel(self, layout, context):
     
@@ -650,14 +668,10 @@ class SM_OT_Main_Popup(bpy.types.Operator):
 
     bl_options = {'UNDO'}
 
-    main_tabs = [
-        ("RENDER", "Render", ""),
-        ("GOS", "GOS", ""),
-        ("OUTPUT", "Output", ""),
-    ]
+    
   
-    main_tabs: bpy.props.EnumProperty(items=main_tabs)
-    single_panel: bpy.props.BoolProperty(name="Single Panel", default=True)
+    main_tabs: bpy.props.StringProperty(name="Tabs")
+    single_panel: bpy.props.BoolProperty(name="Single Panel", default=False)
 
 
     @classmethod

@@ -40,18 +40,12 @@ from . operators.mesh_history_operator import (
 from . prefs import SM_Prefs , add_hotkey, remove_hotkey
 from . ui.get_icon import register_icons, unregister_icons
 from . ui.add_pose_copy_buttons import add_pose_copy_buttons
-from . ui.properties_popup_panel import SM_Properties_Popup
-from . ui.render_settings_popup import (
-    SM_Render_Settings_Popup, 
-    Render_Settings_Props
-)
+
+
 from . operators.change_area_type import SM_change_area_type, SM_change_area_type_modal
 from . ui.change_workspaces_pie import SM_PIE_Workspaces_Menu, SM_PIE_Workspaces_Menu_Call, SM_change_workspace
-from . ui.gos_popup_panel import (
-    SM_OT_GOS_Popup, 
-    GOS_Props,
-)
-from . ui.main_popup_panel import SM_OT_Main_Popup, Main_Popup_Props
+
+from . ui.main_popup_panel import SM_OT_Main_Popup, Main_Popup_Props, Render_Settings_Props, GOS_Props
 
 bl_info = {
     "name" : "S.Menu",
@@ -106,10 +100,6 @@ classes = [
     SM_MH_Instances,
     #? Popup Panels
     SM_OT_Main_Popup,
-    SM_Properties_Popup,
-    SM_OT_GOS_Popup,
-    # Render Settings
-    SM_Render_Settings_Popup,
     #§ Operators
     SM_change_area_type,
     SM_change_workspace,

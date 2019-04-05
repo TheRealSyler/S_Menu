@@ -2987,16 +2987,21 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         # 8 - TOP
         split = pie.split()
         row = split.row(align=True)
-        
-        op_button(row, "sop.sm_render_settings_popup", "Render Settings", "SCENE", 1.1, 2)
-        
+        row.scale_x = 1.1
+        row.scale_y = 2
+        op = row.operator("sop.sm_main_popup", text="Render Settings", icon="MENU_PANEL")
+        op.main_tabs = "RENDER"
+        op.single_panel = True
         # 7 - TOP - LEFT
         pie.separator()
         # 9 - TOP - RIGHT
         split = pie.split()
         row = split.row(align=True)
-        
-        op_button(row, "sop.sm_gos_popup", "GOS Popup", "MENU_PANEL", 1.1, 2)
+        row.scale_x = 1.1
+        row.scale_y = 2
+        op = row.operator("sop.sm_main_popup", text="GOS Popup", icon="MENU_PANEL")
+        op.main_tabs = "GOS"
+        op.single_panel = True
         # 1 - BOTTOM - LEFT
         pie.separator()
         # 3 - BOTTOM - RIGHT
