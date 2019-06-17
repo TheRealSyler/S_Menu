@@ -70,7 +70,6 @@ from bl_ui.space_view3d import (
     VIEW3D_PT_overlay_edit_mesh_measurement,
     VIEW3D_PT_overlay_edit_mesh_normals,
     VIEW3D_PT_overlay_edit_mesh_freestyle,
-    VIEW3D_PT_overlay_edit_mesh_developer,
     VIEW3D_PT_overlay_edit_curve,
     VIEW3D_PT_overlay_paint,
     VIEW3D_PT_overlay_pose,
@@ -634,7 +633,6 @@ def gos_panel(self, layout, context):
                 VIEW3D_PT_overlay_edit_mesh_measurement.draw(self, context)
                 VIEW3D_PT_overlay_edit_mesh_normals.draw(self, context)
                 VIEW3D_PT_overlay_edit_mesh_freestyle.draw(self, context)
-                VIEW3D_PT_overlay_edit_mesh_developer.draw(self, context)
             if context.mode == "EDIT_CURVE":
                 layout.label(text="Curve:")
                 VIEW3D_PT_overlay_edit_curve.draw(self, context)

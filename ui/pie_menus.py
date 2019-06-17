@@ -94,7 +94,7 @@ def custom_pie_slot_tool_set_by_id(pie_ref, slot, icon, id):
 #+-----------------------------------------------------------------------------------------------------+#
 #? Utils
 #+-----------------------------------------------------------------------------------------------------+#
-class SM_PIE_Add(bpy.types.Menu):
+class SM_MT_pie_add(bpy.types.Menu):
     bl_label = "Add"
     
 
@@ -498,16 +498,13 @@ class SM_PIE_Add(bpy.types.Menu):
         col.scale_x = 1
         col.scale_y = 1.2
         enum = [
-            ("discombobulate.ops"),
             ("object.parent_to_empty"),
         ]
         text = [
-            ("Discombobulator"),
             ("Parent to Empty"),
         ]
         icon = [
             9,
-            9,    
         ]
         spacer(col, 3)
         op_loop_val(col, enum, text, icon, False, 7)
@@ -518,18 +515,17 @@ class SM_PIE_Add(bpy.types.Menu):
         box.menu("VIEW3D_MT_mesh_mech_add",text="Mechanical", icon_value=get_icon("List_icon", "main"))
         box.menu("VIEW3D_MT_mesh_torus_add",text="Torus Objects", icon_value=get_icon("List_icon", "main"))
 
-class SM_PIE_Add_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_pie_add_call'
+class SM_MT_pie_add_call(bpy.types.Operator):
+    bl_idname = 'sop.sm_mt_pie_add_call'
     bl_label = 'S.Menu Add Pie'
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        call_pie_menu('SM_PIE_Add', False, None)
-        #bpy.ops.wm.call_menu_pie(name="SM_PIE_Add")
+        call_pie_menu('SM_MT_pie_add', False, None)
         return {'FINISHED'}
 
-class SM_PIE_Add_Node(bpy.types.Menu):
+class SM_MT_pie_add_node(bpy.types.Menu):
     bl_label = "Node"
     
     def draw(self, context):
@@ -867,12 +863,12 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         col.scale_x = 1.1
         col.scale_y = 1.8
         col.operator_context = "INVOKE_DEFAULT"
-        col.operator("wm.call_menu_pie", text="Texture", icon="TEXTURE").name = "SM_Add_Texture_Node"
+        col.operator("wm.call_menu_pie", text="Texture", icon="TEXTURE").name = "SM_MT_add_texture_node"
     
     def shader_add(self, col):
         col.scale_x = 1.1
         col.scale_y = 1.8
-        col.operator("wm.call_menu_pie", text="Shader", icon="SHADING_RENDERED").name = "SM_Add_Shader_Node"
+        col.operator("wm.call_menu_pie", text="Shader", icon="SHADING_RENDERED").name = "SM_MT_add_shader_node"
     
     def group_menu_add(self, col):
         col.menu("NODE_MT_category_CMP_GROUP", text="Groups", icon_value=get_icon("List_icon", "main"))
@@ -934,7 +930,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         col.scale_y = 1.2
         col.label(text="                                ")
         box = col.box()
-        box.menu("NODE_MT_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
+        box.menu("NODE_add", text="Add Menu (Old)", icon_value=get_icon("List_icon", "main"))
        
         text = [
             ("Frame"),
@@ -1055,7 +1051,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
             (get_icon("tex_icon", "main")),
-            (get_icon("Reroute_icon", "main")),  
+            (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
             (get_icon("Reroute_icon", "main")),
@@ -1423,7 +1419,7 @@ class SM_PIE_Add_Node(bpy.types.Menu):
         ]
         op_loop_safe_node_val(col, 26, text, icon, e_type)
 
-class SM_Add_Texture_Node(bpy.types.Menu):
+class SM_MT_add_texture_node(bpy.types.Menu):
     bl_label = 'S.Menu Add Texture'
 
     def draw(self, context):
@@ -1632,19 +1628,19 @@ class SM_Add_Texture_Node(bpy.types.Menu):
         ]
         op_loop_safe_node_val(col, 2, text, icon, e_type)
 
-class SM_PIE_Add_Node_Call(bpy.types.Operator):
+class SM_MT_pie_add_node_call(bpy.types.Operator):
 
-    bl_idname = 'sop.sm_pie_node_add_call'
+    bl_idname = 'sop.sm_mt_pie_node_add_call'
     bl_label = 'S.Menu Node Add Pie'
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
     
     
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_Add_Node")
+        bpy.ops.wm.call_menu_pie(name="SM_MT_pie_add_node")
         return {'FINISHED'}
 
-class SM_Add_Shader_Node(bpy.types.Menu):
+class SM_MT_add_shader_node(bpy.types.Menu):
     bl_label = 'S.Menu Add Shader'
     
     def draw(self, context):
@@ -1754,7 +1750,7 @@ class SM_Add_Shader_Node(bpy.types.Menu):
         ]
         op_loop_safe_node(col, 3, text, icon, e_type)
 
-class SM_PIE_Q_Menu(bpy.types.Menu):
+class SM_MT_pie_q_menu(bpy.types.Menu):
     bl_label = "S.Menu 'Q' Menu"
     
 
@@ -1779,7 +1775,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 # 8 - TOP
                 pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
                 # 7 - TOP - LEFT
-                pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                pie.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 # 9 - TOP - RIGHT
                 if get_prefs().enable_hops is True:
                     pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
@@ -1825,7 +1821,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 # 8 - TOP
                 pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
                 # 7 - TOP - LEFT
-                pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                pie.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 # 9 - TOP - RIGHT
                 if get_prefs().enable_hops is True:
                     pie.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
@@ -1897,14 +1893,14 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                     box.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
                     box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
                     box.menu("hops_main_menu", text="Hops Menu", icon_value=get_icon("List_icon", "main"))
-                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                    box.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 else:
                     split = pie.split()
                     col = split.column()
                     col.label(text="                                    ")
                     box = col.box()
                     box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
-                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                    box.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 # 8 - TOP
                 pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
                 # 7 - TOP - LEFT
@@ -1960,7 +1956,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                 # 8 - TOP
                 pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
                 # 7 - TOP - LEFT
-                pie.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                pie.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 # 9 - TOP - RIGHT
                 pie.separator()
                 # 1 - BOTTOM - LEFT
@@ -1986,14 +1982,14 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
                     box.operator("object.convert",text="Convert", icon="OUTLINER_OB_MESH").target = "MESH"
                     box.operator("hops.helper",text="Hops Helper", icon_value=get_icon("Hops_helper_icon", "main"))
                     box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
-                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                    box.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 else:
                     split = pie.split()
                     col = split.column()
                     col.label(text="                                    ")
                     box = col.box()
                     box.operator("anim.keyframe_insert_menu",text="Insert Keyframe", icon="KEYTYPE_KEYFRAME_VEC")
-                    box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+                    box.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
                 # 8 - TOP
                 pie.operator("wm.search_menu",text="Search", icon="VIEWZOOM")
                 # 7 - TOP - LEFT
@@ -2199,7 +2195,7 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         if get_prefs().enable_hops is True:
             op_loop_val(col, enum, text, icon, 0, False)
         box = col.box()
-        box.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
+        box.menu("SCREEN_user_menu", text="Quick Favorites", icon_value=get_icon("List_icon", "main"))
     
     def mesh_menu_bottom_02(self, col):
         col.scale_x = 1.4
@@ -2436,17 +2432,17 @@ class SM_PIE_Q_Menu(bpy.types.Menu):
         sub.prop(curve, "fill_mode")
         col.prop(curve, "use_fill_deform")
 
-class SM_PIE_Q_Menu_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_pie_q_menu_call'
+class SM_MT_pie_q_menu_call(bpy.types.Operator):
+    bl_idname = 'sop.sm_mt_pie_q_menu_call'
     bl_label = 'S.Menu Q Menu Pie'
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_Q_Menu")
+        bpy.ops.wm.call_menu_pie(name="SM_MT_pie_q_menu")
         return {'FINISHED'}
 
-class SM_PIE_A_OM(bpy.types.Menu):
+class SM_MT_pie_a_om(bpy.types.Menu):
     bl_label = "S.Menu 'A' Menu"
     
     def draw(self, context):
@@ -2462,17 +2458,17 @@ class SM_PIE_A_OM(bpy.types.Menu):
         # 8 - TOP
         pie.operator("object.select_all",text="Invert", icon="ARROW_LEFTRIGHT").action = 'INVERT'
             
-class SM_PIE_A_OM_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_pie_a_menu_call'
+class SM_MT_pie_a_om_call(bpy.types.Operator):
+    bl_idname = 'sop.sm_mt_pie_a_menu_call'
     bl_label = "S.Menu 'A' Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_A_OM")
+        bpy.ops.wm.call_menu_pie(name="SM_MT_pie_a_om")
         return {'FINISHED'}
 
-class SM_PIE_A_NODE(bpy.types.Menu):
+class SM_MT_pie_a_node(bpy.types.Menu):
     bl_label = "S.Menu 'A' Node Menu"
     
     def draw(self, context):
@@ -2496,17 +2492,17 @@ class SM_PIE_A_NODE(bpy.types.Menu):
         # 3 - BOTTOM - RIGHT
         pie.operator("wm.tool_set_by_id",text="Links Cut", icon="SCULPTMODE_HLT").name = 'builtin.links_cut'
             
-class SM_PIE_A_NODE_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_pie_a_node_menu_call'
+class SM_MT_pie_a_node_call(bpy.types.Operator):
+    bl_idname = 'sop.sm_mt_pie_a_node_menu_call'
     bl_label = "S.Menu 'A' Node Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_A_NODE")
+        bpy.ops.wm.call_menu_pie(name="SM_MT_pie_a_node")
         return {'FINISHED'}
 
-class SM_PIE_Q_Node(bpy.types.Menu):
+class SM_MT_pie_q_node(bpy.types.Menu):
     bl_label = "S.Menu 'Q' Node Menu"
 
     def draw(self, context):
@@ -2591,7 +2587,7 @@ class SM_PIE_Q_Node(bpy.types.Menu):
 
         box.active = snode.show_backdrop
 
-        box.operator("sop.sm_modal_adjust_view", text="Adjust Backdrop", icon="PREFERENCES")
+        box.operator("sop.sm_mt_modal_adjust_view", text="Adjust Backdrop", icon="PREFERENCES")
 
         box.operator("node.backimage_fit", text="Fit Backdrop", icon="OBJECT_DATA")
     
@@ -2668,18 +2664,18 @@ class SM_PIE_Q_Node(bpy.types.Menu):
      
         col.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
 
-class SM_PIE_Q_Node_Call(bpy.types.Operator):
+class SM_MT_pie_q_node_call(bpy.types.Operator):
 
-    bl_idname = 'sop.sm_pie_q_node_menu_call'
+    bl_idname = 'sop.sm_mt_pie_q_node_menu_call'
     bl_label = "S.Menu 'Q' Node Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        call_pie_menu('SM_PIE_Q_Node', False, None)
+        call_pie_menu('SM_MT_pie_q_node', False, None)
         return {'FINISHED'}
 
-class SM_PIE_Tab_Menu(bpy.types.Menu):
+class SM_MT_pie_tab_menu(bpy.types.Menu):
     bl_label = "S.Menu 'Tab' Menu"
     
     def draw(self, context):
@@ -2691,7 +2687,7 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         if bpy.context.active_object is None or context.active_object.type == "CAMERA":
             pie.separator()
         else:
-            pie.operator("sop.sm_mesh_switch_to_edit_mode",text="Edit Mode", icon="EDITMODE_HLT")
+            pie.operator("sop.sm_mt_mesh_switch_to_edit_mode",text="Edit Mode", icon="EDITMODE_HLT")
         # 2 - BOTTOM
         if bpy.context.active_object is None:
             pie.separator()
@@ -2732,29 +2728,29 @@ class SM_PIE_Tab_Menu(bpy.types.Menu):
         if bpy.context.active_object is None:
             pie.separator()
         else:
-            if bpy.context.active_object.SM_MH_Parent is None:
+            if bpy.context.active_object.SM_MT_MH_Parent is None:
                 pie.separator()
             else:
                 if bpy.context.mode == "EDIT_MESH":
                     pie.separator()
                 else:
-                    if bpy.context.active_object.SM_MH_current_index == 0:
+                    if bpy.context.active_object.SM_MT_MH_current_index == 0:
                         pie.separator()
                     else:
                         pie.operator("object.mode_set",text="Edit Instance", icon="EDITMODE_HLT").mode = 'EDIT'
 
-class SM_PIE_Tab_Menu_Call(bpy.types.Operator):
+class SM_MT_pie_tab_menu_call(bpy.types.Operator):
 
-    bl_idname = 'sop.sm_pie_tab_menu_call'
+    bl_idname = 'sop.sm_mt_pie_tab_menu_call'
     bl_label = "S.Menu 'Tab' Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name="SM_PIE_Tab_Menu")
+        bpy.ops.wm.call_menu_pie(name="SM_MT_pie_tab_menu")
         return {'FINISHED'}
 
-class SM_PIE_M4_Menu(bpy.types.Menu):
+class SM_MT_pie_m4_menu(bpy.types.Menu):
     bl_label = "S.Menu 'M4' Menu"
     
     def draw(self, context):
@@ -2919,6 +2915,7 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         mode = context.mode
         col = col.column(align=True)
         if mode == 'EDIT_MESH':
+            print("awd")
             col.scale_x = 1.6
             col.scale_y = 1.4
             if get_prefs().enable_tinycad is True:
@@ -2951,19 +2948,19 @@ class SM_PIE_M4_Menu(bpy.types.Menu):
         else:
             col.label(text="WIP")
        
-class SM_PIE_M4_Menu_Call(bpy.types.Operator):
+class SM_MT_pie_m4_menu_call(bpy.types.Operator):
     
-    bl_idname = 'sop.sm_pie_m4_menu_call'
+    bl_idname = 'sop.sm_mt_pie_m4_menu_call'
     bl_label = "S.Menu 'M4' Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        call_pie_menu('SM_PIE_M4_Menu', True, get_prefs().SM_PIE_Radius_M4)
+        call_pie_menu('SM_MT_pie_m4_menu', True, get_prefs().SM_PIE_Radius_M4)
         
         return {'FINISHED'}
 
-class SM_PIE_W_Menu(bpy.types.Menu):
+class SM_MT_pie_w_menu(bpy.types.Menu):
     bl_label = "S.Menu 'W' Menu"
     
 
@@ -3027,19 +3024,19 @@ class SM_PIE_W_Menu(bpy.types.Menu):
         #op.a_type = 'VIEW_3D'
         #op.chose_from_list = False
 
-class SM_PIE_W_Menu_Call(bpy.types.Operator):
+class SM_MT_pie_w_menu_call(bpy.types.Operator):
     
-    bl_idname = 'sop.sm_pie_w_menu_call'
+    bl_idname = 'sop.sm_mt_pie_w_menu_call'
     bl_label = "S.Menu 'W' Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        call_pie_menu('SM_PIE_W_Menu', True, get_prefs().SM_PIE_Radius_W)
+        call_pie_menu('SM_MT_pie_w_menu', True, get_prefs().SM_PIE_Radius_W)
         
         return {'FINISHED'}
 
-class SM_PIE_W_Sculpt_Menu(bpy.types.Menu):
+class SM_MT_pie_w_sculpt_menu(bpy.types.Menu):
     bl_label = "S.Menu 'W' Sculpt Menu"
     
 
@@ -3139,13 +3136,13 @@ class SM_PIE_W_Sculpt_Menu(bpy.types.Menu):
         row = col.row(align=True)
         custom_pie_slot_tool_set_by_id(row, "Grab", "BRUSH_GRAB", "builtin_brush.Grab")
 
-class SM_OT_W_Sculpt_Menu_Call(bpy.types.Operator):
-    bl_idname = 'sop.sm_pie_w_sculpt_menu_call'
+class SM_MT_ot_w_sculpt_menu_call(bpy.types.Operator):
+    bl_idname = 'sop.sm_mt_pie_w_sculpt_menu_call'
     bl_label = "S.Menu 'W' Sculpt Menu"
     bl_description = 'Calls pie menu'
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        call_pie_menu('SM_PIE_W_Sculpt_Menu', True, get_prefs().SM_PIE_Radius_W)
+        call_pie_menu('SM_MT_pie_w_sculpt_menu', True, get_prefs().SM_PIE_Radius_W)
         
         return {'FINISHED'}
