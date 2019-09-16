@@ -90,7 +90,7 @@ classes = [
     SM_MT_pie_workspaces_menu_Call,
     # ? Prefs
     SM_Prefs,
-    # + Mesh Hisrtory
+    # + Mesh History
     SM_PT_mesh_history_panel,
     SM_mesh_history_Props,
     SM_mesh_history_make_Instance,
