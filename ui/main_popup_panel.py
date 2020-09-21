@@ -34,7 +34,7 @@ from bl_ui.properties_render import (
     RENDER_PT_color_management_curves,
     RENDER_PT_eevee_sampling,
     RENDER_PT_eevee_film,
-    RENDER_PT_eevee_film_overscan,
+    # RENDER_PT_eevee_film_overscan,
     RENDER_PT_eevee_indirect_lighting,
     RENDER_PT_eevee_indirect_lighting_display,
     RENDER_PT_eevee_ambient_occlusion,
@@ -71,7 +71,7 @@ from bl_ui.space_view3d import (
     VIEW3D_PT_overlay_edit_mesh_normals,
     VIEW3D_PT_overlay_edit_mesh_freestyle,
     VIEW3D_PT_overlay_edit_curve,
-    VIEW3D_PT_overlay_paint,
+    VIEW3D_PT_overlay_texture_paint,
     VIEW3D_PT_overlay_pose,
     VIEW3D_PT_overlay_sculpt
 )
@@ -407,9 +407,9 @@ def render_settings_panel(self, layout, context):
             box = layout.box()
             box.label(text="Film")
             RENDER_PT_eevee_film.draw(self, context)
-            layout.prop(props, "use_overscan")
-            if props.use_overscan is True:
-                RENDER_PT_eevee_film_overscan.draw(self, context)
+            # layout.prop(props, "use_overscan")
+            # if props.use_overscan is True:
+            #     RENDER_PT_eevee_film_overscan.draw(self, context)
             box = layout.box()
             box.label(text="Sampling")
             RENDER_PT_eevee_sampling.draw(self, context)
@@ -637,8 +637,8 @@ def gos_panel(self, layout, context):
                 layout.label(text="Curve:")
                 VIEW3D_PT_overlay_edit_curve.draw(self, context)
             if context.mode in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
-                VIEW3D_PT_overlay_paint.draw_header(self, context)
-                VIEW3D_PT_overlay_paint.draw(self, context)
+                VIEW3D_PT_overlay_texture_paint.draw_header(self, context)
+                VIEW3D_PT_overlay_texture_paint.draw(self, context)
             if context.mode == "POSE":
                 layout.label(text="Pose Mode")
                 VIEW3D_PT_overlay_pose.draw(self, context)

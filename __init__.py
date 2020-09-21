@@ -50,9 +50,9 @@ from . ui.main_popup_panel import SM_OT_Main_Popup, Main_Popup_Props, Render_Set
 bl_info = {
     "name": "S.Menu",
     "author": "Syler",
-    "version": (0, 0, 1, 5),
+    "version": (0, 0, 1, 6),
     "description": "Adds Pie Menus",
-    "blender": (2, 80, 0),
+    "blender": (2, 90, 0),
     "category": "3D view"
 }
 
