@@ -390,7 +390,7 @@ class SM_MT_pie_add(bpy.types.Menu):
             ("FORCE_BOID"),
             ("FORCE_TURBULENCE"),
             ("FORCE_DRAG"),
-            ("FORCE_SMOKEFLOW"),
+            ("FORCE_FLUIDFLOW"), # FORCE_SMOKEFIELD doesn't exists anymore, temp. changed to this icon
         ]
         e_type = [
             ('FORCE'),
@@ -405,7 +405,7 @@ class SM_MT_pie_add(bpy.types.Menu):
             ('BOID'),
             ('TURBULENCE'),
             ('DRAG'),
-            ('SMOKE'),
+            ('FLUID'), # type Smoke doesn't exists anymore in this scope, temp. changed to FLUID
         ]
         spacer(col, snum)
         op_loop_safe(col, enum, text, icon, e_type)
@@ -512,7 +512,8 @@ class SM_MT_pie_add(bpy.types.Menu):
         col.label(text="                                 ")
         box.menu("VIEW3D_MT_mesh_extras_add",text="Extras", icon_value=get_icon("List_icon", "main"))
         box.menu("VIEW3D_MT_mesh_math_add",text="Math Function", icon_value=get_icon("List_icon", "main"))
-        box.menu("VIEW3D_MT_mesh_mech_add",text="Mechanical", icon_value=get_icon("List_icon", "main"))
+        # prob. erased without substitution, for now commented out
+        #box.menu("VIEW3D_MT_mesh_mech_add",text="Mechanical", icon_value=get_icon("List_icon", "main"))
         box.menu("VIEW3D_MT_mesh_torus_add",text="Torus Objects", icon_value=get_icon("List_icon", "main"))
 
 class SM_MT_pie_add_call(bpy.types.Operator):
